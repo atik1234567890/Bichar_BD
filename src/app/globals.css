@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #0a0d0f;
+  --surface: #0f1317;
+  --surface2: #141a20;
+  --border: #1e2830;
+  --border-light: #253040;
+  --text: #c5cdd8;
+  --text-dim: #546878;
+  --text-faint: #2a3d50;
+  --blood: #cc1f1f;
+  --blood-soft: rgba(204, 31, 31, 0.08);
+  --gold: #c8930a;
+  --gold-soft: rgba(200, 147, 10, 0.08);
+  --teal: #0a9e8a;
+  --teal-soft: rgba(10, 158, 138, 0.08);
+  --sky: #1a7acc;
+  --sky-soft: rgba(26, 122, 204, 0.08);
+  --orange: #d45a1a;
+  --orange-soft: rgba(212, 90, 26, 0.08);
+  --purple: #7a3acc;
+  --purple-soft: rgba(122, 58, 204, 0.08);
+  --green: #1a9e5a;
+  --green-soft: rgba(26, 158, 90, 0.08);
+}
+
+@layer base {
+  body {
+    @apply bg-bg text-text font-serif text-[15px] leading-[1.75];
+  }
+}
+
+.hero-noise {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+}
+
+.hero-glow {
+  background: radial-gradient(
+    circle,
+    rgba(204, 31, 31, 0.06),
+    transparent 70%
+  );
+}
+
+.hero-rule-line {
+  background: linear-gradient(90deg, transparent, var(--border-light));
+}
+
+.hero-rule-line.rev {
+  background: linear-gradient(270deg, transparent, var(--border-light));
+}
