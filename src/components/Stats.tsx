@@ -118,24 +118,27 @@ export default function Stats() {
         <div className="bg-surface border border-border p-6">
           <div className="flex items-center gap-2 mb-6">
             <TrendingUp size={16} className="text-gold" />
-            <h3 className="text-white font-bold text-xs uppercase tracking-widest font-mono">System Integrity</h3>
+            <h3 className="text-white font-bold text-xs uppercase tracking-widest font-mono">Hyper-AI Neural Integrity</h3>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-bg border border-border p-4 text-center">
-              <p className="text-text-faint text-[0.55rem] font-mono uppercase mb-1">Hashing Protocol</p>
-              <p className="text-teal font-mono text-xs font-bold">SHA-256 Active</p>
+            <div className="bg-bg border border-border p-4 text-center group hover:border-blood transition-all">
+              <p className="text-text-faint text-[0.55rem] font-mono uppercase mb-1">Neural Cross-Ref</p>
+              <p className="text-teal font-mono text-xs font-bold">Active (10+ Sources)</p>
             </div>
-            <div className="bg-bg border border-border p-4 text-center">
-              <p className="text-text-faint text-[0.55rem] font-mono uppercase mb-1">ELA Analysis</p>
-              <p className="text-teal font-mono text-xs font-bold">Neural Engine ON</p>
+            <div className="bg-bg border border-border p-4 text-center group hover:border-blood transition-all">
+              <p className="text-text-faint text-[0.55rem] font-mono uppercase mb-1">NLP Deep Scan</p>
+              <p className="text-teal font-mono text-xs font-bold">Context-Aware ON</p>
             </div>
-            <div className="bg-bg border border-border p-4 text-center">
-              <p className="text-text-faint text-[0.55rem] font-mono uppercase mb-1">Daily Scrapes</p>
-              <p className="text-white font-mono text-xs font-bold">142 Sources</p>
+            <div className="bg-bg border border-border p-4 text-center group hover:border-blood transition-all">
+              <p className="text-text-faint text-[0.55rem] font-mono uppercase mb-1">Accuracy Index</p>
+              <p className="text-white font-mono text-xs font-bold">99.4% Verified</p>
             </div>
-            <div className="bg-bg border border-border p-4 text-center">
-              <AlertTriangle size={14} className="text-blood mx-auto mb-1" />
-              <p className="text-blood font-mono text-[0.55rem] font-bold uppercase">Anomalies: 0</p>
+            <div className="bg-bg border border-border p-4 text-center group hover:border-blood transition-all">
+              <div className="flex items-center justify-center gap-1 mb-1">
+                <div className="w-1.5 h-1.5 bg-teal rounded-full animate-pulse"></div>
+                <p className="text-teal font-mono text-[0.55rem] font-bold uppercase">Real-time Sync</p>
+              </div>
+              <p className="text-white font-mono text-[0.5rem]">Next Scan: 29m</p>
             </div>
           </div>
         </div>
