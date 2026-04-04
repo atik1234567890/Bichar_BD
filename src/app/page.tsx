@@ -5,8 +5,8 @@ import Stats from "@/components/Stats";
 import CrisisGrid from "@/components/CrisisGrid";
 import MapSection from "@/components/MapSection";
 import IncidentDirectory from "@/components/IncidentDirectory";
-import PoliticianTracker from "@/components/PoliticianTracker";
-import HighProfileExpose from "@/components/HighProfileExpose";
+import PublicFigureSearch from "@/components/PublicFigureSearch";
+import LandVerification from "@/components/LandVerification";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -33,40 +33,12 @@ export default function Home() {
         <CrisisGrid />
         <MapSection />
         <IncidentDirectory />
-        <PoliticianTracker />
-        <HighProfileExpose />
+
+        {/* Search Module instead of hardcoded trackers */}
+        <PublicFigureSearch />
 
         {/* Special Module - Land Verification */}
-        <div className="special-module bg-surface border border-border p-10 relative overflow-hidden my-12 before:content-['AI_SYSTEM'] before:absolute before:top-0 before:right-0 before:font-mono before:text-[0.55rem] before:tracking-[0.2em] before:uppercase before:px-3 before:py-1.5 before:bg-blood before:text-white">
-          <h3 className="sm-title text-[1.4rem] font-bold text-white mb-3">
-            দলিল জালিয়াতি শনাক্তকরণ AI
-          </h3>
-          <p className="sm-desc text-text-dim text-[0.9rem] leading-[1.9] max-w-[700px] mb-6">
-            বাংলাদেশের ভূমি অফিসের সাথে সরাসরি কোনো API সংযোগ না থাকলেও, আমাদের
-            AI সিস্টেম পূর্ববর্তী রেকর্ড এবং জলছাপ (watermark) বিশ্লেষণ করে
-            দলিলে জালিয়াতির সম্ভাবনা নির্ণয় করে।
-          </p>
-          <div className="sm-grid grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="sm-item bg-bg border border-border p-4">
-              <div className="sm-item-title text-[0.85rem] font-bold text-white mb-1">
-                Watermark Analysis
-              </div>
-              <p className="sm-item-desc text-[0.78rem] text-text-dim leading-[1.7]">
-                দলিলে থাকা সরকারি জলছাপ এবং সিকিউরিটি সুতা (security thread) AI
-                দিয়ে স্ক্যান করে সত্যতা যাচাই।
-              </p>
-            </div>
-            <div className="sm-item bg-bg border border-border p-4">
-              <div className="sm-item-title text-[0.85rem] font-bold text-white mb-1">
-                Signature Verification
-              </div>
-              <p className="sm-item-desc text-[0.78rem] text-text-dim leading-[1.7]">
-                পূর্বের রেকর্ড থেকে সংশ্লিষ্ট সাব-রেজিস্ট্রারের স্বাক্ষরের সাথে
-                বর্তমান স্বাক্ষরের মিল খুঁজে বের করা।
-              </p>
-            </div>
-          </div>
-        </div>
+        <LandVerification />
 
         {/* Pipeline / Reporting Flow */}
         <div className="chapter-header mb-14 mt-20">

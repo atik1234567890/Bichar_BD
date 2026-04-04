@@ -1,28 +1,62 @@
 "use client";
 
-import { useState } from "react";
-import { Search, Filter, ShieldAlert, MapPin, Calendar, User, X, CheckCircle2, FileText, Clock } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Search, Filter, ShieldAlert, MapPin, Calendar, User, X, CheckCircle2, FileText, Clock, ExternalLink } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { verifiedIncidents, districtsAndUpazillas } from "@/lib/data";
+import { districtsAndUpazillas, allDistricts, verifiedIncidents as fallbackIncidents } from "@/lib/data";
 
 export default function IncidentDirectory() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("All");
   const [selectedThana, setSelectedThana] = useState("All");
-  const [selectedIncident, setSelectedIncident] = useState<typeof verifiedIncidents[0] | null>(null);
+  const [selectedType, setSelectedType] = useState("All");
+  const [incidents, setIncidents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedIncident, setSelectedIncident] = useState<any | null>(null);
 
-  const availableThanas = selectedDistrict !== "All" ? districtsAndUpazillas[selectedDistrict] : [];
+  const [meta, setMeta] = useState<any>({ total: 0 });
 
-  const filteredIncidents = verifiedIncidents.filter(incident => {
-    const matchesSearch = 
-      incident.description.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      incident.accused.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      incident.thana.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      incident.type.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesDistrict = selectedDistrict === "All" || incident.district === selectedDistrict;
-    const matchesThana = selectedThana === "All" || incident.thana === selectedThana;
-    return matchesSearch && matchesDistrict && matchesThana;
-  });
+  useEffect(() => {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    async function fetchIncidents() {
+      setLoading(true);
+      try {
+        const url = new URL(`${API_URL}/api/incidents`);
+        url.searchParams.append("limit", "50");
+        if (selectedDistrict !== "All") url.searchParams.append("district", selectedDistrict);
+        if (selectedThana !== "All") url.searchParams.append("thana", selectedThana);
+        if (selectedType !== "All") url.searchParams.append("type", selectedType);
+        if (searchTerm) url.searchParams.append("search", searchTerm);
+        
+        const response = await fetch(url.toString());
+        const result = await response.json();
+        
+        if (result.success) {
+          setIncidents(result.data);
+          setMeta(result.meta);
+        }
+      } catch (error) {
+        console.error("Error fetching incidents:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    fetchIncidents();
+  }, [selectedDistrict, selectedThana, selectedType, searchTerm]);
+
+  const availableThanas = selectedDistrict !== "All" ? districtsAndUpazillas[selectedDistrict] || [] : [];
+  const filteredIncidents = incidents;
+  const crimeTypes = [
+    { id: "rape", label: "ধর্ষণ ও নিপীড়ন" },
+    { id: "murder", label: "হত্যাকাণ্ড" },
+    { id: "enforced_disappearance", label: "গুম ও নিখোঁজ" },
+    { id: "election_violence", label: "নির্বাচনী সহিংসতা" },
+    { id: "minority_attack", label: "সংখ্যালঘূ হামলা" },
+    { id: "land_grab", label: "জমি দখল" },
+    { id: "labor_violation", label: "শ্রমিক অধিকার" },
+    { id: "general_crime", label: "সাধারণ অপরাধ" }
+  ];
 
   return (
     <div className="incident-directory mt-24">
@@ -34,7 +68,7 @@ export default function IncidentDirectory() {
           পাবলিক ফিড ও মামলা ট্র্যাকার
         </h2>
         <p className="chapter-sub text-[1rem] text-text-dim font-light italic">
-          দেশের প্রতিটি প্রান্তের অপরাধ এবং অপরাধীদের বিস্তারিত তথ্য — ২০২৬ সালের রিয়েল-টাইম আপডেট
+          {selectedDistrict !== "All" ? `${selectedDistrict} জেলায় মোট ${meta.total}টি মামলা নথিভুক্ত আছে` : `সারাদেশে বর্তমানে ${meta.total}টি মামলার বিস্তারিত রেকর্ড আমাদের সিস্টেমে আছে`}
         </p>
       </div>
 
@@ -52,6 +86,17 @@ export default function IncidentDirectory() {
         <div className="flex flex-wrap gap-2">
           <select 
             className="bg-surface border border-border px-6 py-4 text-sm text-text outline-none focus:border-blood"
+            value={selectedType}
+            onChange={(e) => setSelectedType(e.target.value)}
+          >
+            <option value="All">সকল অপরাধ</option>
+            {crimeTypes.map(t => (
+              <option key={t.id} value={t.id}>{t.label}</option>
+            ))}
+          </select>
+
+          <select 
+            className="bg-surface border border-border px-6 py-4 text-sm text-text outline-none focus:border-blood"
             value={selectedDistrict}
             onChange={(e) => {
               setSelectedDistrict(e.target.value);
@@ -59,7 +104,7 @@ export default function IncidentDirectory() {
             }}
           >
             <option value="All">সকল জেলা</option>
-            {Object.keys(districtsAndUpazillas).map(d => (
+            {allDistricts.sort().map(d => (
               <option key={d} value={d}>{d}</option>
             ))}
           </select>
@@ -107,34 +152,42 @@ export default function IncidentDirectory() {
                     <span className="text-text-faint text-[0.7rem] font-mono">ID: #BD-2026-{incident.id.toString().padStart(4, '0')}</span>
                     
                     <div className="flex gap-2">
-                      {incident.verifiedBy.map((source, i) => (
-                        <span key={i} className="flex items-center gap-1.5 bg-green/10 border border-green/30 px-2 py-0.5 text-[0.6rem] text-green font-mono uppercase tracking-widest">
-                          <CheckCircle2 size={10} /> {source}
+                      {incident.verifiedBy ? (
+                        (incident.verifiedBy as string[]).map((source: string, i: number) => (
+                          <span key={i} className="flex items-center gap-1.5 bg-green/10 border border-green/30 px-2 py-0.5 text-[0.6rem] text-green font-mono uppercase tracking-widest">
+                            <CheckCircle2 size={10} /> {source}
+                          </span>
+                        ))
+                      ) : incident.source_name ? (
+                        <span className="flex items-center gap-1.5 bg-green/10 border border-green/30 px-2 py-0.5 text-[0.6rem] text-green font-mono uppercase tracking-widest">
+                          <CheckCircle2 size={10} /> {incident.source_name}
                         </span>
-                      ))}
+                      ) : null}
                     </div>
                   </div>
                   
                   <h3 className="text-lg font-bold text-white group-hover:text-blood transition-colors">
-                    {incident.description}
+                    {incident.title || incident.description}
                   </h3>
 
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-[0.75rem] font-mono text-text-dim">
                     <div className="flex items-center gap-2">
                       <MapPin size={14} className="text-blood" />
-                      <span>{incident.district}, {incident.thana}</span>
+                      <span>{incident.district}, {incident.thana || "N/A"}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Calendar size={14} className="text-blood" />
-                      <span>{incident.date}</span>
+                      <span>{incident.created_at ? new Date(incident.created_at).toLocaleDateString() : (incident.date || "N/A")}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <User size={14} className="text-blood" />
-                      <span className="truncate">অভিযুক্ত: {incident.accused}</span>
+                      <span className="truncate">অভিযুক্ত: {incident.accused || "অজ্ঞাত"}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <ShieldAlert size={14} className="text-blood" />
-                      <span>অবস্থা: {incident.status}</span>
+                      <span className={incident.status === 'verdict' ? 'text-green font-bold' : 'text-blood font-bold'}>
+                        {incident.status === 'verdict' ? 'নিষ্পত্তি হয়েছে' : 'তদন্তাধীন'}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -191,7 +244,7 @@ export default function IncidentDirectory() {
                   </span>
                   <span className="text-text-faint text-[0.7rem] font-mono">ID: #BD-2026-{selectedIncident.id}</span>
                 </div>
-                <h2 className="text-2xl font-bold text-white mb-4">{selectedIncident.description}</h2>
+                <h2 className="text-2xl font-bold text-white mb-4">{selectedIncident.title || selectedIncident.description}</h2>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
@@ -200,37 +253,58 @@ export default function IncidentDirectory() {
                   <div className="space-y-3">
                     <div className="flex items-center gap-3 text-sm text-text">
                       <MapPin size={16} className="text-blood" />
-                      <span>{selectedIncident.district}, {selectedIncident.thana}</span>
+                      <span>{selectedIncident.district}, {selectedIncident.thana || "N/A"}</span>
                     </div>
                     <div className="flex items-center gap-3 text-sm text-text">
                       <Calendar size={16} className="text-blood" />
-                      <span>{selectedIncident.date}</span>
+                      <span>{selectedIncident.created_at ? new Date(selectedIncident.created_at).toLocaleDateString() : (selectedIncident.date || "N/A")}</span>
                     </div>
                     <div className="flex items-center gap-3 text-sm text-text">
                       <User size={16} className="text-blood" />
-                      <span>অভিযুক্ত: {selectedIncident.accused}</span>
+                      <span>অভিযুক্ত: {selectedIncident.accused || "অজ্ঞাত"}</span>
                     </div>
                     <div className="flex items-center gap-3 text-sm text-text">
                       <ShieldAlert size={16} className="text-blood" />
-                      <span>অবস্থা: {selectedIncident.status}</span>
+                      <span className={selectedIncident.status === 'verdict' ? 'text-green font-bold' : 'text-blood font-bold'}>
+                        অবস্থা: {selectedIncident.status === 'verdict' ? 'নিষ্পত্তি হয়েছে' : 'তদন্তাধীন/ঝুলে আছে'}
+                      </span>
                     </div>
                     <div className="flex items-center gap-3 text-sm text-text">
                       <Clock size={16} className="text-blood" />
-                      <span>ঝুলে আছে: {selectedIncident.daysPending} দিন</span>
+                      <span>সময়কাল: {selectedIncident.days_pending || 0} দিন</span>
                     </div>
+                    {selectedIncident.source_url && (
+                      <div className="flex items-center gap-3 text-sm text-text">
+                        <ExternalLink size={16} className="text-blood" />
+                        <a 
+                          href={selectedIncident.source_url} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-blood hover:underline flex items-center gap-1"
+                        >
+                          সংবাদ সূত্র দেখুন (Verified) <FileText size={12} />
+                        </a>
+                      </div>
+                    )}
                   </div>
                 </div>
 
                 <div className="space-y-4">
                   <div className="text-text-faint text-[0.6rem] uppercase tracking-widest font-mono">প্রমাণ ও ভেরিফিকেশন (Verification)</div>
                   <div className="space-y-4">
-                    <div className="text-sm text-text italic">"{selectedIncident.evidence}"</div>
+                    <div className="text-sm text-text italic">"{selectedIncident.description || selectedIncident.evidence || "কোনো বর্ণনা নেই"}"</div>
                     <div className="flex flex-wrap gap-2">
-                      {selectedIncident.verifiedBy.map((v, i) => (
-                        <span key={i} className="flex items-center gap-2 bg-green/10 border border-green/30 px-3 py-1.5 text-[0.7rem] text-green font-mono uppercase tracking-widest">
-                          <CheckCircle2 size={12} /> {v}
+                      {selectedIncident.verifiedBy ? (
+                        (selectedIncident.verifiedBy as string[]).map((v: string, i: number) => (
+                          <span key={i} className="flex items-center gap-2 bg-green/10 border border-green/30 px-3 py-1.5 text-[0.7rem] text-green font-mono uppercase tracking-widest">
+                            <CheckCircle2 size={12} /> {v}
+                          </span>
+                        ))
+                      ) : selectedIncident.source_name ? (
+                        <span className="flex items-center gap-2 bg-green/10 border border-green/30 px-3 py-1.5 text-[0.7rem] text-green font-mono uppercase tracking-widest">
+                          <CheckCircle2 size={12} /> {selectedIncident.source_name}
                         </span>
-                      ))}
+                      ) : null}
                     </div>
                   </div>
                 </div>

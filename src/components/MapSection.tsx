@@ -2,18 +2,41 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { crimeStats } from "@/lib/data";
+import { allDistricts } from "@/lib/data";
 import { MapPin, AlertTriangle, ShieldCheck, Clock, TrendingUp, Search } from "lucide-react";
 
 export default function MapSection() {
   const [mounted, setMounted] = useState(false);
-  const [selectedRegion, setSelectedRegion] = useState<keyof typeof crimeStats | null>(null);
+  const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
+  const [stats, setStats] = useState<any[]>([]);
 
   useEffect(() => {
     setMounted(true);
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    async function fetchStats() {
+      try {
+        const response = await fetch(`${API_URL}/api/stats/divisions`);
+        const result = await response.json();
+        if (result.success) {
+          setStats(result.data);
+        }
+      } catch (error) {
+        console.error("Error fetching map stats:", error);
+      }
+    }
+    fetchStats();
   }, []);
 
-  const regions = Object.keys(crimeStats) as Array<keyof typeof crimeStats>;
+  const regions = stats.length > 0 ? stats : allDistricts.map(d => ({
+    division: d,
+    crime_density_score: 0,
+    pending_cases: 0,
+    resolved_cases: 0,
+    justice_score: 0,
+    total_cases: 0
+  }));
+
+  const totalNationalCases = regions.reduce((acc: number, curr: any) => acc + (curr.total_cases || 0), 0);
 
   return (
     <div className="map-section mt-24 mb-12">
@@ -22,49 +45,49 @@ export default function MapSection() {
           রিয়েল-টাইম হিটম্যাপ
         </div>
         <h2 className="chapter-title text-[clamp(2rem,4vw,3rem)] font-bold text-white leading-[1.1] mb-2">
-          অপরাধ ঘনত্ব ও বিচারিক পরিসংখ্যান
+          ৬৪ জেলার অপরাধ ও বিচারিক রেকর্ড
         </h2>
         <p className="chapter-sub text-[1rem] text-text-dim font-light italic">
-          অঞ্চল ভিত্তিক ঝুলে থাকা মামলা, নিষ্পত্তির হার এবং অপরাধের তীব্রতা
+          সারাদেশে মোট {totalNationalCases.toLocaleString()}টি নথিভুক্ত অপরাধ এবং তাদের বর্তমান অবস্থা
         </p>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
         {/* Left Side: Regions List with Stats */}
         <div className="xl:col-span-1 space-y-3 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
-          {regions.map((region) => (
+          {regions.map((region: any) => (
             <div 
-              key={region}
-              onMouseEnter={() => setSelectedRegion(region)}
+              key={region.division}
+              onMouseEnter={() => setSelectedRegion(region.division)}
               className={`p-4 border transition-all cursor-pointer group ${
-                selectedRegion === region 
+                selectedRegion === region.division 
                 ? 'bg-surface2 border-blood shadow-[0_0_15px_rgba(204,31,31,0.1)]' 
                 : 'bg-surface border-border hover:border-blood/50'
               }`}
             >
               <div className="flex justify-between items-center mb-3">
-                <span className={`text-sm font-bold transition-colors ${selectedRegion === region ? 'text-blood' : 'text-white'}`}>
-                  {region}
+                <span className={`text-sm font-bold transition-colors ${selectedRegion === region.division ? 'text-blood' : 'text-white'}`}>
+                  {region.division}
                 </span>
                 <span className="text-[0.6rem] font-mono bg-bg px-2 py-0.5 border border-border text-text-faint">
-                  Density: {crimeStats[region].density}%
+                  {region.total_cases} Cases
                 </span>
               </div>
               <div className="h-1 bg-bg w-full mb-3">
                 <motion.div 
                   initial={{ width: 0 }}
-                  animate={{ width: `${crimeStats[region].density}%` }}
-                  className={`h-full ${crimeStats[region].density > 70 ? 'bg-blood' : crimeStats[region].density > 40 ? 'bg-gold' : 'bg-teal'}`}
+                  animate={{ width: `${Math.min(100, region.total_cases)}%` }}
+                  className={`h-full ${region.total_cases > 80 ? 'bg-blood' : region.total_cases > 40 ? 'bg-gold' : 'bg-teal'}`}
                 />
               </div>
               <div className="grid grid-cols-2 gap-2 text-[0.6rem] font-mono text-text-dim">
                 <div className="flex items-center gap-1.5">
                   <Clock size={10} className="text-blood" />
-                  <span>Pending: {crimeStats[region].pending}</span>
+                  <span>Pending: {region.pending_cases}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <ShieldCheck size={10} className="text-teal" />
-                  <span>Resolved: {crimeStats[region].resolved}</span>
+                  <span>Resolved: {region.resolved_cases}</span>
                 </div>
               </div>
             </div>
@@ -80,28 +103,30 @@ export default function MapSection() {
           </div>
 
           {/* District Dots with Density Color */}
-          {mounted && regions.map((region, i) => {
-            const stats = crimeStats[region];
+          {mounted && regions.map((region: any, i: number) => {
+            const stats = region;
+            // Limit to first 30 districts to avoid cluttering, or use a specific logic
+            if (i > 30) return null;
             return (
               <motion.div
-                key={region}
-                className={`absolute w-4 h-4 rounded-full cursor-pointer z-10 ${
-                  stats.density > 70 ? 'bg-blood' : stats.density > 40 ? 'bg-gold' : 'bg-teal'
+                key={region.division}
+                className={`absolute w-3 h-3 rounded-full cursor-pointer z-10 ${
+                  stats.crime_density_score > 70 ? 'bg-blood' : stats.crime_density_score > 40 ? 'bg-gold' : 'bg-teal'
                 }`}
                 style={{
-                  top: `${25 + (i * 8)}%`,
-                  left: `${35 + (Math.sin(i) * 20)}%`,
+                  top: `${15 + (Math.floor(i / 6) * 15)}%`,
+                  left: `${15 + ((i % 6) * 15)}%`,
                 }}
                 whileHover={{ scale: 2 }}
-                onMouseEnter={() => setSelectedRegion(region)}
+                onMouseEnter={() => setSelectedRegion(region.division)}
                 animate={{
-                  boxShadow: selectedRegion === region 
-                    ? `0 0 20px 10px ${stats.density > 70 ? 'rgba(204,31,31,0.3)' : 'rgba(200,147,10,0.3)'}`
+                  boxShadow: selectedRegion === region.division 
+                    ? `0 0 20px 10px ${stats.crime_density_score > 70 ? 'rgba(204,31,31,0.3)' : 'rgba(200,147,10,0.3)'}`
                     : '0 0 0px 0px transparent'
                 }}
               >
                 <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 bg-bg border border-border px-2 py-1 whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none text-[0.6rem] font-mono text-white">
-                  {region}
+                  {region.division}
                 </div>
               </motion.div>
             )
@@ -170,15 +195,15 @@ export default function MapSection() {
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
                       <span className="text-[0.65rem] font-mono text-text-faint uppercase">অপরাধের তীব্রতা</span>
-                      <span className="text-blood font-bold">{crimeStats[selectedRegion].density}%</span>
+                      <span className="text-blood font-bold">{regions.find((r: any) => r.division === selectedRegion)?.crime_density_score}%</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-[0.65rem] font-mono text-text-faint uppercase">নিষ্পত্তির গড় সময়</span>
-                      <span className="text-white font-bold">{crimeStats[selectedRegion].avgDays} দিন</span>
+                      <span className="text-[0.65rem] font-mono text-text-faint uppercase">মোট মামলা</span>
+                      <span className="text-white font-bold">{regions.find((r: any) => r.division === selectedRegion)?.total_cases} টি</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-[0.65rem] font-mono text-text-faint uppercase">ঝুলে থাকা মামলা</span>
-                      <span className="text-gold font-bold">{crimeStats[selectedRegion].pending} টি</span>
+                      <span className="text-gold font-bold">{regions.find((r: any) => r.division === selectedRegion)?.pending_cases} টি</span>
                     </div>
                   </div>
 

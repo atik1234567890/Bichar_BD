@@ -1,0 +1,13 @@
+flask
+flask-sqlalchemy
+flask-cors
+flask-limiter
+feedparser
+requests
+beautifulsoup4
+lxml
+Pillow
+numpy
+apscheduler
+python-dotenv
+gunicorn

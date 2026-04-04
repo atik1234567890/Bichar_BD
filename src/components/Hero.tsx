@@ -38,9 +38,8 @@ export default function Hero() {
           <div className="hero-rule-icon w-2 h-2 border border-blood rotate-45" />
           <div className="hero-rule-line rev h-[1px] w-20" />
         </div>
-        <p className="hero-desc font-bangla text-[1.2rem] text-text-dim max-w-[680px] mx-auto mb-12 leading-[2] font-light">
-          generic crime tracker নয় — বাংলাদেশের মানুষ যে সমস্যায় প্রতিদিন পড়ে,
-          সেই সমস্যাগুলোকে সরাসরি address করা।
+        <p className="hero-sub text-[clamp(1rem,2vw,1.25rem)] text-text-dim max-w-[700px] mx-auto font-light leading-relaxed mb-10 italic">
+          রিয়েল-টাইম ডাটা, ভেরিফায়েড নিউজ এবং এআই অ্যানালিটিক্স-এর মাধ্যমে বাংলাদেশের প্রতিটি অপরাধ ও মানবাধিকার লঙ্ঘনের বিচারিক অবস্থা মনিটর করুন।
         </p>
       </motion.div>
     </div>

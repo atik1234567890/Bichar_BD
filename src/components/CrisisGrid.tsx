@@ -1,16 +1,55 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CrisisCard from "./CrisisCard";
 import ReportForm from "./ReportForm";
 
-const crises = [
+const defaultCrises = [
   {
+    id: "rape",
     barColor: "bg-blood",
     severity: "text-blood",
-    severityLabel: "Critical · Bangladesh-Specific",
+    severityLabel: "Critical · সামাজিক ব্যাধি",
+    emoji: "🩸",
+    title: "ধর্ষণ ও যৌন নিপীড়ন Tracker",
+    context:
+      "বাংলাদেশে নারী ও শিশু নির্যাতনের এক ভয়াবহ চিত্র। বিচারহীনতার সংস্কৃতি এই অপরাধকে আরও বাড়িয়ে দিচ্ছে।",
+    contextColor: "bg-blood-soft border-blood text-blood",
+    solution:
+      "রিয়েল-টাইম রিপোর্ট, মামলা ট্র্যাকিং এবং আইনি সহায়তার জন্য সরাসরি সংযোগ। প্রতিটি ঘটনার পুঙ্খানুপুঙ্খ রেকর্ড রাখা হবে।",
+    features: [
+      "ধর্ষণ ও গণধর্ষণ মামলা ট্র্যাকিং",
+      "যৌন হয়রানি ও শ্লীলতাহানি রিপোর্ট",
+      "আইনি সহায়তার জন্য লয়ার কানেকশন",
+      "অপরাধীর প্রোফাইল ও রেকর্ড সংরক্ষণ",
+    ],
+  },
+  {
+    id: "murder",
+    barColor: "bg-blood",
+    severity: "text-blood",
+    severityLabel: "Critical · জীবননাশী অপরাধ",
+    emoji: "💀",
+    title: "হত্যা ও জঘন্য অপরাধ Monitor",
+    context:
+      "পিটিয়ে হত্যা, রাজনৈতিক হত্যাকাণ্ড এবং উদ্দেশ্যপ্রণোদিত খুনের ঘটনাগুলো এখন নিত্যনৈমিত্তিক হয়ে দাঁড়িয়েছে।",
+    contextColor: "bg-blood-soft border-blood text-blood",
+    solution:
+      "লাশ উদ্ধার থেকে শুরু করে ময়নাতদন্ত রিপোর্ট এবং চার্জশিট পর্যন্ত প্রতিটি ধাপ মনিটর করা হবে।",
+    features: [
+      "রাজনৈতিক হত্যাকাণ্ড ট্র্যাকিং",
+      "পিটিয়ে হত্যা (Mob Lynching) রেকর্ড",
+      "ময়নাতদন্ত ও ফরেনসিক আপডেট",
+      "মামলার চার্জশিট মনিটরিং",
+    ],
+  },
+  {
+    id: "enforced_disappearance",
+    barColor: "bg-blood",
+    severity: "text-blood",
+    severityLabel: "Critical · গুম ও নিখোঁজ",
     emoji: "👻",
-    title: "গুম ও বিচারবহির্ভূত হত্যা Tracker",
+    title: "গুম ও নিখোঁজ Tracker",
     context:
       "বাংলাদেশে Enforced Disappearance একটা সুপরিচিত ট্র্যাজেডি। পরিবার জানে না প্রিয়জন জীবিত না মৃত।",
     contextColor: "bg-blood-soft border-blood text-blood",
@@ -18,66 +57,13 @@ const crises = [
       "Disappearance report করা যাবে। Last seen location, date, circumstances। আন্তর্জাতিক human rights database-এর সাথে connect। পরিবার update পাবে।",
     features: [
       "Anonymous family report system",
-      "UN Working Group on Enforced Disappearances-এর format",
+      "UN Working Group-এর format অনুযায়ী রিপোর্ট",
       "International human rights org alert",
       "\"Crossfire\" ও custody death track",
     ],
   },
   {
-    barColor: "bg-gold",
-    severity: "text-gold",
-    severityLabel: "Critical · রাজনৈতিক সংকট",
-    emoji: "🗳️",
-    title: "নির্বাচনী সহিংসতা ও ভোট জালিয়াতি Monitor",
-    context:
-      "বাংলাদেশে নির্বাচনের সময় ব্যাপক সহিংসতা, কেন্দ্র দখল, ভোট কারচুপি হয় — কিন্তু real-time কোনো record থাকে না।",
-    contextColor: "bg-gold-soft border-gold text-gold",
-    solution:
-      "নির্বাচনের আগে-পরে real-time incident reporting। কোন কেন্দ্রে কী হলো map-এ দেখাবে। Observer network-এর সাথে integrate।",
-    features: [
-      "Election incident real-time map",
-      "Polling center-wise report",
-      "Photo/video evidence upload",
-      "International observer alert",
-    ],
-  },
-  {
-    barColor: "bg-teal",
-    severity: "text-teal",
-    severityLabel: "Critical · সামাজিক",
-    emoji: "🏘️",
-    title: "সংখ্যালঘূ নিপীড়ন Tracker",
-    context:
-      "হিন্দু, বৌদ্ধ, খ্রিস্টান, আদিবাসী — নির্বাচন-পরবর্তী বা যেকোনো উত্তেজনায় সংখ্যালঘুরা আক্রান্ত হয়। কেউ track করে না।",
-    contextColor: "bg-teal-soft border-teal text-teal",
-    solution:
-      "Minority attack real-time reporting। ঘটনা, অবস্থান, ক্ষয়ক্ষতি। সাথে সাথে UNHCR ও সংশ্লিষ্ট NGO-তে alert। Historical pattern দেখাবে।",
-    features: [
-      "Attack type categorization",
-      "UNHCR automatic notification",
-      "District-wise vulnerability map",
-      "Historical incident archive",
-    ],
-  },
-  {
-    barColor: "bg-sky",
-    severity: "text-sky",
-    severityLabel: "High · শ্রম অধিকার",
-    emoji: "🧵",
-    title: "পোশাক শ্রমিক অধিকার লঙ্ঘন Monitor",
-    context:
-      "বাংলাদেশের ৩৬ লক্ষ RMG শ্রমিকের বেতন চুরি, শারীরিক নির্যাতন, অনিরাপদ কাজের পরিবেশ — কেউ কথা বলে না।",
-    contextColor: "bg-sky-soft border-sky text-sky",
-    solution:
-      "Factory-wise complaint system। Anonymous report। International buyer brands-এর নামে পাঠানো যাবে। BGMEA ও আন্তর্জাতিক labor monitor-দের সাথে সংযুক্ত।",
-    features: [
-      "Factory name ও location tracking",
-      "International brand alert (H&M, Zara)",
-      "Worker rights violation score",
-      "BGMEA ও ILO report integration",
-    ],
-  },
-  {
+    id: "land_grab",
     barColor: "bg-orange",
     severity: "text-orange",
     severityLabel: "High · ভূমি সংকট",
@@ -95,19 +81,55 @@ const crises = [
       "Automatic legal aid referral",
     ],
   },
+  {
+    id: "labor_violation",
+    barColor: "bg-sky",
+    severity: "text-sky",
+    severityLabel: "High · শ্রম অধিকার",
+    emoji: "🧵",
+    title: "পোশাক শ্রমিক অধিকার লঙ্ঘন Monitor",
+    context:
+      "বাংলাদেশের ৩৬ লক্ষ RMG শ্রমিকের বেতন চুরি, শারীরিক নির্যাতন, অনিরাপদ কাজের পরিবেশ — কেউ কথা বলে না।",
+    contextColor: "bg-sky-soft border-sky text-sky",
+    solution:
+      "Factory-wise complaint system। Anonymous report। International brand alert (H&M, Zara)। BGMEA ও আন্তর্জাতিক labor monitor-দের সাথে সংযুক্ত।",
+    features: [
+      "Factory name ও location tracking",
+      "International brand alert (H&M, Zara)",
+      "Worker rights violation score",
+      "BGMEA ও ILO report integration",
+    ],
+  },
 ];
 
 export default function CrisisGrid() {
   const [selectedReport, setSelectedReport] = useState<string | null>(null);
+  const [detailedStats, setDetailedStats] = useState<any>(null);
+
+  useEffect(() => {
+    async function fetchDetailedStats() {
+      try {
+        const response = await fetch("http://localhost:5000/api/stats/detailed");
+        const result = await response.json();
+        if (result.success) {
+          setDetailedStats(result.data);
+        }
+      } catch (error) {
+        console.error("Error fetching detailed stats:", error);
+      }
+    }
+    fetchDetailedStats();
+  }, []);
 
   return (
     <>
-      <div className="crisis-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[1px] bg-border border border-border">
-        {crises.map((crisis, idx) => (
+      <div className="crisis-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {defaultCrises.map((crisis) => (
           <CrisisCard 
-            key={idx} 
+            key={crisis.id} 
             {...crisis} 
             onReportClick={(title) => setSelectedReport(title)}
+            stats={detailedStats ? detailedStats[crisis.id] : { total: 0, resolved: 0, pending: 0 }}
           />
         ))}
       </div>

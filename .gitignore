@@ -28,6 +28,16 @@ yarn-error.log*
 # vercel
 .vercel
 
+# python
+venv/
+instance/
+__pycache__/
+*.pyc
+*.db
+static/uploads/
+force_scrape.py
+check_data.py
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

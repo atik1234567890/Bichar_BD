@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { AlertCircle, Zap } from "lucide-react";
 
-const newsItems = [
+const fallbackNews = [
   "LIVE: ঢাকা-চট্টগ্রাম মহাসড়কে নতুন ভূমি দখল চেষ্টার অভিযোগ ভেরিফাইড।",
   "UPDATE: ২০২৬ সালের প্রথম ত্রৈমাসিকে গুমের হার ১২% বৃদ্ধি পেয়েছে — হিউম্যান রাইটস ওয়াচ।",
   "ALERT: সাভারের গার্মেন্টস শ্রমিকদের বকেয়া বেতন পরিশোধের দাবিতে বিক্ষোভ চলছে।",
@@ -13,13 +13,34 @@ const newsItems = [
 
 export default function LiveTicker() {
   const [index, setIndex] = useState(0);
+  const [newsItems, setNewsItems] = useState<string[]>(fallbackNews);
+
+  useEffect(() => {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    async function fetchFeed() {
+        try {
+          const response = await fetch(`${API_URL}/api/feed/live`);
+          const result = await response.json();
+          if (result.success && result.data.length > 0) {
+            setNewsItems(result.data.map((item: any) => `${item.message} @ ${item.district}`));
+          }
+        } catch (error) {
+          console.error("Error fetching feed:", error);
+        }
+      }
+     
+     fetchFeed();
+     // Refresh every 2 minutes
+     const feedTimer = setInterval(fetchFeed, 120000);
+     return () => clearInterval(feedTimer);
+   }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setIndex((prev) => (prev + 1) % newsItems.length);
     }, 5000);
-    return () => clearInterval(timer);
-  }, []);
+    return () => timer && clearInterval(timer);
+  }, [newsItems]);
 
   return (
     <div className="bg-blood/10 border-b border-blood/20 py-2 px-6 overflow-hidden">
