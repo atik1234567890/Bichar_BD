@@ -63,7 +63,10 @@ def seed_figures():
         {"name": "Asaduzzaman Khan Kamal", "role": "Former Minister", "party": "Awami League", "constituency": "Dhaka-12", "incidents_count": 76, "status": "fugitive"},
         {"name": "Anisul Huq", "role": "Former Minister", "party": "Awami League", "constituency": "Brahmanbaria-4", "incidents_count": 54, "status": "arrested"},
         {"name": "Salman F Rahman", "role": "Former Advisor", "party": "Awami League", "constituency": "Dhaka-1", "incidents_count": 67, "status": "arrested"},
-        {"name": "Zunaid Ahmed Palak", "role": "Former Minister", "party": "Awami League", "constituency": "Natore-3", "incidents_count": 42, "status": "arrested"}
+        {"name": "Zunaid Ahmed Palak", "role": "Former Minister", "party": "Awami League", "constituency": "Natore-3", "incidents_count": 42, "status": "arrested"},
+        {"name": "Tarique Rahman", "role": "Acting Chairman", "party": "BNP", "constituency": "Bogura-7", "incidents_count": 15, "status": "fugitive"},
+        {"name": "Mirza Fakhrul Islam Alamgir", "role": "Secretary General", "party": "BNP", "constituency": "Thakurgaon-1", "incidents_count": 92, "status": "active"},
+        {"name": "Amir Khosru Mahmud Chowdhury", "role": "Standing Committee Member", "party": "BNP", "constituency": "Chattogram-11", "incidents_count": 34, "status": "active"}
     ]
     for f in figures:
         if not PublicFigure.query.filter_by(name=f['name']).first():
