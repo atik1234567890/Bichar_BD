@@ -64,6 +64,14 @@ class PublicFigure(db.Model):
     status = db.Column(db.String(50), default='active') # active, under_investigation, arrested, fugitive
     image_url = db.Column(db.String(500))
     description = db.Column(db.Text)
+    
+    # New detailed fields
+    assets_total = db.Column(db.String(255)) # e.g. "500 Crore BDT"
+    property_details = db.Column(db.Text) # JSON string of properties
+    case_history = db.Column(db.Text) # JSON string of all cases
+    permanent_address = db.Column(db.String(500))
+    current_location = db.Column(db.String(255))
+    
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 class DivisionStats(db.Model):

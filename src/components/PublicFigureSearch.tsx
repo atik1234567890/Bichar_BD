@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, User, ShieldAlert, ExternalLink, X, FileText, MapPin, Calendar, Scale } from "lucide-react";
+import { Search, User, ShieldAlert, ExternalLink, X, FileText, MapPin, Calendar, Scale, Landmark, Home, Briefcase, History } from "lucide-react";
 
 export default function PublicFigureSearch() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -133,7 +133,69 @@ export default function PublicFigureSearch() {
               </div>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-10">
+              {/* Assets & Wealth Section */}
+              <div className="bg-bg border border-border p-6">
+                <div className="flex items-center gap-3 mb-6 text-gold">
+                  <Landmark size={20} />
+                  <h3 className="text-sm font-mono uppercase tracking-[0.2em] font-bold">Wealth & Assets Analysis</h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div>
+                    <p className="text-[0.6rem] text-text-faint uppercase font-mono mb-2">Estimated Net Worth</p>
+                    <p className="text-2xl font-bold text-white mb-4">{selectedFigure.assets_total || "Disclosure Pending"}</p>
+                    <div className="space-y-3">
+                      <p className="text-[0.6rem] text-text-faint uppercase font-mono border-b border-border pb-1">Declared Properties</p>
+                      <div className="space-y-2">
+                        {selectedFigure.property_details ? JSON.parse(selectedFigure.property_details).map((p: any, i: number) => (
+                          <div key={i} className="flex items-start gap-3 text-xs text-text-dim">
+                            <Home size={14} className="shrink-0 mt-0.5 text-gold/50" />
+                            <span>{p}</span>
+                          </div>
+                        )) : <p className="text-xs text-text-faint italic">No detailed property records found in public database.</p>}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-surface2/50 p-4 border border-border-light">
+                    <p className="text-[0.6rem] text-text-faint uppercase font-mono mb-3">Permanent Address Record</p>
+                    <div className="flex items-start gap-3 text-xs text-white leading-relaxed">
+                      <MapPin size={16} className="shrink-0 text-blood" />
+                      <span>{selectedFigure.permanent_address || "Confidential / Under Investigation"}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Case History Section */}
+              <div className="bg-bg border border-border p-6">
+                <div className="flex items-center gap-3 mb-6 text-blood">
+                  <History size={20} />
+                  <h3 className="text-sm font-mono uppercase tracking-[0.2em] font-bold">Judicial Case History (A-Z)</h3>
+                </div>
+                <div className="space-y-4">
+                  {selectedFigure.case_history ? JSON.parse(selectedFigure.case_history).map((c: any, i: number) => (
+                    <div key={i} className="border-l-2 border-blood bg-surface2/30 p-4 hover:bg-surface2 transition-colors">
+                      <div className="flex justify-between items-start mb-2">
+                        <h4 className="text-white font-bold text-sm">{c.title}</h4>
+                        <span className="text-[0.6rem] font-mono text-text-faint uppercase">{c.date}</span>
+                      </div>
+                      <p className="text-xs text-text-dim mb-3 leading-relaxed">{c.details}</p>
+                      <div className="flex items-center gap-4 text-[0.6rem] font-mono">
+                        <span className={`px-2 py-0.5 border ${c.status === 'Resolved' ? 'border-teal text-teal' : 'border-blood text-blood'}`}>
+                          {c.status}
+                        </span>
+                        <span className="text-text-faint uppercase">Court: {c.court}</span>
+                      </div>
+                    </div>
+                  )) : (
+                    <div className="text-center py-10 border border-dashed border-border opacity-50">
+                      <Briefcase size={32} className="mx-auto mb-3" />
+                      <p className="text-xs font-mono uppercase">Full Case Log Generation in Progress...</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
               <h3 className="text-xs font-mono uppercase tracking-[0.3em] text-text-faint border-b border-border pb-2">
                 Detailed Allegation Feed
               </h3>

@@ -27,7 +27,12 @@ def search_figures():
             "incidents_count": f.incidents_count,
             "status": f.status,
             "image_url": f.image_url,
-            "description": f.description
+            "description": f.description,
+            "assets_total": f.assets_total,
+            "property_details": f.property_details,
+            "case_history": f.case_history,
+            "permanent_address": f.permanent_address,
+            "current_location": f.current_location
         })
         
     return jsonify({

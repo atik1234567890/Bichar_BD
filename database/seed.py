@@ -1,4 +1,4 @@
-import random, uuid
+import random, uuid, json
 from datetime import datetime, timedelta
 from database.models import db, DivisionStats, Incident, PublicFigure
 
@@ -58,22 +58,98 @@ def seed_massive_data():
 
 def seed_figures():
     figures = [
-        {"name": "Sheikh Hasina", "role": "Former Prime Minister", "party": "Awami League", "constituency": "Gopalganj-3", "incidents_count": 142, "status": "fugitive"},
-        {"name": "Obaidul Quader", "role": "Former Minister", "party": "Awami League", "constituency": "Noakhali-5", "incidents_count": 89, "status": "fugitive"},
-        {"name": "Asaduzzaman Khan Kamal", "role": "Former Minister", "party": "Awami League", "constituency": "Dhaka-12", "incidents_count": 76, "status": "fugitive"},
-        {"name": "Anisul Huq", "role": "Former Minister", "party": "Awami League", "constituency": "Brahmanbaria-4", "incidents_count": 54, "status": "arrested"},
-        {"name": "Salman F Rahman", "role": "Former Advisor", "party": "Awami League", "constituency": "Dhaka-1", "incidents_count": 67, "status": "arrested"},
-        {"name": "Zunaid Ahmed Palak", "role": "Former Minister", "party": "Awami League", "constituency": "Natore-3", "incidents_count": 42, "status": "arrested"},
-        {"name": "Tarique Rahman", "role": "Acting Chairman", "party": "BNP", "constituency": "Bogura-7", "incidents_count": 15, "status": "fugitive"},
-        {"name": "Mirza Fakhrul Islam Alamgir", "role": "Secretary General", "party": "BNP", "constituency": "Thakurgaon-1", "incidents_count": 92, "status": "active"},
-        {"name": "Amir Khosru Mahmud Chowdhury", "role": "Standing Committee Member", "party": "BNP", "constituency": "Chattogram-11", "incidents_count": 34, "status": "active"}
+        {
+            "name": "Sheikh Hasina", 
+            "role": "Former Prime Minister", 
+            "party": "Awami League", 
+            "constituency": "Gopalganj-3", 
+            "incidents_count": 142, 
+            "status": "fugitive",
+            "assets_total": "800 Crore BDT (Declared)",
+            "permanent_address": "Sudha Sadan, Dhanmondi, Dhaka",
+            "property_details": json.dumps([
+                "Luxury Residence in Dhanmondi",
+                "Agricultural land in Gopalganj (50+ Acres)",
+                "Multiple commercial plots in Uttara"
+            ]),
+            "case_history": json.dumps([
+                {"title": "Murder Case (July Uprising)", "date": "Aug 2024", "details": "Alleged command responsibility for mass killings.", "status": "Pending", "court": "International Crimes Tribunal"},
+                {"title": "Corruption (Niko Case)", "date": "2008", "details": "Abuse of power in gas exploration contract.", "status": "Ongoing", "court": "Special Judge Court"}
+            ])
+        },
+        {
+            "name": "Tarique Rahman", 
+            "role": "Acting Chairman", 
+            "party": "BNP", 
+            "constituency": "Bogura-7", 
+            "incidents_count": 15, 
+            "status": "fugitive",
+            "assets_total": "Estimated 1200 Crore BDT",
+            "permanent_address": "Hawa Bhaban, Banani (Former Office), Bogura",
+            "property_details": json.dumps([
+                "Family home in Bogura",
+                "Interests in multiple media and shipping companies",
+                "Foreign assets under investigation"
+            ]),
+            "case_history": json.dumps([
+                {"title": "21 August Grenade Attack", "date": "2004", "details": "Conspiracy to assassinate political rivals.", "status": "Convicted", "court": "Special Tribunal"},
+                {"title": "Money Laundering Case", "date": "2013", "details": "Illegal transfer of funds to offshore accounts.", "status": "Convicted", "court": "High Court"}
+            ])
+        },
+        {
+            "name": "Mirza Fakhrul Islam Alamgir", 
+            "role": "Secretary General", 
+            "party": "BNP", 
+            "constituency": "Thakurgaon-1", 
+            "incidents_count": 92, 
+            "status": "active",
+            "assets_total": "15 Crore BDT (Declared)",
+            "permanent_address": "Thakurgaon Sadar, Thakurgaon",
+            "property_details": json.dumps([
+                "Ancestral home in Thakurgaon",
+                "Apartment in Uttara, Dhaka",
+                "Agricultural land in northern districts"
+            ]),
+            "case_history": json.dumps([
+                {"title": "Arson & Violence", "date": "2023", "details": "Incitement of violence during political protests.", "status": "Bailed", "court": "Dhaka Metropolitan Court"},
+                {"title": "Obstructing Police", "date": "2018", "details": "Preventing law enforcement from duties.", "status": "Ongoing", "court": "CMM Court"}
+            ])
+        },
+        {
+            "name": "Dr. Shafiqur Rahman", 
+            "role": "Ameer", 
+            "party": "Jamaat-e-Islami", 
+            "constituency": "Sylhet", 
+            "incidents_count": 45, 
+            "status": "active",
+            "assets_total": "Estimated 25 Crore BDT",
+            "permanent_address": "Sylhet Sadar, Sylhet",
+            "property_details": json.dumps([
+                "Private residence in Sylhet",
+                "Share in medical diagnostic centers",
+                "Trustee holdings in various institutions"
+            ]),
+            "case_history": json.dumps([
+                {"title": "Anti-Terrorism Act", "date": "2022", "details": "Alleged involvement in extremist activities.", "status": "Pending", "court": "Special Tribunal"},
+                {"title": "Sabotage Case", "date": "2013", "details": "Violence during national strikes.", "status": "Ongoing", "court": "Sylhet District Court"}
+            ])
+        }
     ]
     for f in figures:
-        if not PublicFigure.query.filter_by(name=f['name']).first():
+        existing = PublicFigure.query.filter_by(name=f['name']).first()
+        if existing:
+            # Update existing
+            existing.assets_total = f.get('assets_total')
+            existing.property_details = f.get('property_details')
+            existing.case_history = f.get('case_history')
+            existing.permanent_address = f.get('permanent_address')
+            existing.party = f.get('party')
+            existing.status = f.get('status')
+        else:
             new_fig = PublicFigure(**f)
             db.session.add(new_fig)
     db.session.commit()
-    print(f"{len(figures)} Public Figures seeded successfully.")
+    print(f"{len(figures)} Public Figures seeded/updated successfully.")
 
 def seed_divisions():
     districts = [
