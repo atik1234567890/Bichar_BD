@@ -10,9 +10,12 @@ export default function MapSection() {
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
   const [stats, setStats] = useState<any[]>([]);
 
+  const [liveEvents, setLiveEvents] = useState<any[]>([]);
+
   useEffect(() => {
     setMounted(true);
     const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    
     async function fetchStats() {
       try {
         const response = await fetch(`${API_URL}/api/stats/divisions`);
@@ -24,7 +27,28 @@ export default function MapSection() {
         console.error("Error fetching map stats:", error);
       }
     }
+
+    async function fetchLiveEvents() {
+      try {
+        const response = await fetch(`${API_URL}/api/feed/live`);
+        const result = await response.json();
+        if (result.success) {
+          setLiveEvents(result.data.slice(0, 3)); // Get latest 3
+        }
+      } catch (error) {
+        console.error("Error fetching map live events:", error);
+      }
+    }
+
     fetchStats();
+    fetchLiveEvents();
+    
+    const interval = setInterval(() => {
+      fetchStats();
+      fetchLiveEvents();
+    }, 60000); // Refresh every minute
+    
+    return () => clearInterval(interval);
   }, []);
 
   const regions = stats.length > 0 ? stats : allDistricts.map(d => ({
@@ -159,14 +183,25 @@ export default function MapSection() {
                 <span className="text-[0.65rem] font-mono text-white uppercase tracking-widest">Live Activity Feed</span>
              </div>
              <div className="space-y-2 max-w-[200px]">
-                <div className="text-[0.6rem] text-text-dim flex gap-2">
-                  <span className="text-blood font-bold shrink-0">12:04</span>
-                  <span>নতুন গুম রিপোর্ট: ঢাকা, মিরপুর অঞ্চল</span>
-                </div>
-                <div className="text-[0.6rem] text-text-dim flex gap-2">
-                  <span className="text-gold font-bold shrink-0">11:45</span>
-                  <span>জমি দখল সংঘর্ষ: চট্টগ্রাম, পটিয়া</span>
-                </div>
+                {liveEvents.length > 0 ? liveEvents.map((event, i) => (
+                  <div key={event.id || i} className="text-[0.6rem] text-text-dim flex gap-2">
+                    <span className={`${i === 0 ? 'text-blood' : 'text-gold'} font-bold shrink-0`}>
+                      {new Date(event.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                    <span className="truncate">{event.message}</span>
+                  </div>
+                )) : (
+                  <>
+                    <div className="text-[0.6rem] text-text-dim flex gap-2">
+                      <span className="text-blood font-bold shrink-0">12:04</span>
+                      <span>নতুন গুম রিপোর্ট: ঢাকা, মিরপুর অঞ্চল</span>
+                    </div>
+                    <div className="text-[0.6rem] text-text-dim flex gap-2">
+                      <span className="text-gold font-bold shrink-0">11:45</span>
+                      <span>জমি দখল সংঘর্ষ: চট্টগ্রাম, পটিয়া</span>
+                    </div>
+                  </>
+                )}
              </div>
           </div>
         </div>
