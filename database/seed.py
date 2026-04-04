@@ -58,83 +58,93 @@ def seed_massive_data():
 
 def seed_figures():
     figures = [
+        # --- BNP ---
         {
-            "name": "Sheikh Hasina", 
-            "role": "Former Prime Minister", 
-            "party": "Awami League", 
-            "constituency": "Gopalganj-3", 
-            "incidents_count": 142, 
-            "status": "fugitive",
-            "assets_total": "800 Crore BDT (Declared)",
-            "permanent_address": "Sudha Sadan, Dhanmondi, Dhaka",
-            "property_details": json.dumps([
-                "Luxury Residence in Dhanmondi",
-                "Agricultural land in Gopalganj (50+ Acres)",
-                "Multiple commercial plots in Uttara"
-            ]),
+            "name": "Tarique Rahman", "role": "Acting Chairman", "party": "BNP", "constituency": "Bogura-7", "incidents_count": 15, "status": "fugitive",
+            "assets_total": "Estimated 1,200 Crore BDT", "permanent_address": "Hawa Bhaban, Banani (Former), Bogura (Home)",
+            "property_details": json.dumps(["Multiple luxury vehicles", "Investments in media and shipping", "Properties in London & Dubai"]),
             "case_history": json.dumps([
-                {"title": "Murder Case (July Uprising)", "date": "Aug 2024", "details": "Alleged command responsibility for mass killings.", "status": "Pending", "court": "International Crimes Tribunal"},
-                {"title": "Corruption (Niko Case)", "date": "2008", "details": "Abuse of power in gas exploration contract.", "status": "Ongoing", "court": "Special Judge Court"}
+                {"title": "21 August Grenade Attack", "date": "2004", "details": "Conspiracy to assassinate political leadership.", "status": "Convicted", "court": "Special Tribunal"},
+                {"title": "Money Laundering Case", "date": "2013", "details": "Illegal offshore fund transfers.", "status": "Convicted", "court": "High Court"},
+                {"title": "Zia Orphanage Trust Scam", "date": "2018", "details": "Misuse of trust funds.", "status": "Convicted", "court": "Special Judge Court"}
             ])
         },
         {
-            "name": "Tarique Rahman", 
-            "role": "Acting Chairman", 
-            "party": "BNP", 
-            "constituency": "Bogura-7", 
-            "incidents_count": 15, 
-            "status": "fugitive",
-            "assets_total": "Estimated 1200 Crore BDT",
-            "permanent_address": "Hawa Bhaban, Banani (Former Office), Bogura",
-            "property_details": json.dumps([
-                "Family home in Bogura",
-                "Interests in multiple media and shipping companies",
-                "Foreign assets under investigation"
-            ]),
+            "name": "Mirza Fakhrul Islam Alamgir", "role": "Secretary General", "party": "BNP", "constituency": "Thakurgaon-1", "incidents_count": 92, "status": "active",
+            "assets_total": "15 Crore BDT (Declared)", "permanent_address": "Thakurgaon Sadar, Thakurgaon",
+            "property_details": json.dumps(["Ancestral home in Thakurgaon", "Apartment in Uttara, Dhaka", "Agricultural lands"]),
             "case_history": json.dumps([
-                {"title": "21 August Grenade Attack", "date": "2004", "details": "Conspiracy to assassinate political rivals.", "status": "Convicted", "court": "Special Tribunal"},
-                {"title": "Money Laundering Case", "date": "2013", "details": "Illegal transfer of funds to offshore accounts.", "status": "Convicted", "court": "High Court"}
+                {"title": "Protest Violence", "date": "2023", "details": "Vandalism during political rallies.", "status": "Ongoing", "court": "CMM Court"},
+                {"title": "Arson Cases", "date": "2015", "details": "Involvement in arson attacks during strikes.", "status": "Bailed", "court": "Sessions Court"}
             ])
         },
         {
-            "name": "Mirza Fakhrul Islam Alamgir", 
-            "role": "Secretary General", 
-            "party": "BNP", 
-            "constituency": "Thakurgaon-1", 
-            "incidents_count": 92, 
-            "status": "active",
-            "assets_total": "15 Crore BDT (Declared)",
-            "permanent_address": "Thakurgaon Sadar, Thakurgaon",
-            "property_details": json.dumps([
-                "Ancestral home in Thakurgaon",
-                "Apartment in Uttara, Dhaka",
-                "Agricultural land in northern districts"
-            ]),
+            "name": "Amir Khosru Mahmud Chowdhury", "role": "Standing Committee Member", "party": "BNP", "constituency": "Chattogram-11", "incidents_count": 34, "status": "active",
+            "assets_total": "450 Crore BDT", "permanent_address": "Mehedibag, Chattogram",
+            "property_details": json.dumps(["Stock holdings in various companies", "Real estate in Chattogram", "Business assets"]),
+            "case_history": json.dumps([{"title": "Corruption Charge", "date": "2018", "details": "Illicit asset accumulation.", "status": "Under Investigation", "court": "ACC Court"}])
+        },
+        {
+            "name": "Ruhul Kabir Rizvi", "role": "Senior Joint Secretary General", "party": "BNP", "constituency": "Dhaka", "incidents_count": 180, "status": "active",
+            "assets_total": "2.5 Crore BDT", "permanent_address": "Dhaka",
+            "property_details": json.dumps(["Flat in Dhaka", "Ancestral property"]),
+            "case_history": json.dumps([{"title": "Sedition Case", "date": "2016", "details": "Anti-state remarks.", "status": "Ongoing", "court": "Metropolitan Court"}])
+        },
+        {
+            "name": "Khandaker Mosharraf Hossain", "role": "Standing Committee Member", "party": "BNP", "constituency": "Cumilla-2", "incidents_count": 28, "status": "active",
+            "assets_total": "80 Crore BDT", "permanent_address": "Cumilla",
+            "property_details": json.dumps(["Residential properties in Cumilla and Dhaka"]),
+            "case_history": json.dumps([{"title": "Money Laundering", "date": "2014", "details": "Transfer of funds abroad.", "status": "Ongoing", "court": "Special Judge Court"}])
+        },
+
+        # --- Jamaat-e-Islami ---
+        {
+            "name": "Dr. Shafiqur Rahman", "role": "Ameer", "party": "Jamaat-e-Islami", "constituency": "Sylhet", "incidents_count": 45, "status": "active",
+            "assets_total": "25 Crore BDT", "permanent_address": "Sylhet Sadar",
+            "property_details": json.dumps(["Diagnostic centers shares", "Private residence in Sylhet"]),
+            "case_history": json.dumps([{"title": "Anti-Terrorism Act", "date": "2022", "details": "Alleged extremist funding.", "status": "Pending", "court": "Special Tribunal"}])
+        },
+        {
+            "name": "Mia Golam Parwar", "role": "Secretary General", "party": "Jamaat-e-Islami", "constituency": "Khulna-5", "incidents_count": 62, "status": "active",
+            "assets_total": "12 Crore BDT", "permanent_address": "Khulna",
+            "property_details": json.dumps(["Agricultural land", "House in Khulna"]),
+            "case_history": json.dumps([{"title": "Sabotage Charge", "date": "2021", "details": "Conspiracy against public order.", "status": "Ongoing", "court": "Metropolitan Court"}])
+        },
+
+        # --- Awami League ---
+        {
+            "name": "Sheikh Hasina", "role": "Former Prime Minister", "party": "Awami League", "constituency": "Gopalganj-3", "incidents_count": 142, "status": "fugitive",
+            "assets_total": "800 Crore BDT (Declared)", "permanent_address": "Sudha Sadan, Dhanmondi, Dhaka",
+            "property_details": json.dumps(["Luxury Residence in Dhanmondi", "Agricultural land in Gopalganj (50+ Acres)", "Commercial plots in Uttara"]),
             "case_history": json.dumps([
-                {"title": "Arson & Violence", "date": "2023", "details": "Incitement of violence during political protests.", "status": "Bailed", "court": "Dhaka Metropolitan Court"},
-                {"title": "Obstructing Police", "date": "2018", "details": "Preventing law enforcement from duties.", "status": "Ongoing", "court": "CMM Court"}
+                {"title": "Mass Killing (July 2024)", "date": "Aug 2024", "details": "Command responsibility for genocide.", "status": "Pending", "court": "ICT"},
+                {"title": "Niko Corruption", "date": "2008", "details": "Gas contract abuse.", "status": "Ongoing", "court": "Special Judge Court"}
             ])
         },
         {
-            "name": "Dr. Shafiqur Rahman", 
-            "role": "Ameer", 
-            "party": "Jamaat-e-Islami", 
-            "constituency": "Sylhet", 
-            "incidents_count": 45, 
-            "status": "active",
-            "assets_total": "Estimated 25 Crore BDT",
-            "permanent_address": "Sylhet Sadar, Sylhet",
-            "property_details": json.dumps([
-                "Private residence in Sylhet",
-                "Share in medical diagnostic centers",
-                "Trustee holdings in various institutions"
-            ]),
-            "case_history": json.dumps([
-                {"title": "Anti-Terrorism Act", "date": "2022", "details": "Alleged involvement in extremist activities.", "status": "Pending", "court": "Special Tribunal"},
-                {"title": "Sabotage Case", "date": "2013", "details": "Violence during national strikes.", "status": "Ongoing", "court": "Sylhet District Court"}
-            ])
+            "name": "Obaidul Quader", "role": "Former Minister", "party": "Awami League", "constituency": "Noakhali-5", "incidents_count": 89, "status": "fugitive",
+            "assets_total": "Estimated 350 Crore BDT", "permanent_address": "Noakhali",
+            "property_details": json.dumps(["Luxury watch collection", "Properties in Noakhali and Dhaka"]),
+            "case_history": json.dumps([{"title": "Incitement to Violence", "date": "2024", "details": "Provocative speeches during uprising.", "status": "Pending", "court": "ICT"}])
         }
     ]
+    for f in figures:
+        existing = PublicFigure.query.filter_by(name=f['name']).first()
+        if existing:
+            existing.assets_total = f.get('assets_total')
+            existing.property_details = f.get('property_details')
+            existing.case_history = f.get('case_history')
+            existing.permanent_address = f.get('permanent_address')
+            existing.party = f.get('party')
+            existing.status = f.get('status')
+            existing.role = f.get('role')
+            existing.constituency = f.get('constituency')
+            existing.incidents_count = f.get('incidents_count')
+        else:
+            new_fig = PublicFigure(**f)
+            db.session.add(new_fig)
+    db.session.commit()
+    print(f"{len(figures)} Public Figures updated with A-Z details.")
     for f in figures:
         existing = PublicFigure.query.filter_by(name=f['name']).first()
         if existing:

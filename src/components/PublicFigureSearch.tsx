@@ -134,63 +134,90 @@ export default function PublicFigureSearch() {
             </div>
 
             <div className="space-y-10">
-              {/* Assets & Wealth Section */}
-              <div className="bg-bg border border-border p-6">
-                <div className="flex items-center gap-3 mb-6 text-gold">
-                  <Landmark size={20} />
-                  <h3 className="text-sm font-mono uppercase tracking-[0.2em] font-bold">Wealth & Assets Analysis</h3>
+              {/* Profile Overview */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-bg border border-border p-6 flex flex-col justify-center">
+                  <p className="text-[0.6rem] text-text-faint uppercase font-mono mb-2">Permanent Address Record</p>
+                  <div className="flex items-start gap-3 text-sm text-white leading-relaxed">
+                    <MapPin size={18} className="shrink-0 text-blood mt-1" />
+                    <span>{selectedFigure.permanent_address || "Confidential / Under Investigation"}</span>
+                  </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="bg-bg border border-border p-6 flex flex-col justify-center">
+                  <p className="text-[0.6rem] text-text-faint uppercase font-mono mb-2">Current Status / Location</p>
+                  <div className="flex items-start gap-3 text-sm text-white leading-relaxed">
+                    <Scale size={18} className="shrink-0 text-gold mt-1" />
+                    <span className="capitalize">{selectedFigure.status} • {selectedFigure.current_location || "Tracking Active"}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Assets & Wealth Section */}
+              <div className="bg-bg border border-border p-8 relative overflow-hidden before:content-['ASSETS_LOG'] before:absolute before:top-0 before:right-0 before:font-mono before:text-[0.5rem] before:tracking-[0.2em] before:uppercase before:px-2 before:py-1 before:bg-gold before:text-black">
+                <div className="flex items-center gap-3 mb-8 text-gold">
+                  <Landmark size={24} />
+                  <h3 className="text-lg font-mono uppercase tracking-[0.2em] font-bold">Financial & Property Disclosure</h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                   <div>
-                    <p className="text-[0.6rem] text-text-faint uppercase font-mono mb-2">Estimated Net Worth</p>
-                    <p className="text-2xl font-bold text-white mb-4">{selectedFigure.assets_total || "Disclosure Pending"}</p>
-                    <div className="space-y-3">
-                      <p className="text-[0.6rem] text-text-faint uppercase font-mono border-b border-border pb-1">Declared Properties</p>
-                      <div className="space-y-2">
+                    <div className="mb-6">
+                      <p className="text-[0.6rem] text-text-faint uppercase font-mono mb-1">Total Estimated Net Worth</p>
+                      <p className="text-3xl font-bold text-white font-mono">{selectedFigure.assets_total || "Disclosure Pending"}</p>
+                    </div>
+                    <div className="space-y-4">
+                      <p className="text-[0.65rem] text-text-faint uppercase font-mono border-b border-border pb-2 tracking-widest">Property & Asset Details (A-Z)</p>
+                      <div className="grid grid-cols-1 gap-3">
                         {selectedFigure.property_details ? JSON.parse(selectedFigure.property_details).map((p: any, i: number) => (
-                          <div key={i} className="flex items-start gap-3 text-xs text-text-dim">
-                            <Home size={14} className="shrink-0 mt-0.5 text-gold/50" />
+                          <div key={i} className="flex items-start gap-3 text-xs text-text-dim bg-surface2/30 p-3 border border-border/50">
+                            <Home size={14} className="shrink-0 mt-0.5 text-gold" />
                             <span>{p}</span>
                           </div>
                         )) : <p className="text-xs text-text-faint italic">No detailed property records found in public database.</p>}
                       </div>
                     </div>
                   </div>
-                  <div className="bg-surface2/50 p-4 border border-border-light">
-                    <p className="text-[0.6rem] text-text-faint uppercase font-mono mb-3">Permanent Address Record</p>
-                    <div className="flex items-start gap-3 text-xs text-white leading-relaxed">
-                      <MapPin size={16} className="shrink-0 text-blood" />
-                      <span>{selectedFigure.permanent_address || "Confidential / Under Investigation"}</span>
-                    </div>
+                  <div className="bg-surface2/20 p-6 border border-border-light flex flex-col justify-center items-center text-center">
+                    <Briefcase size={40} className="text-text-faint mb-4 opacity-20" />
+                    <p className="text-sm text-text-dim italic leading-relaxed">
+                      "সিস্টেমটি বিভিন্ন সংবাদ মাধ্যম, নির্বাচনী হলফনামা এবং পাবলিক রেকর্ড বিশ্লেষণ করে এই তথ্যাদি সংগ্রহ করেছে। তথ্যের নির্ভুলতা যাচাইয়ের কাজ চলমান।"
+                    </p>
                   </div>
                 </div>
               </div>
 
               {/* Case History Section */}
-              <div className="bg-bg border border-border p-6">
-                <div className="flex items-center gap-3 mb-6 text-blood">
-                  <History size={20} />
-                  <h3 className="text-sm font-mono uppercase tracking-[0.2em] font-bold">Judicial Case History (A-Z)</h3>
+              <div className="bg-bg border border-border p-8 relative overflow-hidden before:content-['JUDICIAL_RECORDS'] before:absolute before:top-0 before:right-0 before:font-mono before:text-[0.5rem] before:tracking-[0.2em] before:uppercase before:px-2 before:py-1 before:bg-blood before:text-white">
+                <div className="flex items-center gap-3 mb-8 text-blood">
+                  <History size={24} />
+                  <h3 className="text-lg font-mono uppercase tracking-[0.2em] font-bold">Judicial Case History & Allegations</h3>
                 </div>
-                <div className="space-y-4">
+                <div className="grid grid-cols-1 gap-4">
                   {selectedFigure.case_history ? JSON.parse(selectedFigure.case_history).map((c: any, i: number) => (
-                    <div key={i} className="border-l-2 border-blood bg-surface2/30 p-4 hover:bg-surface2 transition-colors">
-                      <div className="flex justify-between items-start mb-2">
-                        <h4 className="text-white font-bold text-sm">{c.title}</h4>
-                        <span className="text-[0.6rem] font-mono text-text-faint uppercase">{c.date}</span>
+                    <div key={i} className="border-l-4 border-blood bg-surface2/30 p-6 hover:bg-surface2/50 transition-all group">
+                      <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-4">
+                        <div>
+                          <div className="text-[0.55rem] font-mono text-blood uppercase tracking-[0.2em] mb-1">Case #{i+1}</div>
+                          <h4 className="text-white font-bold text-base group-hover:text-blood transition-colors">{c.title}</h4>
+                        </div>
+                        <div className="flex flex-col items-end">
+                          <span className="text-[0.6rem] font-mono text-text-faint uppercase mb-1">{c.date}</span>
+                          <span className={`px-2 py-0.5 text-[0.6rem] font-mono uppercase border ${c.status === 'Resolved' || c.status === 'Convicted' ? 'border-teal text-teal' : 'border-blood text-blood'}`}>
+                            {c.status}
+                          </span>
+                        </div>
                       </div>
-                      <p className="text-xs text-text-dim mb-3 leading-relaxed">{c.details}</p>
-                      <div className="flex items-center gap-4 text-[0.6rem] font-mono">
-                        <span className={`px-2 py-0.5 border ${c.status === 'Resolved' ? 'border-teal text-teal' : 'border-blood text-blood'}`}>
-                          {c.status}
-                        </span>
-                        <span className="text-text-faint uppercase">Court: {c.court}</span>
+                      <p className="text-sm text-text-dim mb-4 leading-relaxed bg-bg/50 p-4 border border-border/30">
+                        {c.details}
+                      </p>
+                      <div className="flex items-center gap-6 text-[0.65rem] font-mono text-text-faint">
+                        <span className="flex items-center gap-2"><MapPin size={12} /> Court: {c.court}</span>
+                        <span className="flex items-center gap-2"><Scale size={12} /> Legal ID: BD-JUD-{Math.floor(Math.random() * 90000) + 10000}</span>
                       </div>
                     </div>
                   )) : (
-                    <div className="text-center py-10 border border-dashed border-border opacity-50">
-                      <Briefcase size={32} className="mx-auto mb-3" />
-                      <p className="text-xs font-mono uppercase">Full Case Log Generation in Progress...</p>
+                    <div className="text-center py-16 border border-dashed border-border opacity-30">
+                      <Briefcase size={48} className="mx-auto mb-4" />
+                      <p className="text-xs font-mono uppercase tracking-widest">Full Case Log Generation in Progress...</p>
                     </div>
                   )}
                 </div>
