@@ -1,5 +1,7 @@
 # BicharBD — Bangladesh-Specific Power Features
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fatik1234567890%2FBichar_BD&env=NEXT_PUBLIC_API_URL)
+
 BicharBD is a modern, impact-focused platform designed to track and report human rights violations and social injustices specific to the context of Bangladesh.
 
 ## Key Features
