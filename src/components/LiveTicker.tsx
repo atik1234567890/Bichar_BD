@@ -22,7 +22,11 @@ export default function LiveTicker() {
           const response = await fetch(`${API_URL}/api/feed/live`);
           const result = await response.json();
           if (result.success && result.data.length > 0) {
-            setNewsItems(result.data.map((item: any) => `${item.message} @ ${item.district}`));
+            const formattedItems = result.data.map((item: any) => {
+                const districtStr = item.district && item.district !== "National" ? ` in ${item.district}` : "";
+                return `${item.message}${districtStr}`;
+            });
+            setNewsItems(formattedItems);
           }
         } catch (error) {
           console.error("Error fetching feed:", error);
@@ -30,15 +34,16 @@ export default function LiveTicker() {
       }
      
      fetchFeed();
-     // Refresh every 2 minutes
-     const feedTimer = setInterval(fetchFeed, 120000);
+     // Refresh from API every 1 minute for more "live" feel
+     const feedTimer = setInterval(fetchFeed, 60000);
      return () => clearInterval(feedTimer);
    }, []);
 
   useEffect(() => {
+    if (newsItems.length === 0) return;
     const timer = setInterval(() => {
       setIndex((prev) => (prev + 1) % newsItems.length);
-    }, 5000);
+    }, 6000); // 6 seconds per item
     return () => timer && clearInterval(timer);
   }, [newsItems]);
 
