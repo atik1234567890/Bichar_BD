@@ -107,9 +107,10 @@ export default function CrisisGrid() {
   const [detailedStats, setDetailedStats] = useState<any>(null);
 
   useEffect(() => {
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
     async function fetchDetailedStats() {
       try {
-        const response = await fetch("http://localhost:5000/api/stats/detailed");
+        const response = await fetch(`${API_URL}/api/stats/detailed`);
         const result = await response.json();
         if (result.success) {
           setDetailedStats(result.data);

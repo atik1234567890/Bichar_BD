@@ -5,17 +5,48 @@ import { X, Send, ShieldCheck, Upload } from "lucide-react";
 
 export default function ReportForm({ isOpen, onClose, title }: { isOpen: boolean, onClose: () => void, title: string }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    district: "",
+    thana: "",
+    date: "",
+    accused: "",
+    description: ""
+  });
+  const [file, setFile] = useState<File | null>(null);
 
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    alert('Report submitted successfully via Encrypted Channel!');
-    setIsSubmitting(false);
-    onClose();
+    
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    const submitData = new FormData();
+    submitData.append("incident_type", title);
+    submitData.append("description", formData.description);
+    submitData.append("division", formData.district); 
+    submitData.append("district", formData.district);
+    submitData.append("thana", formData.thana);
+    if (file) submitData.append("evidence_file", file);
+
+    try {
+      const response = await fetch(`${API_URL}/api/report/submit`, {
+        method: "POST",
+        body: submitData,
+      });
+      const result = await response.json();
+      if (result.success) {
+        alert('আপনার অভিযোগ সফলভাবে এনক্রিপ্টেড চ্যানেলে জমা হয়েছে। টোকেন: ' + result.token);
+        onClose();
+      } else {
+        alert('ত্রুটি: ' + result.message);
+      }
+    } catch (error) {
+      console.error("Submission error:", error);
+      alert('সার্ভারের সাথে সংযোগ করা যাচ্ছে না। পরে চেষ্টা করুন।');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -49,6 +80,8 @@ export default function ReportForm({ isOpen, onClose, title }: { isOpen: boolean
                 placeholder="যেমন: ঢাকা"
                 required
                 disabled={isSubmitting}
+                value={formData.district}
+                onChange={(e) => setFormData({...formData, district: e.target.value})}
               />
             </div>
             <div className="space-y-2">
@@ -59,6 +92,8 @@ export default function ReportForm({ isOpen, onClose, title }: { isOpen: boolean
                 placeholder="যেমন: রমনা"
                 required
                 disabled={isSubmitting}
+                value={formData.thana}
+                onChange={(e) => setFormData({...formData, thana: e.target.value})}
               />
             </div>
             <div className="space-y-2">
@@ -68,6 +103,8 @@ export default function ReportForm({ isOpen, onClose, title }: { isOpen: boolean
                 className="w-full bg-bg border border-border p-3 text-text text-sm focus:border-blood outline-none transition-colors"
                 required
                 disabled={isSubmitting}
+                value={formData.date}
+                onChange={(e) => setFormData({...formData, date: e.target.value})}
               />
             </div>
           </div>
@@ -79,6 +116,8 @@ export default function ReportForm({ isOpen, onClose, title }: { isOpen: boolean
               className="w-full bg-bg border border-border p-3 text-text text-sm focus:border-blood outline-none transition-colors"
               placeholder="নাম, পদবী বা কোনো বিশেষ পরিচয় থাকলে লিখুন..."
               disabled={isSubmitting}
+              value={formData.accused}
+              onChange={(e) => setFormData({...formData, accused: e.target.value})}
             />
           </div>
 
@@ -89,15 +128,28 @@ export default function ReportForm({ isOpen, onClose, title }: { isOpen: boolean
               placeholder="ঘটনাটি বিস্তারিত লিখুন (কী ঘটেছিল, কীভাবে ঘটেছিল)..."
               required
               disabled={isSubmitting}
+              value={formData.description}
+              onChange={(e) => setFormData({...formData, description: e.target.value})}
             />
           </div>
 
           <div className="space-y-2">
             <label className="text-[0.7rem] font-mono text-text-faint uppercase tracking-widest block">প্রমাণ আপলোড (Evidence)</label>
-            <div className="border-2 border-dashed border-border p-8 text-center group hover:border-blood transition-colors cursor-pointer">
+            <input 
+              type="file" 
+              id="evidence-upload" 
+              className="hidden" 
+              onChange={(e) => e.target.files && setFile(e.target.files[0])}
+            />
+            <label 
+              htmlFor="evidence-upload"
+              className="border-2 border-dashed border-border p-8 text-center group hover:border-blood transition-colors cursor-pointer block"
+            >
               <Upload className="mx-auto text-text-faint mb-2 group-hover:text-blood transition-colors" />
-              <p className="text-xs text-text-dim">ছবি, ভিডিও বা অডিও ফাইল ড্রপ করুন (Max 50MB)</p>
-            </div>
+              <p className="text-xs text-text-dim">
+                {file ? file.name : "ছবি, ভিডিও বা অডিও ফাইল ড্রপ করুন (Max 50MB)"}
+              </p>
+            </label>
           </div>
 
           <div className="pt-4">

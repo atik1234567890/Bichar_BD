@@ -167,7 +167,7 @@ export default function HighProfileExpose() {
                     <FileText size={12} /> সংগৃহীত প্রমাণসমূহ (Collected Evidence)
                   </div>
                   <ul className="space-y-3">
-                    {selectedCase.evidence.map((ev, i) => (
+                    {(selectedCase.evidence as string[]).map((ev: string, i: number) => (
                       <li key={i} className="flex items-center gap-3 text-sm text-text-dim bg-bg p-3 border border-border">
                         <CheckCircle2 size={14} className="text-blood" /> {ev}
                       </li>
@@ -180,7 +180,7 @@ export default function HighProfileExpose() {
                     <AlertCircle size={12} /> ভেরিফাইড নিউজ সোর্স (News Coverage)
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {selectedCase.newsLinks.map((link, i) => (
+                    {(selectedCase.newsLinks as string[]).map((link: string, i: number) => (
                       <span key={i} className="bg-blood/10 border border-blood/30 px-3 py-1.5 text-[0.7rem] text-blood font-mono uppercase tracking-widest">
                         {link}
                       </span>

@@ -148,7 +148,7 @@ export default function PoliticianTracker() {
               <div className="bg-bg border border-border p-6 mb-8">
                 <div className="text-[0.7rem] font-mono text-text-faint uppercase tracking-widest mb-4">তথ্য যাচাইকারী (Verified By)</div>
                 <div className="flex flex-wrap gap-3">
-                  {selectedPolitician.verifiedBy.map((v, i) => (
+                  {(selectedPolitician.verifiedBy as string[]).map((v: string, i: number) => (
                     <span key={i} className="flex items-center gap-2 bg-blood/10 border border-blood/30 px-3 py-1.5 text-[0.75rem] text-blood font-mono">
                       <CheckCircle2 size={14} /> {v}
                     </span>
