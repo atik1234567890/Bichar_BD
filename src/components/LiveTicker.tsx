@@ -48,7 +48,7 @@ export default function LiveTicker() {
   }, [newsItems]);
 
   return (
-    <div className="bg-blood/10 border-b border-blood/20 py-2 px-6 overflow-hidden">
+    <div className="bg-blood/10 border-b border-blood/20 py-2 px-6 overflow-hidden no-print">
       <div className="max-w-[1400px] mx-auto flex items-center gap-4">
         <div className="flex items-center gap-2 shrink-0 bg-blood px-2 py-0.5 rounded-sm">
           <Zap size={12} className="text-white fill-white animate-pulse" />

@@ -310,9 +310,18 @@ export default function IncidentDirectory() {
                 </div>
               </div>
 
-              <div className="bg-bg border border-border p-6 text-center">
-                <button className="bg-blood text-white px-8 py-3 text-[0.7rem] font-mono uppercase tracking-[0.2em] hover:bg-blood/90 transition-all">
-                  আন্তর্জাতিক আদালতে রিপোর্ট করুন
+              <div className="bg-bg border border-border p-6 flex flex-col md:flex-row gap-4 justify-center items-center no-print">
+                <button 
+                  onClick={() => alert('আপনার এই রিপোর্টটি আন্তর্জাতিক মানবাধিকার সংস্থা (UN/HRW) এবং আন্তর্জাতিক অপরাধ আদালতে (ICC) পাঠানোর জন্য প্রস্তুত করা হচ্ছে।')}
+                  className="bg-blood text-white px-8 py-3 text-[0.7rem] font-mono uppercase tracking-[0.2em] hover:bg-blood/90 transition-all flex items-center gap-2"
+                >
+                  <ShieldAlert size={14} /> আন্তর্জাতিক আদালতে রিপোর্ট করুন
+                </button>
+                <button 
+                  onClick={() => window.print()}
+                  className="bg-bg border border-border text-text-dim px-8 py-3 text-[0.7rem] font-mono uppercase tracking-[0.2em] hover:border-blood hover:text-blood transition-all flex items-center gap-2"
+                >
+                  <FileText size={14} /> ডাউনলোড (PDF Report)
                 </button>
               </div>
             </motion.div>

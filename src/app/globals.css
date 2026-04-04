@@ -52,3 +52,51 @@
 .hero-rule-line.rev {
   background: linear-gradient(270deg, transparent, var(--border-light));
 }
+
+@media print {
+  .no-print, 
+  nav, 
+  footer, 
+  .chapter-header, 
+  .live-ticker, 
+  .developer-credit,
+  button {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+    font-family: serif !important;
+  }
+  
+  .bg-surface, 
+  .bg-bg, 
+  .bg-surface2 {
+    background: transparent !important;
+    border: 1px solid #eee !important;
+  }
+  
+  .text-white, 
+  .text-text, 
+  .text-text-dim {
+    color: black !important;
+  }
+  
+  .text-blood {
+    color: #cc1f1f !important;
+    font-weight: bold !important;
+  }
+  
+  .border, 
+  .border-border {
+    border-color: #ddd !important;
+  }
+
+  .special-module {
+    page-break-inside: avoid;
+    border: 2px solid #333 !important;
+    padding: 20px !important;
+    margin: 20px 0 !important;
+  }
+}

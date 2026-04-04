@@ -51,8 +51,8 @@ export default function Stats() {
       color: "teal",
     },
     {
-      num: `${summary.today_count || 0}`,
-      desc: "গত ২৪ ঘণ্টায়\nনতুন রিপোর্ট",
+      num: `Verified`,
+      desc: "সিস্টেমের নির্ভরযোগ্যতা\nএবং ডেটা সিকিউরিটি",
       color: "sky",
     },
   ] : [

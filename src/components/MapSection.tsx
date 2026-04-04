@@ -256,7 +256,10 @@ export default function MapSection() {
                     </div>
                   </div>
 
-                  <button className="w-full bg-blood text-white py-3 text-[0.7rem] font-mono uppercase tracking-widest hover:bg-blood/90 transition-all flex items-center justify-center gap-2">
+                  <button 
+                    onClick={() => window.print()}
+                    className="w-full bg-blood text-white py-3 text-[0.7rem] font-mono uppercase tracking-widest hover:bg-blood/90 transition-all flex items-center justify-center gap-2 no-print"
+                  >
                     <Search size={14} /> পূর্ণাঙ্গ রিপোর্ট ডাউনলোড
                   </button>
                 </div>

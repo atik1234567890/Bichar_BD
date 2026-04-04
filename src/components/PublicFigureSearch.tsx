@@ -163,8 +163,11 @@ export default function PublicFigureSearch() {
               </div>
             </div>
 
-            <div className="mt-10 flex justify-center">
-              <button className="bg-blood/10 border border-blood/30 text-blood px-10 py-3 font-bold text-[0.7rem] uppercase tracking-widest hover:bg-blood hover:text-white transition-all">
+            <div className="mt-10 flex justify-center no-print">
+              <button 
+                onClick={() => window.print()}
+                className="bg-blood/10 border border-blood/30 text-blood px-10 py-3 font-bold text-[0.7rem] uppercase tracking-widest hover:bg-blood hover:text-white transition-all"
+              >
                 Download Full PDF Case File
               </button>
             </div>

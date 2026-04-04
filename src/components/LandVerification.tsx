@@ -134,6 +134,15 @@ export default function LandVerification() {
                     </ul>
                   </div>
                 )}
+
+                <div className="pt-6 no-print">
+                  <button 
+                    onClick={() => window.print()}
+                    className="w-full bg-surface2 border border-border text-text-faint hover:text-white py-3 text-[0.65rem] font-mono uppercase tracking-widest transition-all"
+                  >
+                    Download AI Analysis Report
+                  </button>
+                </div>
               </div>
             </div>
           )}
