@@ -2,6 +2,60 @@ import random, uuid, json
 from datetime import datetime, timedelta
 from database.models import db, DivisionStats, Incident, PublicFigure
 
+def seed_historical_archive():
+    print("📜 Seeding Historical Justice Archive (1971-Present)...")
+    historical_cases = [
+        {
+            "incident_id": "HIST-1971-DHAKA-001",
+            "title": "Operation Searchlight - University of Dhaka Massacre",
+            "description": "The systematic killing of intellectuals and students at Dhaka University by the Pakistani military. A defining moment in the 1971 Genocide.",
+            "incident_type": "genocide",
+            "era": "1971_War",
+            "division": "Dhaka",
+            "district": "Dhaka",
+            "status": "historic_documented",
+            "source_url": "https://liberationwararchive.org/operation-searchlight",
+            "source_name": "Liberation War Archive",
+            "verification_label": "archival_verified",
+            "created_at": datetime(1971, 3, 25)
+        },
+        {
+            "incident_id": "HIST-1975-DHAKA-002",
+            "title": "Assassination of Bangabandhu Sheikh Mujibur Rahman",
+            "description": "The brutal assassination of the Father of the Nation and most of his family members at Dhanmondi 32.",
+            "incident_type": "political_assassination",
+            "era": "Post_Independence",
+            "division": "Dhaka",
+            "district": "Dhaka",
+            "status": "verdict",
+            "source_url": "https://www.thedailystar.net/news-detail-101568",
+            "source_name": "The Daily Star Archive",
+            "verification_label": "archival_verified",
+            "created_at": datetime(1975, 8, 15)
+        },
+        {
+            "incident_id": "HIST-1990-DHAKA-003",
+            "title": "Noor Hossain - Pro-Democracy Uprising",
+            "description": "Martyrdom of Noor Hossain during the democratic movement against the autocratic regime. He had 'Down with Autocracy' painted on his chest.",
+            "incident_type": "political_violence",
+            "era": "90s_Restoration",
+            "division": "Dhaka",
+            "district": "Dhaka",
+            "status": "historic_documented",
+            "source_url": "https://banglapedia.org/Noor_Hossain",
+            "source_name": "Banglapedia",
+            "verification_label": "archival_verified",
+            "created_at": datetime(1987, 11, 10)
+        }
+    ]
+    
+    for case in historical_cases:
+        if not Incident.query.filter_by(incident_id=case['incident_id']).first():
+            new_case = Incident(**case)
+            db.session.add(new_case)
+    db.session.commit()
+    print("✅ Historical Archive synchronized.")
+
 def seed_massive_data():
     districts = [
         "Dhaka", "Gazipur", "Narayanganj", "Tangail", "Faridpur", "Manikganj", "Munshiganj", "Rajbari", "Madaripur", "Gopalganj", "Shariatpur", "Kishoreganj", "Narsingdi",

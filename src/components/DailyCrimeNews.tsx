@@ -56,11 +56,11 @@ export default function DailyCrimeNews() {
           <div className="chapter-kicker font-mono text-[0.6rem] tracking-[0.3em] uppercase text-text-faint mb-3 flex items-center gap-4 before:content-['LIVE'] before:text-[0.5rem] before:text-blood before:border before:border-blood/30 before:px-1.5 before:py-0.5">
             সরাসরি আপডেট
           </div>
-          <h2 className="chapter-title text-[clamp(2rem,4vw,3rem)] font-bold text-white leading-[1.1] mb-2">
+          <h2 className="chapter-title text-[clamp(2.5rem,6vw,4.5rem)] font-bold text-white leading-[1] mb-6 tracking-tight">
             আজকের গুরুত্বপূর্ণ অপরাধ সংবাদ
           </h2>
-          <p className="chapter-sub text-[1rem] text-text-dim font-light italic">
-            সারা দেশের যাচাইকৃত সংবাদ উৎস থেকে সংগৃহীত — ৩০ মিনিট পরপর অটো-আপডেট
+          <p className="chapter-sub text-[1.2rem] text-text-dim font-light italic max-w-[800px] leading-relaxed">
+            সারা দেশের যাচাইকৃত সংবাদ উৎস থেকে সংগৃহীত — ৩০ মিনিট পরপর অটো-আপডেট।
           </p>
         </div>
         <div className="bg-blood/10 border border-blood/20 px-4 py-2 flex items-center gap-3">

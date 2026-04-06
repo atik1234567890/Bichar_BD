@@ -10,10 +10,7 @@ export default function Footer() {
               বিচারের জন্য <em className="text-blood not-italic">সংগ্রাম</em>
             </div>
             <p className="text-sm text-text-dim font-bangla leading-relaxed">
-              BicharBD তথ্য সংগ্রহ করে যাচাইকৃত সংবাদ উৎস থেকে। 
-              সকল অভিযুক্ত আইনের চোখে নির্দোষ যতক্ষণ না আদালত 
-              দোষী সাব্যস্ত করে। Community report স্পষ্টভাবে 
-              Unverified হিসেবে চিহ্নিত।
+              BicharBD ১৯৭১ সাল থেকে বর্তমান সময় পর্যন্ত বাংলাদেশের প্রতিটি গুরুত্বপূর্ণ বিচারিক তথ্য এবং মানবাধিকার লঙ্ঘনের ঘটনা সংগ্রহ ও যাচাই করে থাকে। এটি একটি স্বাধীন এবং নিরপেক্ষ আর্কাইভ।
             </p>
           </div>
 

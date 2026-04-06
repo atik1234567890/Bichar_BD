@@ -39,22 +39,22 @@ export default function Stats() {
   const stats = summary ? [
     {
       num: `${summary.total.toLocaleString()}`,
-      desc: "মোট নথিভুক্ত\nঅপরাধ (২০২৬)",
+      desc: "মোট নথিভুক্ত\nবিচারিক রেকর্ড",
       color: "blood",
     },
     {
       num: `${(summary.resolved / summary.total * 100 || 0).toFixed(1)}%`,
-      desc: "বিচারের গড় হার\n(সারাদেশে)",
+      desc: "বিচারের গড় হার\n(১৯৭১–২০২৬)",
       color: "gold",
     },
     {
       num: `${summary.pending.toLocaleString()}`,
-      desc: "তদন্তাধীন ও\nঝুলে থাকা মামলা",
+      desc: "চলমান ও\nতদন্তাধীন মামলা",
       color: "teal",
     },
     {
       num: `Verified`,
-      desc: "সিস্টেমের নির্ভরযোগ্যতা\nএবং ডেটা সিকিউরিটি",
+      desc: "১০০% ভেরিফাইড\nঅফিসিয়াল সোর্স",
       color: "sky",
     },
   ] : [

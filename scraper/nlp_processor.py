@@ -42,8 +42,16 @@ CRIME_KEYWORDS = {
     "DSA","CSA","journalist arrested","freedom of press", "কারাদণ্ড"
   ],
   "general_crime": [
-    "ডাকাতি","ছিনতাই"," kidnapping","অপহরণ","চুরি","গ্রেফতার",
+    "ডাকাতি","ছিনতাই"," kidnapping"," অপহরণ","চুরি","গ্রেফতার",
     "robbery","kidnapping","theft","arrested", "অস্ত্র", "মাদক", "ইয়াবা", "ফেনসিডিল"
+  ],
+  "genocide": [
+    "গণহত্যা","searchlight","রাজাকার","আলবদর","মুক্তিযুদ্ধ",
+    "war crime","genocide","intellectual killing","mass grave"
+  ],
+  "political_assassination": [
+    "হত্যাকাণ্ড"," assassination","ষড়যন্ত্র","বঙ্গবন্ধু","জেল হত্যা",
+    "coup","conspiracy","political murder"
   ]
 }
 

@@ -11,19 +11,20 @@ class Incident(db.Model):
     title = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text, nullable=False)
     incident_type = db.Column(db.String(50), nullable=False)
+    era = db.Column(db.String(50), default='Modern') # 1971_War, Post_Independence, 90s_Restoration, Modern
     division = db.Column(db.String(50), nullable=False)
     district = db.Column(db.String(50), nullable=False)
     thana = db.Column(db.String(50))
     latitude = db.Column(db.Float)
     longitude = db.Column(db.Float)
     incident_date = db.Column(db.DateTime, default=datetime.utcnow)
-    status = db.Column(db.String(50), default='reported') # reported, under_investigation, arrested, charged, verdict, stalled, forgotten
+    status = db.Column(db.String(50), default='reported') # reported, under_investigation, arrested, charged, verdict, stalled, forgotten, historic_documented
     days_pending = db.Column(db.Integer, default=0)
     source_url = db.Column(db.String(500))
     source_name = db.Column(db.String(100))
     is_verified = db.Column(db.Boolean, default=False)
     is_community_report = db.Column(db.Boolean, default=False)
-    verification_label = db.Column(db.String(50)) # ai_verified, news_sourced, community_report, disputed
+    verification_label = db.Column(db.String(50)) # ai_verified, news_sourced, community_report, disputed, archival_verified
     evidence_hash = db.Column(db.String(64))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

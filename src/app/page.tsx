@@ -5,6 +5,7 @@ import Stats from "@/components/Stats";
 import CrisisGrid from "@/components/CrisisGrid";
 import MapSection from "@/components/MapSection";
 import IncidentDirectory from "@/components/IncidentDirectory";
+import HistoricalArchive from "@/components/HistoricalArchive";
 import PublicFigureSearch from "@/components/PublicFigureSearch";
 import LandVerification from "@/components/LandVerification";
 import AutonomousBrainStatus from "@/components/AutonomousBrainStatus";
@@ -14,21 +15,21 @@ import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-bg selection:bg-blood selection:text-white">
       <DeveloperCredit />
       <LiveTicker />
       <Hero />
 
-      <section className="chapter max-w-[1120px] mx-auto p-12 md:p-20 border-b border-border">
-        <div className="chapter-header mb-14">
-          <div className="chapter-kicker font-mono text-[0.6rem] tracking-[0.3em] uppercase text-text-faint mb-3 flex items-center gap-4 before:content-['01'] before:text-[0.5rem] before:text-blood before:border before:border-blood/30 before:px-1.5 before:py-0.5">
+      <section className="chapter max-w-[1200px] mx-auto p-12 md:p-24 border-b border-border">
+        <div className="chapter-header mb-20 relative before:content-['CONTEXT'] before:absolute before:-top-6 before:left-0 before:font-mono before:text-[0.6rem] before:text-blood/50 before:tracking-[0.5em]">
+          <div className="chapter-kicker font-mono text-[0.65rem] tracking-[0.4em] uppercase text-text-faint mb-5 flex items-center gap-5 before:content-['01'] before:text-[0.55rem] before:text-blood before:border before:border-blood/40 before:px-2 before:py-1">
             বাংলাদেশের বাস্তবতা
           </div>
-          <h2 className="chapter-title text-[clamp(2rem,4vw,3rem)] font-bold text-white leading-[1.1] mb-2">
+          <h2 className="chapter-title text-[clamp(2.5rem,6vw,4.5rem)] font-bold text-white leading-[1] mb-6 tracking-tight">
             এই দেশের মানুষ যা ভোগ করছে
           </h2>
-          <p className="chapter-sub text-[1rem] text-text-dim font-light italic">
-            এই সংকটগুলো সারা পৃথিবীতে নেই — এগুলো আমাদের দেশের নিজস্ব ক্ষত
+          <p className="chapter-sub text-[1.2rem] text-text-dim font-light italic max-w-[800px] leading-relaxed">
+            এই সংকটগুলো সারা পৃথিবীতে নেই — এগুলো আমাদের দেশের নিজস্ব ক্ষত যা আমরা প্রজন্মের পর প্রজন্ম বয়ে বেড়াচ্ছি।
           </p>
         </div>
 
@@ -38,27 +39,40 @@ export default function Home() {
         <MapSection />
         <IncidentDirectory />
 
+        {/* Historical Justice Archive (1971-Present) */}
+        <div className="mt-40">
+          <HistoricalArchive />
+        </div>
+
         {/* Search Module instead of hardcoded trackers */}
-        <PublicFigureSearch />
+        <div className="mt-40">
+          <PublicFigureSearch />
+        </div>
 
         {/* High Profile Expose Section */}
-        <HighProfileExpose />
+        <div className="mt-40">
+          <HighProfileExpose />
+        </div>
 
         {/* Special Module - Land Verification */}
-        <LandVerification />
+        <div className="mt-40">
+          <LandVerification />
+        </div>
 
-        <AutonomousBrainStatus />
+        <div className="mt-40">
+          <AutonomousBrainStatus />
+        </div>
 
         {/* Pipeline / Reporting Flow */}
-        <div className="chapter-header mb-14 mt-20">
-          <div className="chapter-kicker font-mono text-[0.6rem] tracking-[0.3em] uppercase text-text-faint mb-3 flex items-center gap-4 before:content-['02'] before:text-[0.5rem] before:text-blood before:border before:border-blood/30 before:px-1.5 before:py-0.5">
+        <div className="chapter-header mb-20 mt-40 relative before:content-['PIPELINE'] before:absolute before:-top-6 before:left-0 before:font-mono before:text-[0.6rem] before:text-blood/50 before:tracking-[0.5em]">
+          <div className="chapter-kicker font-mono text-[0.65rem] tracking-[0.4em] uppercase text-text-faint mb-5 flex items-center gap-5 before:content-['02'] before:text-[0.55rem] before:text-blood before:border before:border-blood/40 before:px-2 before:py-1">
             রিপোর্টিং ফ্লো
           </div>
-          <h2 className="chapter-title text-[clamp(2rem,4vw,3rem)] font-bold text-white leading-[1.1] mb-2">
+          <h2 className="chapter-title text-[clamp(2.5rem,6vw,4.5rem)] font-bold text-white leading-[1] mb-6 tracking-tight">
             আপনার অভিযোগ যেভাবে কাজ করে
           </h2>
-          <p className="chapter-sub text-[1rem] text-text-dim font-light italic">
-            সুরক্ষিত এবং সরাসরি — কোনো মধ্যস্বত্বভোগী ছাড়াই আন্তর্জাতিক পর্যায়ে
+          <p className="chapter-sub text-[1.2rem] text-text-dim font-light italic max-w-[800px] leading-relaxed">
+            সুরক্ষিত এবং সরাসরি — কোনো মধ্যস্বত্বভোগী ছাড়াই আন্তর্জাতিক পর্যায়ে অভিযোগ পৌঁছে দেওয়া।
           </p>
         </div>
 

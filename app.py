@@ -3,7 +3,7 @@ from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from database.models import db
-from database.seed import seed_divisions, seed_figures, seed_massive_data
+from database.seed import seed_divisions, seed_figures, seed_massive_data, seed_historical_archive
 from api.incidents import incidents_bp
 from api.stats import stats_bp
 from api.reports import reports_bp
@@ -72,6 +72,7 @@ with app.app_context():
     db.create_all()
     seed_divisions()
     seed_figures()
+    seed_historical_archive() # Load 1971-Present Historical Data
     
     # 🚨 CRITICAL: Remove all Seeded/Demo data to ensure 100% Real-Time Information
     # Only real-time scraped news and user reports will remain.

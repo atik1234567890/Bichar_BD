@@ -46,6 +46,7 @@ def daily_incidents():
 def list_incidents():
     page = request.args.get('page', 1, type=int)
     limit = request.args.get('limit', 20, type=int)
+    era = request.args.get('era')
     division = request.args.get('division')
     district = request.args.get('district')
     thana = request.args.get('thana')
@@ -54,6 +55,7 @@ def list_incidents():
     search = request.args.get('search')
     
     query = Incident.query
+    if era: query = query.filter_by(era=era)
     if division: query = query.filter_by(division=division)
     if district: query = query.filter_by(district=district)
     if thana: query = query.filter_by(thana=thana)
@@ -76,6 +78,7 @@ def list_incidents():
             "title": inc.title,
             "description": inc.description,
             "incident_type": inc.incident_type,
+            "era": inc.era,
             "division": inc.division,
             "district": inc.district,
             "thana": inc.thana,
@@ -105,6 +108,7 @@ def get_incident(id):
             "title": inc.title,
             "description": inc.description,
             "incident_type": inc.incident_type,
+            "era": inc.era,
             "division": inc.division,
             "district": inc.district,
             "thana": inc.thana,
@@ -114,6 +118,5 @@ def get_incident(id):
             "source_name": inc.source_name,
             "verification_label": inc.verification_label,
             "created_at": inc.created_at.isoformat()
-        },
-        "timestamp": datetime.utcnow().isoformat()
+        }
     })
