@@ -7,6 +7,7 @@ import MapSection from "@/components/MapSection";
 import IncidentDirectory from "@/components/IncidentDirectory";
 import PublicFigureSearch from "@/components/PublicFigureSearch";
 import LandVerification from "@/components/LandVerification";
+import AutonomousBrainStatus from "@/components/AutonomousBrainStatus";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -39,6 +40,8 @@ export default function Home() {
 
         {/* Special Module - Land Verification */}
         <LandVerification />
+
+        <AutonomousBrainStatus />
 
         {/* Pipeline / Reporting Flow */}
         <div className="chapter-header mb-14 mt-20">

@@ -10,6 +10,7 @@ from api.reports import reports_bp
 from api.feed import feed_bp
 from api.figures import figures_bp
 from scraper.scheduler import scheduler
+from scraper.autonomous_brain import start_brain
 import os
 
 app = Flask(__name__)
@@ -29,12 +30,26 @@ limiter = Limiter(
     storage_uri="memory://"
 )
 
+# Global Brain Instance
+brain = None
+
 # Register Blueprints
 app.register_blueprint(incidents_bp, url_prefix='/api/incidents')
 app.register_blueprint(stats_bp, url_prefix='/api/stats')
 app.register_blueprint(reports_bp, url_prefix='/api/report')
 app.register_blueprint(feed_bp, url_prefix='/api/feed')
 app.register_blueprint(figures_bp, url_prefix='/api/figures')
+
+@app.route('/api/brain/status')
+def brain_status():
+    if brain:
+        return jsonify({
+            "success": True,
+            "version": brain.version,
+            "logs": brain.health_logs[-10:], # Last 10 logs
+            "status": "Self-Healing Active"
+        })
+    return jsonify({"success": False, "message": "Brain not initialized"})
 
 @app.route('/health')
 def health():
@@ -58,6 +73,7 @@ with app.app_context():
     seed_divisions()
     seed_figures()
     seed_massive_data()
+    brain = start_brain(app) # Start the Autonomous Brain
     if not scheduler.running:
         scheduler.start()
 
