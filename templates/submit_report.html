@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>রিপোর্ট জমা দিন — BicharBD</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla&family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 60px auto;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 40px;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--text-faint);
+            margin-bottom: 10px;
+        }
+        input, select, textarea {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 12px;
+            color: var(--text);
+            font-family: inherit;
+            outline: none;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--blood);
+        }
+        .btn-submit {
+            background: var(--blood);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-family: var(--font-mono);
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container nav-container">
+            <div class="logo">BICHAR_BD</div>
+            <nav class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="form-container">
+            <h1 class="font-serif text-2xl mb-8">অভিযোগ জমা দিন</h1>
+            <p class="text-text-dim text-sm mb-10">আপনার পরিচয় সম্পূর্ণ গোপন থাকবে। আমাদের সিস্টেম আপনার IP অ্যাড্রেস ট্র্যাক করে না।</p>
+            
+            <form id="report-form" action="/api/report/submit" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label>অভিযোগের ধরন</label>
+                    <select name="incident_type" required>
+                        <option value="rape">ধর্ষণ</option>
+                        <option value="murder">হত্যা</option>
+                        <option value="enforced_disappearance">গুম</option>
+                        <option value="land_grab">ভূমি দখল</option>
+                        <option value="labor_violation">শ্রমিক অধিকার লঙ্ঘন</option>
+                        <option value="election_violence">নির্বাচনী সহিংসতা</option>
+                        <option value="minority_attack">সংখ্যালঘু আক্রমণ</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>বিভাগ</label>
+                    <select name="division" required>
+                        <option value="Dhaka">ঢাকা</option>
+                        <option value="Chittagong">চট্টগ্রাম</option>
+                        <option value="Rajshahi">রাজশাহী</option>
+                        <option value="Khulna">খুলনা</option>
+                        <option value="Barisal">বরিশাল</option>
+                        <option value="Sylhet">সিলেট</option>
+                        <option value="Rangpur">রংপুর</option>
+                        <option value="Mymensingh">ময়মনসিংহ</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>জেলা</label>
+                    <input type="text" name="district" placeholder="জেলার নাম লিখুন" required>
+                </div>
+
+                <div class="form-group">
+                    <label>বিস্তারিত বিবরণ</label>
+                    <textarea name="description" rows="5" placeholder="ঘটনাটি বিস্তারিত লিখুন..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>তথ্যপ্রমাণ (ছবি/ভিডিও/ডকুমেন্ট)</label>
+                    <input type="file" name="evidence" accept="image/*,video/*,.pdf">
+                </div>
+
+                <button type="submit" class="btn-submit">নিরাপদে জমা দিন</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/report.js') }}"></script>
+</body>
+</html>

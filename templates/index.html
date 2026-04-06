@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BicharBD — বাংলাদেশের ইনভেস্টিগেটিভ ড্যাশবোর্ড</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla&family=IBM+Plex+Mono:wght@400;700&family=Fraunces:wght@900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="ticker-wrap">
+        <div class="ticker-content">
+            <!-- Populated by feed.js -->
+        </div>
+    </div>
+
+    <header>
+        <div class="container nav-container">
+            <div class="logo">BICHAR_BD</div>
+            <nav class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/submit" class="nav-link">Submit Report</a>
+                <a href="#stats" class="nav-link">Statistics</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <span class="hero-kicker">NATIONAL JUSTICE MONITOR</span>
+                <h1 class="hero-title font-serif">বাংলাদেশের বাস্তবতা।</h1>
+                <p class="hero-desc">এই সংকটগুলো সারা পৃথিবীতে নেই — এগুলো আমাদের দেশের নিজস্ব ক্ষত। আমরা সত্য তুলে ধরি, কোনো রাখঢাক ছাড়াই।</p>
+                
+                <div class="stats-grid" id="stats">
+                    <div class="stat-card">
+                        <span class="stat-num text-blood" data-stat="total-cases">0</span>
+                        <span class="stat-label">Total Records</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-num text-gold" data-stat="justice-score">0%</span>
+                        <span class="stat-label">Justice Rate</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-num text-teal" data-stat="pending-cases">0</span>
+                        <span class="stat-label">Under Investigation</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-num text-sky">SECURE</span>
+                        <span class="stat-label">Verification</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="incidents py-20">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">সাম্প্রতিক ঘটনাবলী</h2>
+                    <p class="text-text-dim">সরাসরি নিউজ ফিড এবং কমিউনিটি রিপোর্ট থেকে সংগৃহীত।</p>
+                </div>
+                <div class="incident-grid" id="incident-grid">
+                    <!-- Populated by main.js -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 BICHAR_BD — OPEN SOURCE JUSTICE SYSTEM</p>
+            <p class="mt-2">ANONYMOUS & ENCRYPTED</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/feed.js') }}"></script>
+</body>
+</html>

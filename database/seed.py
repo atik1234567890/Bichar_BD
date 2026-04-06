@@ -17,6 +17,10 @@ def seed_massive_data():
     crime_types = ["rape", "murder", "enforced_disappearance", "land_grab", "labor_violation", "election_violence", "minority_attack", "general_crime"]
     statuses = ["reported", "under_investigation", "arrested", "charged", "verdict", "stalled", "forgotten"]
     
+    if Incident.query.first():
+        print("Incident data already exists. Skipping massive seeding.")
+        return
+    
     print("Generating massive incident data for 64 districts...")
     
     for dist in districts:
@@ -131,31 +135,11 @@ def seed_figures():
     for f in figures:
         existing = PublicFigure.query.filter_by(name=f['name']).first()
         if existing:
-            existing.assets_total = f.get('assets_total')
-            existing.property_details = f.get('property_details')
-            existing.case_history = f.get('case_history')
-            existing.permanent_address = f.get('permanent_address')
-            existing.party = f.get('party')
-            existing.status = f.get('status')
-            existing.role = f.get('role')
-            existing.constituency = f.get('constituency')
-            existing.incidents_count = f.get('incidents_count')
+            # Update existing with all fields
+            for key, value in f.items():
+                setattr(existing, key, value)
         else:
-            new_fig = PublicFigure(**f)
-            db.session.add(new_fig)
-    db.session.commit()
-    print(f"{len(figures)} Public Figures updated with A-Z details.")
-    for f in figures:
-        existing = PublicFigure.query.filter_by(name=f['name']).first()
-        if existing:
-            # Update existing
-            existing.assets_total = f.get('assets_total')
-            existing.property_details = f.get('property_details')
-            existing.case_history = f.get('case_history')
-            existing.permanent_address = f.get('permanent_address')
-            existing.party = f.get('party')
-            existing.status = f.get('status')
-        else:
+            # Create new
             new_fig = PublicFigure(**f)
             db.session.add(new_fig)
     db.session.commit()

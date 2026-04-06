@@ -9,6 +9,7 @@ import PublicFigureSearch from "@/components/PublicFigureSearch";
 import LandVerification from "@/components/LandVerification";
 import AutonomousBrainStatus from "@/components/AutonomousBrainStatus";
 import DailyCrimeNews from "@/components/DailyCrimeNews";
+import HighProfileExpose from "@/components/HighProfileExpose";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -39,6 +40,9 @@ export default function Home() {
 
         {/* Search Module instead of hardcoded trackers */}
         <PublicFigureSearch />
+
+        {/* High Profile Expose Section */}
+        <HighProfileExpose />
 
         {/* Special Module - Land Verification */}
         <LandVerification />
