@@ -12,3 +12,4 @@ apscheduler
 python-dotenv
 gunicorn
 psycopg2-binary
+pytz

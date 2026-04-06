@@ -33,11 +33,11 @@ export default function LiveTicker() {
         }
       }
      
-     fetchFeed();
-     // Refresh from API every 1 minute for more "live" feel
-     const feedTimer = setInterval(fetchFeed, 60000);
-     return () => clearInterval(feedTimer);
-   }, []);
+      fetchFeed();
+      // Refresh from API every 30 seconds for more "live" feel
+      const feedTimer = setInterval(fetchFeed, 30000);
+      return () => clearInterval(feedTimer);
+    }, []);
 
   useEffect(() => {
     if (newsItems.length === 0) return;

@@ -1,3 +1,4 @@
+import pytz
 from flask import Blueprint, jsonify, request
 from database.models import db, Incident
 from datetime import datetime, timedelta
@@ -6,16 +7,20 @@ incidents_bp = Blueprint('incidents', __name__)
 
 @incidents_bp.route('/daily', methods=['GET'])
 def daily_incidents():
-    # Fetch incidents from today (start of the day in UTC/Local)
-    now = datetime.utcnow()
-    today_start = datetime(now.year, now.month, now.day)
+    # Fetch incidents from today (start of the day in Bangladesh Timezone)
+    bd_tz = pytz.timezone('Asia/Dhaka')
+    now_bd = datetime.now(bd_tz)
+    today_start_bd = datetime(now_bd.year, now_bd.month, now_bd.day)
     
-    incidents = Incident.query.filter(Incident.created_at >= today_start).order_by(Incident.created_at.desc()).all()
+    # Convert back to UTC for DB query
+    today_start_utc = bd_tz.localize(today_start_bd).astimezone(pytz.utc).replace(tzinfo=None)
+    
+    incidents = Incident.query.filter(Incident.created_at >= today_start_utc).order_by(Incident.created_at.desc()).all()
     
     # Fallback: if no news today, show last 24 hours to keep the section active
     if not incidents:
-        since = now - timedelta(hours=24)
-        incidents = Incident.query.filter(Incident.created_at >= since).order_by(Incident.created_at.desc()).limit(10).all()
+        since_utc = datetime.utcnow() - timedelta(hours=24)
+        incidents = Incident.query.filter(Incident.created_at >= since_utc).order_by(Incident.created_at.desc()).limit(10).all()
     
     data = []
     for inc in incidents:

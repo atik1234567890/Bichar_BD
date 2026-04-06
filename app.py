@@ -72,7 +72,17 @@ with app.app_context():
     db.create_all()
     seed_divisions()
     seed_figures()
-    seed_massive_data()
+    
+    # 🚨 CRITICAL: Remove all Seeded/Demo data to ensure 100% Real-Time Information
+    # Only real-time scraped news and user reports will remain.
+    from database.models import Incident
+    deleted_count = Incident.query.filter_by(verification_label='news_sourced').delete()
+    if deleted_count > 0:
+        db.session.commit()
+        print(f"🧹 Cleaned {deleted_count} demo/seeded incidents for 100% Real-Time Integrity.")
+    
+    # seed_massive_data() # Permanently disabled for real-time mode
+    
     brain = start_brain(app) # Start the Autonomous Brain
     if not scheduler.running:
         scheduler.start()
