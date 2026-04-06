@@ -50,6 +50,8 @@ def seed_massive_data():
                 division=dist,
                 district=dist,
                 status=status,
+                source_url=f"https://www.bicharbd.org/archive/{incident_id}",
+                source_name="BicharBD Official Records",
                 days_pending=random.randint(15, 800) if status != "verdict" else 0,
                 created_at=date,
                 is_verified=True,

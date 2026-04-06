@@ -33,11 +33,15 @@ class AutonomousBrain:
         """Detects system anomalies and applies patches."""
         with self.app.app_context():
             try:
-                # Check for broken links or missing source data
-                broken_links = Incident.query.filter(Incident.source_url == None).count()
+                # Check for broken links or missing source data (excluding verified seeded news)
+                broken_links_query = Incident.query.filter(
+                    (Incident.source_url == None) & 
+                    (Incident.verification_label != 'news_sourced')
+                )
+                broken_links = broken_links_query.count()
                 if broken_links > 0:
                     self.log_self_action("REPAIR", f"Fixed {broken_links} incidents with missing source references.")
-                    Incident.query.filter(Incident.source_url == None).delete()
+                    broken_links_query.delete()
                     db.session.commit()
                 
                 # Re-run scraper if no news found in last 30 mins
