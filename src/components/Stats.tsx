@@ -9,7 +9,9 @@ export default function Stats() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    let API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    if (API_URL.endsWith("/")) API_URL = API_URL.slice(0, -1);
+    
     async function fetchData() {
       try {
         const [summaryRes, typesRes] = await Promise.all([

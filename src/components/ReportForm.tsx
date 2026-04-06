@@ -20,7 +20,9 @@ export default function ReportForm({ isOpen, onClose, title }: { isOpen: boolean
     e.preventDefault();
     setIsSubmitting(true);
     
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    let API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    if (API_URL.endsWith("/")) API_URL = API_URL.slice(0, -1);
+    
     const submitData = new FormData();
     submitData.append("incident_type", title);
     submitData.append("description", formData.description);

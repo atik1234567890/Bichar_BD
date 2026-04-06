@@ -10,7 +10,9 @@ export default function DailyCrimeNews() {
   useEffect(() => {
     const fetchDailyNews = async () => {
       try {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        let API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        if (API_URL.endsWith("/")) API_URL = API_URL.slice(0, -1);
+        
         const response = await fetch(`${API_URL}/api/incidents/daily`);
         const data = await response.json();
         if (data.success) {

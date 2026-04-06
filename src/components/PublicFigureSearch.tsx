@@ -12,7 +12,9 @@ export default function PublicFigureSearch() {
   const handleSearch = async () => {
     if (!searchTerm) return;
     setLoading(true);
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    let API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    if (API_URL.endsWith("/")) API_URL = API_URL.slice(0, -1);
+    
     try {
       const response = await fetch(`${API_URL}/api/figures/search?q=${encodeURIComponent(searchTerm)}`);
       const result = await response.json();
