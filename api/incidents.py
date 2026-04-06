@@ -1,8 +1,34 @@
 from flask import Blueprint, jsonify, request
 from database.models import db, Incident
-from datetime import datetime
+from datetime import datetime, timedelta
 
 incidents_bp = Blueprint('incidents', __name__)
+
+@incidents_bp.route('/daily', methods=['GET'])
+def daily_incidents():
+    # Fetch incidents from the last 24 hours
+    since = datetime.utcnow() - timedelta(hours=24)
+    incidents = Incident.query.filter(Incident.created_at >= since).order_by(Incident.created_at.desc()).all()
+    
+    data = []
+    for inc in incidents:
+        data.append({
+            "id": inc.id,
+            "title": inc.title,
+            "description": inc.description,
+            "incident_type": inc.incident_type,
+            "district": inc.district,
+            "source_name": inc.source_name,
+            "source_url": inc.source_url,
+            "created_at": inc.created_at.isoformat()
+        })
+        
+    return jsonify({
+        "success": True,
+        "count": len(data),
+        "data": data,
+        "timestamp": datetime.utcnow().isoformat()
+    })
 
 @incidents_bp.route('/', methods=['GET'])
 def list_incidents():

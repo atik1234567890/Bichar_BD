@@ -8,6 +8,7 @@ import IncidentDirectory from "@/components/IncidentDirectory";
 import PublicFigureSearch from "@/components/PublicFigureSearch";
 import LandVerification from "@/components/LandVerification";
 import AutonomousBrainStatus from "@/components/AutonomousBrainStatus";
+import DailyCrimeNews from "@/components/DailyCrimeNews";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -32,6 +33,7 @@ export default function Home() {
 
         <Stats />
         <CrisisGrid />
+        <DailyCrimeNews />
         <MapSection />
         <IncidentDirectory />
 

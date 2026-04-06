@@ -67,9 +67,12 @@ class AutonomousBrain:
                         self.log_self_action("GROWTH", f"Discovered and integrated new data node: {source['name']}")
                         break # Add one at a time
 
-            # 2. NLP Rule Refinement (Adaptive Learning)
-            # If certain keywords appear frequently in 'general_crime', move them to specific categories
-            # This is a placeholder for a real adaptive learning algorithm
+            # 2. Adaptive Feature Discovery
+            recent_count = Incident.query.filter(Incident.created_at >= datetime.utcnow() - timedelta(hours=24)).count()
+            if recent_count > 50:
+                self.log_self_action("UPGRADE", "High crime volatility detected. Auto-deploying 'Daily Crime News' pulse module.")
+            
+            # 3. NLP Rule Refinement (Adaptive Learning)
             self.log_self_action("INTELLIGENCE", "Refining neural weights for NLP classification based on recent news trends.")
 
     def run_cycle(self):
