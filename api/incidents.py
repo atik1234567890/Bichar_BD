@@ -6,9 +6,16 @@ incidents_bp = Blueprint('incidents', __name__)
 
 @incidents_bp.route('/daily', methods=['GET'])
 def daily_incidents():
-    # Fetch incidents from the last 24 hours
-    since = datetime.utcnow() - timedelta(hours=24)
-    incidents = Incident.query.filter(Incident.created_at >= since).order_by(Incident.created_at.desc()).all()
+    # Fetch incidents from today (start of the day in UTC/Local)
+    now = datetime.utcnow()
+    today_start = datetime(now.year, now.month, now.day)
+    
+    incidents = Incident.query.filter(Incident.created_at >= today_start).order_by(Incident.created_at.desc()).all()
+    
+    # Fallback: if no news today, show last 24 hours to keep the section active
+    if not incidents:
+        since = now - timedelta(hours=24)
+        incidents = Incident.query.filter(Incident.created_at >= since).order_by(Incident.created_at.desc()).limit(10).all()
     
     data = []
     for inc in incidents:
@@ -18,7 +25,7 @@ def daily_incidents():
             "description": inc.description,
             "incident_type": inc.incident_type,
             "district": inc.district,
-            "source_name": inc.source_name,
+            "source_name": inc.source_name or "সংবাদ মাধ্যম",
             "source_url": inc.source_url,
             "created_at": inc.created_at.isoformat()
         })
@@ -27,7 +34,7 @@ def daily_incidents():
         "success": True,
         "count": len(data),
         "data": data,
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": now.isoformat()
     })
 
 @incidents_bp.route('/', methods=['GET'])

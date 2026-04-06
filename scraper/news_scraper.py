@@ -7,17 +7,19 @@ from database.models import db, Incident, LiveFeedEvent
 from scraper.nlp_processor import classify_article, extract_location, detect_status
 
 RSS_SOURCES = [
-    {'name': 'Prothom Alo', 'rss': 'https://www.prothomalo.com/feed/bangladesh'},
-    {'name': 'The Daily Star', 'rss': 'https://www.thedailystar.net/bangladesh/news/rss.xml'},
-    {'name': 'Ittefaq', 'rss': 'https://www.ittefaq.com.bd/rss/bangladesh'},
-    {'name': 'Jugantor', 'rss': 'https://www.jugantor.com/rss/all.xml'},
-    {'name': 'BDNews24', 'rss': 'https://bangla.bdnews24.com/?widgetName=rssfeed&widgetId=1151&getXmlFeed=true'},
-    {'name': 'Samakal', 'rss': 'https://samakal.com/rss/bangladesh'},
-    {'name': 'Kaler Kantho', 'rss': 'https://www.kalerkantho.com/rss/bangladesh'},
-    {'name': 'Inqilab', 'rss': 'https://dailyinqilab.com/rss/bangladesh'},
-    {'name': 'Manabzamin', 'rss': 'https://mzamin.com/rss/bangladesh'},
-    {'name': 'Nayadiganta', 'rss': 'https://dailynayadiganta.com/rss/bangladesh'},
-    {'name': 'Dhaka Tribune', 'rss': 'https://www.dhakatribune.com/feed/bangladesh'},
+    {'name': 'প্রথম আলো', 'rss': 'https://www.prothomalo.com/feed/bangladesh'},
+    {'name': 'দ্য ডেইলি স্টার', 'rss': 'https://www.thedailystar.net/bangladesh/news/rss.xml'},
+    {'name': 'ইত্তেফাক', 'rss': 'https://www.ittefaq.com.bd/rss/bangladesh'},
+    {'name': 'যুগান্তর', 'rss': 'https://www.jugantor.com/rss/all.xml'},
+    {'name': 'বিডিনিউজ২৪', 'rss': 'https://bangla.bdnews24.com/?widgetName=rssfeed&widgetId=1151&getXmlFeed=true'},
+    {'name': 'সমকাল', 'rss': 'https://samakal.com/rss/bangladesh'},
+    {'name': 'কালের কণ্ঠ', 'rss': 'https://www.kalerkantho.com/rss/bangladesh'},
+    {'name': 'ইনকিলাব', 'rss': 'https://dailyinqilab.com/rss/bangladesh'},
+    {'name': 'মানবজমিন', 'rss': 'https://mzamin.com/rss/bangladesh'},
+    {'name': 'নয়া দিগন্ত', 'rss': 'https://dailynayadiganta.com/rss/bangladesh'},
+    {'name': 'ঢাকা ট্রিবিউন', 'rss': 'https://www.dhakatribune.com/feed/bangladesh'},
+    {'name': 'বাংলাদেশ প্রতিদিন', 'rss': 'https://www.bd-pratidin.com/rss.xml'},
+    {'name': 'জাগো নিউজ', 'rss': 'https://www.jagonews24.com/rss/all.xml'},
 ]
 
 def scrape_all_sources():
