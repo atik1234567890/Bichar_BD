@@ -57,15 +57,15 @@ export default function Hero() {
         </p>
 
         <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-20">
-          <button className="px-10 py-5 bg-blood text-white font-mono text-[0.8rem] font-bold uppercase tracking-[0.3em] hover:bg-blood/80 transition-all shadow-2xl shadow-blood/20 group">
+          <a href="#incident-directory" className="px-10 py-5 bg-blood text-white font-mono text-[0.8rem] font-bold uppercase tracking-[0.3em] hover:bg-blood/80 transition-all shadow-2xl shadow-blood/20 group">
             <span className="flex items-center gap-3">
               Browse Archive 
               <span className="group-hover:translate-x-1 transition-transform">→</span>
             </span>
-          </button>
-          <button className="px-10 py-5 bg-surface border border-border text-text font-mono text-[0.8rem] font-bold uppercase tracking-[0.3em] hover:border-blood transition-all">
+          </a>
+          <a href="/submit" className="px-10 py-5 bg-surface border border-border text-text font-mono text-[0.8rem] font-bold uppercase tracking-[0.3em] hover:border-blood transition-all">
             Submit Report
-          </button>
+          </a>
         </div>
       </motion.div>
     </div>

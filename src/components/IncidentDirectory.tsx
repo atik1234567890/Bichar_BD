@@ -70,7 +70,7 @@ export default function IncidentDirectory() {
   ];
 
   return (
-    <div className="incident-directory mt-24">
+    <div id="incident-directory" className="incident-directory mt-24">
       <div className="chapter-header mb-10">
         <div className="chapter-kicker font-mono text-[0.6rem] tracking-[0.3em] uppercase text-text-faint mb-3 flex items-center gap-4 before:content-['04'] before:text-[0.5rem] before:text-blood before:border before:border-blood/30 before:px-1.5 before:py-0.5">
           ইন্সিডেন্ট ডিরেক্টরি
@@ -151,7 +151,12 @@ export default function IncidentDirectory() {
 
       <div className="space-y-4">
         <AnimatePresence mode="popLayout">
-          {incidents.length > 0 ? (
+          {loading ? (
+            <div className="col-span-full py-20 text-center">
+              <div className="w-10 h-10 border-2 border-blood border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+              <p className="font-mono text-xs text-text-faint uppercase tracking-widest">Searching Records...</p>
+            </div>
+          ) : incidents.length > 0 ? (
             incidents.map((incident) => (
               <motion.div 
                 key={incident.id}

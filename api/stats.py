@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-from database.models import db, Incident, DivisionStats
+from database.models import db, Incident, DistrictStats
 from datetime import datetime
 from sqlalchemy import func
 
@@ -69,28 +69,28 @@ def divisions():
     # Map results to a dictionary for easy access
     stats_map = {row.district: row for row in stats_query}
     
-    # Get all districts from DivisionStats to ensure we return a complete list
-    all_districts = DivisionStats.query.all()
+    # Get all districts from DistrictStats to ensure we return a complete list
+    all_districts = DistrictStats.query.all()
     
     data = []
     for s in all_districts:
-        row = stats_map.get(s.division)
+        row = stats_map.get(s.district)
         total = row.total if row else 0
         pending = row.pending if row else 0
         resolved = row.resolved if row else 0
         
-        # Calculate scores dynamically
-        crime_density = min(100, (total * 10)) # Just a multiplier for visualization
+        # Use stored density score or calculate dynamically
+        crime_density = s.density_score or min(100, (total * 10))
         justice_score = (resolved / total * 100) if total > 0 else 0
         
         data.append({
-            "division": s.division,
+            "division": s.district, # Frontend expects 'division' but it's district name
             "total_cases": total,
             "pending_cases": pending,
             "resolved_cases": resolved,
-            "crime_density_score": round(crime_density, 1),
+            "crime_density_score": round(float(crime_density), 1),
             "justice_score": round(justice_score, 1),
-            "last_updated": datetime.utcnow().isoformat()
+            "last_updated": s.last_updated.isoformat() if s.last_updated else datetime.utcnow().isoformat()
         })
         
     # Sort by total cases desc

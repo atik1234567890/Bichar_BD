@@ -75,7 +75,10 @@ export default function JulyUprisingExpose() {
           <p className="text-sm text-text-dim leading-relaxed mb-8">
             আপনার কাছে যদি জুলাই ২০২৪-এর কোনো ভিডিও, অডিও বা নথিপত্র থাকে যা বিচারে সাহায্য করতে পারে, তবে তা আমাদের এনক্রিপ্টেড পোর্টালে জমা দিন।
           </p>
-          <button className="w-full bg-blood text-white py-4 font-mono font-bold uppercase tracking-widest hover:bg-blood/80 transition-all shadow-xl shadow-blood/20">
+          <button 
+            onClick={() => window.location.href='/submit'}
+            className="w-full bg-blood text-white py-4 font-mono font-bold uppercase tracking-widest hover:bg-blood/80 transition-all shadow-xl shadow-blood/20 text-center"
+          >
             Submit Evidence →
           </button>
         </div>

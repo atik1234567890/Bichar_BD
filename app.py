@@ -3,7 +3,7 @@ from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from database.models import db
-from database.seed import seed_divisions, seed_figures, seed_massive_data, seed_historical_archive
+from database.seed import seed_districts, seed_figures, seed_massive_data, seed_historical_archive
 from api.incidents import incidents_bp
 from api.stats import stats_bp
 from api.reports import reports_bp
@@ -75,7 +75,7 @@ def submit_report_page():
 # Initialize DB and Scheduler
 with app.app_context():
     db.create_all()
-    seed_divisions()
+    seed_districts() # Seed all 64 districts
     seed_figures()
     seed_historical_archive() # Load 1971-Present Historical Data
     

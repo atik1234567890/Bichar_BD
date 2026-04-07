@@ -1,7 +1,7 @@
 import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime, timedelta
-from database.models import db, Incident, DivisionStats, LiveFeedEvent
+from database.models import db, Incident, DistrictStats, LiveFeedEvent
 from scraper.news_scraper import scrape_all_sources
 from sqlalchemy import func
 
@@ -43,23 +43,19 @@ def update_division_stats():
     ]
     for dist in districts:
         total = Incident.query.filter_by(district=dist).count()
-        pending = Incident.query.filter(Incident.district == dist, Incident.status.notin_(['verdict'])).count()
+        pending = Incident.query.filter(Incident.district == dist, Incident.status != 'verdict').count()
         resolved = Incident.query.filter_by(district=dist, status='verdict').count()
         
         # Real density score: total / 5 (more realistic for visualization)
-        crime_density = min(100, (total / 5) * 100) 
+        crime_density = min(100, int((total / 5) * 100)) 
         
-        # Real justice score: resolved / total
-        justice_score = (resolved / total * 100) if total > 0 else 0
-        
-        stats = DivisionStats.query.filter_by(division=dist).first()
+        stats = DistrictStats.query.filter_by(district=dist).first()
         if stats:
             stats.total_cases = total
             stats.pending_cases = pending
             stats.resolved_cases = resolved
-            stats.crime_density_score = crime_density
-            stats.justice_score = justice_score
-            stats.last_updated = datetime.now(pytz.utc) # DB usually stores UTC
+            stats.density_score = crime_density
+            stats.last_updated = datetime.now(pytz.utc)
     db.session.commit()
 
 def cleanup_old_events():
