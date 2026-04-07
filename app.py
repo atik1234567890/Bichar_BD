@@ -84,6 +84,31 @@ with app.app_context():
     
     # seed_massive_data() # Permanently disabled for real-time mode
     
+    # Run initial sync immediately on startup
+    from scraper.news_scraper import scrape_all_sources
+    from scraper.scheduler import update_division_stats, update_pending_days
+    from database.models import LiveFeedEvent
+    
+    # Add a neural log for startup
+    db.session.add(LiveFeedEvent(
+        event_type="HEAL",
+        message="Neural Core Initialized. Synchronizing 1971-2026 Justice Archive...",
+        district="Dhaka"
+    ))
+    db.session.commit()
+    
+    scrape_all_sources()
+    update_division_stats()
+    update_pending_days()
+    
+    # Add another log after sync
+    db.session.add(LiveFeedEvent(
+        event_type="GROWTH",
+        message="Neural Sync Complete. Real-time monitoring active across 64 districts.",
+        district="National"
+    ))
+    db.session.commit()
+    
     brain = start_brain(app) # Start the Autonomous Brain
     if not scheduler.running:
         scheduler.start()

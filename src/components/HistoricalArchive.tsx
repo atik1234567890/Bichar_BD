@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { BookOpen, Calendar, MapPin, ExternalLink, ShieldCheck, Search, Filter } from "lucide-react";
+import { BookOpen, MapPin, ExternalLink, ShieldCheck } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const ERAS = [

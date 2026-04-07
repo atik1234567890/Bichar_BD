@@ -17,9 +17,9 @@ def daily_incidents():
     
     incidents = Incident.query.filter(Incident.created_at >= today_start_utc).order_by(Incident.created_at.desc()).all()
     
-    # Fallback: if no news today, show last 24 hours to keep the section active
+    # Fallback: if no news today, show last 7 days to keep the section active
     if not incidents:
-        since_utc = datetime.utcnow() - timedelta(hours=24)
+        since_utc = datetime.utcnow() - timedelta(days=7)
         incidents = Incident.query.filter(Incident.created_at >= since_utc).order_by(Incident.created_at.desc()).limit(10).all()
     
     data = []
@@ -39,7 +39,7 @@ def daily_incidents():
         "success": True,
         "count": len(data),
         "data": data,
-        "timestamp": now.isoformat()
+        "timestamp": now_bd.isoformat()
     })
 
 @incidents_bp.route('/', methods=['GET'])

@@ -5,7 +5,7 @@ import Stats from "@/components/Stats";
 import CrisisGrid from "@/components/CrisisGrid";
 import MapSection from "@/components/MapSection";
 import IncidentDirectory from "@/components/IncidentDirectory";
-import HistoricalArchive from "@/components/HistoricalArchive";
+import HistoricalArchive from "@/components/HistoricalArchive"; // Historical justice records module
 import PublicFigureSearch from "@/components/PublicFigureSearch";
 import LandVerification from "@/components/LandVerification";
 import AutonomousBrainStatus from "@/components/AutonomousBrainStatus";

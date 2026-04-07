@@ -20,6 +20,9 @@ RSS_SOURCES = [
     {'name': 'ঢাকা ট্রিবিউন', 'rss': 'https://www.dhakatribune.com/feed/bangladesh'},
     {'name': 'বাংলাদেশ প্রতিদিন', 'rss': 'https://www.bd-pratidin.com/rss.xml'},
     {'name': 'জাগো নিউজ', 'rss': 'https://www.jagonews24.com/rss/all.xml'},
+    {'name': 'The Business Standard', 'rss': 'https://www.tbsnews.net/bangladesh/rss.xml'},
+    {'name': 'New Age', 'rss': 'https://www.newagebd.net/rss/bangladesh'},
+    {'name': 'Independent TV', 'rss': 'https://www.independent24.com/rss/bangladesh'},
 ]
 
 def scrape_all_sources():
@@ -124,5 +127,15 @@ def scrape_all_sources():
             db.session.rollback()
 
     db.session.commit()
+    
+    # Neural status logging for "Active" feeling
+    status_msg = f"Neural Engine: Scanning {len(RSS_SOURCES)} sources. {total_new} new nodes integrated."
+    db.session.add(LiveFeedEvent(
+        event_type="MAINTENANCE",
+        message=status_msg,
+        district="National"
+    ))
+    db.session.commit()
+    
     print(f"✅ Neural Process Complete. {total_new} High-Accuracy incidents synchronized.")
     return total_new

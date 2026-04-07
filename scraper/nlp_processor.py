@@ -26,11 +26,11 @@ CRIME_KEYWORDS = {
   "labor_violation": [
     "গার্মেন্টস শ্রমিক","বেতন বকেয়া","কারখানায় অগ্নিকাণ্ড",
     "শ্রমিক নির্যাতন","garment worker","unpaid wages",
-    "factory fire","labor rights", "শ্রমিক বিক্ষোভ"
+    "factory fire","labor rights", "শ্রমিক বিক্ষোভ", "মজুরি", "বকেয়া"
   ],
   "land_grab": [
     "জমি দখল","ভূমি দখল","দলিল জাল","জোরপূর্বক উচ্ছেদ",
-    "land grab","forced eviction","fake deed","illegal occupation", "দখল"
+    "land grab","forced eviction","fake deed","illegal occupation", "দখল", "উচ্ছেদ", "জমি"
   ],
   "dowry_violence": [
     "যৌতুক","এসিড হামলা","বাল্যবিবাহ","গৃহবধূ নির্যাতন",
@@ -52,6 +52,10 @@ CRIME_KEYWORDS = {
   "political_assassination": [
     "হত্যাকাণ্ড"," assassination","ষড়যন্ত্র","বঙ্গবন্ধু","জেল হত্যা",
     "coup","conspiracy","political murder"
+  ],
+  "political_violence": [
+    "রাজনৈতিক সহিংসতা", "ককটেল", "বোমা", "অগ্নিসংযোগ", "হামলা",
+    "political violence", "cocktail", "bombing", "arson"
   ]
 }
 

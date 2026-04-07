@@ -10,6 +10,7 @@ export default function IncidentDirectory() {
   const [selectedDistrict, setSelectedDistrict] = useState("All");
   const [selectedThana, setSelectedThana] = useState("All");
   const [selectedType, setSelectedType] = useState("All");
+  const [selectedEra, setSelectedEra] = useState("All");
   const [incidents, setIncidents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedIncident, setSelectedIncident] = useState<any | null>(null);
@@ -26,6 +27,7 @@ export default function IncidentDirectory() {
         if (selectedDistrict !== "All") url.searchParams.append("district", selectedDistrict);
         if (selectedThana !== "All") url.searchParams.append("thana", selectedThana);
         if (selectedType !== "All") url.searchParams.append("type", selectedType);
+        if (selectedEra !== "All") url.searchParams.append("era", selectedEra);
         if (searchTerm) url.searchParams.append("search", searchTerm);
         
         const response = await fetch(url.toString());
@@ -43,7 +45,7 @@ export default function IncidentDirectory() {
     }
     
     fetchIncidents();
-  }, [selectedDistrict, selectedThana, selectedType, searchTerm]);
+  }, [selectedDistrict, selectedThana, selectedType, selectedEra, searchTerm]);
 
   const availableThanas = selectedDistrict !== "All" ? districtsAndUpazillas[selectedDistrict] || [] : [];
   const filteredIncidents = incidents;
@@ -55,7 +57,16 @@ export default function IncidentDirectory() {
     { id: "minority_attack", label: "সংখ্যালঘূ হামলা" },
     { id: "land_grab", label: "জমি দখল" },
     { id: "labor_violation", label: "শ্রমিক অধিকার" },
-    { id: "general_crime", label: "সাধারণ অপরাধ" }
+    { id: "general_crime", label: "সাধারণ অপরাধ" },
+    { id: "genocide", label: "গণহত্যা" },
+    { id: "political_assassination", label: "রাজনৈতিক হত্যাকাণ্ড" }
+  ];
+
+  const eras = [
+    { id: "1971_War", label: "১৯৭১: স্বাধীনতা যুদ্ধ" },
+    { id: "Post_Independence", label: "৭৫-৮৯: পুনর্গঠন" },
+    { id: "90s_Restoration", label: "৯০-এর দশক: গণতন্ত্র" },
+    { id: "Modern", label: "বর্তমান: আধুনিক" }
   ];
 
   return (
@@ -92,6 +103,17 @@ export default function IncidentDirectory() {
             <option value="All">সকল অপরাধ</option>
             {crimeTypes.map(t => (
               <option key={t.id} value={t.id}>{t.label}</option>
+            ))}
+          </select>
+
+          <select 
+            className="bg-surface border border-border px-6 py-4 text-sm text-text outline-none focus:border-blood"
+            value={selectedEra}
+            onChange={(e) => setSelectedEra(e.target.value)}
+          >
+            <option value="All">সকল সময়কাল</option>
+            {eras.map(e => (
+              <option key={e.id} value={e.id}>{e.label}</option>
             ))}
           </select>
 

@@ -35,7 +35,8 @@ def detailed_stats():
 @stats_bp.route('/summary', methods=['GET'])
 def summary():
     total = Incident.query.count()
-    pending = Incident.query.filter(Incident.status.in_(['reported', 'under_investigation', 'arrested', 'charged'])).count()
+    # All statuses except 'verdict' are considered pending or in progress
+    pending = Incident.query.filter(Incident.status != 'verdict').count()
     resolved = Incident.query.filter_by(status='verdict').count()
     today_count = Incident.query.filter(Incident.created_at >= datetime.utcnow().date()).count()
     stalled_count = Incident.query.filter_by(status='stalled').count()

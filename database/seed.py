@@ -3,8 +3,9 @@ from datetime import datetime, timedelta
 from database.models import db, DivisionStats, Incident, PublicFigure
 
 def seed_historical_archive():
-    print("📜 Seeding Historical Justice Archive (1971-Present)...")
+    print("📜 Seeding Comprehensive Historical Justice Archive (1971-Present)...")
     historical_cases = [
+        # 1971 War Era
         {
             "incident_id": "HIST-1971-DHAKA-001",
             "title": "Operation Searchlight - University of Dhaka Massacre",
@@ -20,6 +21,21 @@ def seed_historical_archive():
             "created_at": datetime(1971, 3, 25)
         },
         {
+            "incident_id": "HIST-1971-KHULNA-002",
+            "title": "Chuknagar Massacre",
+            "description": "One of the largest massacres of the Liberation War, where thousands of refugees were killed by Pakistani forces while fleeing to India.",
+            "incident_type": "genocide",
+            "era": "1971_War",
+            "division": "Khulna",
+            "district": "Khulna",
+            "status": "historic_documented",
+            "source_url": "https://banglapedia.org/Chuknagar_Massacre",
+            "source_name": "Banglapedia",
+            "verification_label": "archival_verified",
+            "created_at": datetime(1971, 5, 20)
+        },
+        # Post-Independence Era
+        {
             "incident_id": "HIST-1975-DHAKA-002",
             "title": "Assassination of Bangabandhu Sheikh Mujibur Rahman",
             "description": "The brutal assassination of the Father of the Nation and most of his family members at Dhanmondi 32.",
@@ -34,6 +50,21 @@ def seed_historical_archive():
             "created_at": datetime(1975, 8, 15)
         },
         {
+            "incident_id": "HIST-1975-DHAKA-004",
+            "title": "Jail Killing Day - Assassination of Four National Leaders",
+            "description": "The killing of Syed Nazrul Islam, Tajuddin Ahmad, M Mansur Ali and AHM Qamaruzzaman inside Dhaka Central Jail.",
+            "incident_type": "political_assassination",
+            "era": "Post_Independence",
+            "division": "Dhaka",
+            "district": "Dhaka",
+            "status": "verdict",
+            "source_url": "https://www.thedailystar.net/news/jail-killing-day-3158931",
+            "source_name": "The Daily Star",
+            "verification_label": "archival_verified",
+            "created_at": datetime(1975, 11, 3)
+        },
+        # 90s Restoration Era
+        {
             "incident_id": "HIST-1990-DHAKA-003",
             "title": "Noor Hossain - Pro-Democracy Uprising",
             "description": "Martyrdom of Noor Hossain during the democratic movement against the autocratic regime. He had 'Down with Autocracy' painted on his chest.",
@@ -46,15 +77,78 @@ def seed_historical_archive():
             "source_name": "Banglapedia",
             "verification_label": "archival_verified",
             "created_at": datetime(1987, 11, 10)
+        },
+        {
+            "incident_id": "HIST-1992-DHAKA-005",
+            "title": "Jahanara Imam - Gano Adalat (People's Court)",
+            "description": "The symbolic trial of war criminals led by Jahanara Imam, which revived the demand for justice for 1971 atrocities.",
+            "incident_type": "legal_milestone",
+            "era": "90s_Restoration",
+            "division": "Dhaka",
+            "district": "Dhaka",
+            "status": "historic_documented",
+            "source_url": "https://banglapedia.org/Jahanara_Imam",
+            "source_name": "Banglapedia",
+            "verification_label": "archival_verified",
+            "created_at": datetime(1992, 3, 26)
+        },
+        # Modern Era (Landmark Cases)
+        {
+            "incident_id": "HIST-2013-DHAKA-006",
+            "title": "Rana Plaza Collapse - Industrial Tragedy",
+            "description": "The collapse of the Rana Plaza building, killing 1,134 garment workers. A massive failure of building safety and labor rights.",
+            "incident_type": "labor_violation",
+            "era": "Modern",
+            "division": "Dhaka",
+            "district": "Dhaka",
+            "status": "under_investigation",
+            "source_url": "https://www.ilo.org/dhaka/Whatwedo/Projects/WCMS_240343/lang--en/index.htm",
+            "source_name": "ILO Official Report",
+            "verification_label": "archival_verified",
+            "created_at": datetime(2013, 4, 24)
+        },
+        {
+            "incident_id": "HIST-2013-DHAKA-007",
+            "title": "Shahbagh Protests - Demand for War Crimes Verdict",
+            "description": "A massive mass protest demanding capital punishment for Abdul Quader Mollah and all war criminals.",
+            "incident_type": "political_protest",
+            "era": "Modern",
+            "division": "Dhaka",
+            "district": "Dhaka",
+            "status": "historic_documented",
+            "source_url": "https://www.bbc.com/news/world-asia-21415757",
+            "source_name": "BBC News",
+            "verification_label": "archival_verified",
+            "created_at": datetime(2013, 2, 5)
+        },
+        {
+            "incident_id": "HIST-2024-DHAKA-008",
+            "title": "July-August Student-Led Uprising",
+            "description": "Massive protests against the quota system leading to a nationwide uprising and political transition. Numerous casualties reported during the events.",
+            "incident_type": "political_protest",
+            "era": "Modern",
+            "division": "Dhaka",
+            "district": "Dhaka",
+            "status": "under_investigation",
+            "source_url": "https://www.aljazeera.com/news/2024/8/5/bangladesh-protests-what-happened-next",
+            "source_name": "Al Jazeera",
+            "verification_label": "archival_verified",
+            "created_at": datetime(2024, 7, 16)
         }
     ]
     
     for case in historical_cases:
-        if not Incident.query.filter_by(incident_id=case['incident_id']).first():
+        existing = Incident.query.filter_by(incident_id=case['incident_id']).first()
+        if not existing:
             new_case = Incident(**case)
             db.session.add(new_case)
+        else:
+            # Update if already exists to ensure 100% real info
+            for key, value in case.items():
+                setattr(existing, key, value)
+                
     db.session.commit()
-    print("✅ Historical Archive synchronized.")
+    print("✅ Comprehensive Historical Archive synchronized.")
 
 def seed_massive_data():
     districts = [
