@@ -23,7 +23,7 @@ export default function IncidentDirectory() {
       setLoading(true);
       try {
         const url = new URL(`${API_URL}/api/incidents`);
-        url.searchParams.append("limit", "50");
+        url.searchParams.append("limit", "100"); // Fetch more for better directory experience
         if (selectedDistrict !== "All") url.searchParams.append("district", selectedDistrict);
         if (selectedThana !== "All") url.searchParams.append("thana", selectedThana);
         if (selectedType !== "All") url.searchParams.append("type", selectedType);
@@ -34,7 +34,12 @@ export default function IncidentDirectory() {
         const result = await response.json();
         
         if (result.success) {
-          setIncidents(result.data);
+          // Sort incidents: prioritize historical/high profile
+          const sortedData = result.data.sort((a: any, b: any) => {
+            if (a.status === 'high_profile') return -1;
+            return 0;
+          });
+          setIncidents(sortedData);
           setMeta(result.meta);
         }
       } catch (error) {

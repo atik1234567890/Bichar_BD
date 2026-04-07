@@ -29,34 +29,32 @@ def update_pending_days():
     db.session.commit()
 
 def update_division_stats():
+    from scraper.nlp_processor import BANGLADESH_DISTRICTS
     now_bd = datetime.now(bd_tz)
-    print(f"[{now_bd}] Updating district stats...")
-    districts = [
-        "Dhaka", "Gazipur", "Narayanganj", "Tangail", "Faridpur", "Manikganj", "Munshiganj", "Rajbari", "Madaripur", "Gopalganj", "Shariatpur", "Kishoreganj", "Narsingdi",
-        "Chittagong", "Cox's Bazar", "Comilla", "Brahmanbaria", "Feni", "Lakshmipur", "Noakhali", "Chandpur", "Khagrachhari", "Rangamati", "Bandarban",
-        "Rajshahi", "Bogra", "Pabna", "Naogaon", "Natore", "Chapai Nawabganj", "Joypurhat", "Sirajganj",
-        "Khulna", "Jessore", "Satkhira", "Bagerhat", "Kushtia", "Meherpur", "Chuadanga", "Jhenaidah", "Magura", "Narail",
-        "Barisal", "Patuakhali", "Bhola", "Pirojpur", "Barguna", "Jhalokati",
-        "Sylhet", "Moulvibazar", "Habiganj", "Sunamganj",
-        "Rangpur", "Dinajpur", "Kurigram", "Gaibandha", "Nilphamari", "Panchagarh", "Thakurgaon", "Lalmonirhat",
-        "Mymensingh", "Jamalpur", "Netrokona", "Sherpur"
-    ]
-    for dist in districts:
-        total = Incident.query.filter_by(district=dist).count()
-        pending = Incident.query.filter(Incident.district == dist, Incident.status != 'verdict').count()
-        resolved = Incident.query.filter_by(district=dist, status='verdict').count()
+    print(f"[{now_bd}] Updating all 64 district stats...")
+    
+    for dist_bn, data in BANGLADESH_DISTRICTS.items():
+        dist_en = data['en']
+        total = Incident.query.filter_by(district=dist_en).count()
+        pending = Incident.query.filter(Incident.district == dist_en, Incident.status != 'verdict').count()
+        resolved = Incident.query.filter_by(district=dist_en, status='verdict').count()
         
-        # Real density score: total / 5 (more realistic for visualization)
-        crime_density = min(100, int((total / 5) * 100)) 
+        # Calculate real-time density score
+        crime_density = min(100, int((total / 10) * 100)) if total > 0 else 0
         
-        stats = DistrictStats.query.filter_by(district=dist).first()
-        if stats:
-            stats.total_cases = total
-            stats.pending_cases = pending
-            stats.resolved_cases = resolved
-            stats.density_score = crime_density
-            stats.last_updated = datetime.now(pytz.utc)
+        stats = DistrictStats.query.filter_by(district=dist_en).first()
+        if not stats:
+            stats = DistrictStats(district=dist_en, division=data['division'])
+            db.session.add(stats)
+            
+        stats.total_cases = total
+        stats.pending_cases = pending
+        stats.resolved_cases = resolved
+        stats.density_score = crime_density
+        stats.last_updated = datetime.now(pytz.utc)
+        
     db.session.commit()
+    print("✅ All 64 District statistics synchronized.")
 
 def cleanup_old_events():
     now_bd = datetime.now(bd_tz)

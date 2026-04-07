@@ -114,6 +114,14 @@ with app.app_context():
     ))
     db.session.commit()
     
+    # 🚨 CRITICAL FIX: Ensure all 64 districts have stats entry even if 0 cases
+    from database.models import DistrictStats
+    from scraper.nlp_processor import BANGLADESH_DISTRICTS
+    for dist_bn, data in BANGLADESH_DISTRICTS.items():
+        if not DistrictStats.query.filter_by(district=data['en']).first():
+            db.session.add(DistrictStats(district=data['en'], division=data['division']))
+    db.session.commit()
+    
     brain = start_brain(app) # Start the Autonomous Brain
     if not scheduler.running:
         scheduler.start()
