@@ -15,33 +15,22 @@ export default function Footer() {
           </div>
 
           <div className="space-y-6">
-            <h4 className="text-xs font-mono uppercase tracking-[0.2em] text-white">Contact Developer</h4>
+            <h4 className="text-xs font-mono uppercase tracking-[0.2em] text-white">Contact</h4>
             <div className="space-y-4">
-              <a href="mailto:atik@example.com" className="flex items-center gap-3 text-sm text-text-dim hover:text-blood transition-colors">
-                <Mail size={16} /> atik@example.com
+              <a href="mailto:contact@bicharbd.com" className="flex items-center gap-3 text-sm text-text-dim hover:text-blood transition-colors">
+                <Mail size={16} /> contact@bicharbd.com (email only)
               </a>
-              <a href="tel:+8801343332857" className="flex items-center gap-3 text-sm text-text-dim hover:text-blood transition-colors">
-                <Phone size={16} /> +880 1343 332857
-              </a>
-              <a href="https://wa.me/8801343332857" className="flex items-center gap-3 text-sm text-text-dim hover:text-blood transition-colors">
-                <MessageSquare size={16} /> WhatsApp Support
-              </a>
+              <div className="flex items-center gap-3 text-sm text-text-dim">
+                <Github size={16} /> github.com/bicharbd
+              </div>
             </div>
           </div>
 
           <div className="space-y-6">
-            <h4 className="text-xs font-mono uppercase tracking-[0.2em] text-white">Connect with Me</h4>
-            <div className="flex gap-4">
-              <a href="https://github.com/atik1234567890" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-bg border border-border flex items-center justify-center text-text-faint hover:border-blood hover:text-blood transition-all">
-                <Github size={18} />
-              </a>
-              <a href="https://www.linkedin.com/in/md-atikur-rahman-3416a1386" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-bg border border-border flex items-center justify-center text-text-faint hover:border-blood hover:text-blood transition-all">
-                <Linkedin size={18} />
-              </a>
-              <a href="https://www.facebook.com/share/1KK88AFa1h/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-bg border border-border flex items-center justify-center text-text-faint hover:border-blood hover:text-blood transition-all">
-                <Facebook size={18} />
-              </a>
-            </div>
+            <h4 className="text-xs font-mono uppercase tracking-[0.2em] text-white text-blood">Legal Disclaimer</h4>
+            <p className="text-[0.7rem] text-text-dim font-bangla leading-relaxed border-l border-blood/30 pl-4 italic">
+              BicharBD সকল তথ্য যাচাইকৃত সংবাদ উৎস থেকে সংগ্রহ করে। সকল অভিযুক্ত ব্যক্তি আইনের দৃষ্টিতে নির্দোষ যতক্ষণ না আদালত দোষী সাব্যস্ত করে। Community report গুলো স্পষ্টভাবে Unverified হিসেবে চিহ্নিত করা হয়।
+            </p>
           </div>
         </div>
 

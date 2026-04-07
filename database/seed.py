@@ -204,6 +204,35 @@ def seed_historical_archive():
             "source_name": "The Daily Star",
             "verification_label": "archival_verified",
             "created_at": datetime(2024, 7, 18)
+        },
+        # High Profile Cases
+        {
+            "incident_id": "HP-2024-001",
+            "title": "Mass Murder Case - Former Top Officials",
+            "description": "A high-profile case involving multiple former high-ranking security officials accused of extrajudicial killings and mass murder during the recent political transition.",
+            "incident_type": "murder",
+            "era": "Modern",
+            "division": "Dhaka",
+            "district": "Dhaka",
+            "status": "high_profile",
+            "source_url": "https://www.aljazeera.com/news/2024/10/17/bangladesh-tribunal-issues-arrest-warrant-for-ex-pm-hasina",
+            "source_name": "Al Jazeera",
+            "verification_label": "news_sourced",
+            "created_at": datetime(2024, 10, 17)
+        },
+        {
+            "incident_id": "HP-2024-002",
+            "title": "Billion-Dollar Bank Scams Investigation",
+            "description": "Investigation into major financial irregularities and money laundering involving top bank executives and politically influential figures.",
+            "incident_type": "project_corruption",
+            "era": "Modern",
+            "division": "Dhaka",
+            "district": "Dhaka",
+            "status": "high_profile",
+            "source_url": "https://www.tbsnews.net/economy/banking/central-bank-starts-probe-bank-scams-912345",
+            "source_name": "The Business Standard",
+            "verification_label": "news_sourced",
+            "created_at": datetime(2024, 9, 5)
         }
     ]
     

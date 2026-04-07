@@ -9,9 +9,9 @@ import HistoricalArchive from "@/components/HistoricalArchive"; // Historical ju
 import JulyUprisingExpose from "@/components/JulyUprisingExpose"; // July 2024 Special Module
 import PublicFigureSearch from "@/components/PublicFigureSearch";
 import LandVerification from "@/components/LandVerification";
-import AutonomousBrainStatus from "@/components/AutonomousBrainStatus";
+import SystemStatus from "@/components/SystemStatus";
 import DailyCrimeNews from "@/components/DailyCrimeNews";
-import HighProfileExpose from "@/components/HighProfileExpose";
+import HighProfileCases from "@/components/HighProfileCases";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -54,9 +54,9 @@ export default function Home() {
           <PublicFigureSearch />
         </div>
 
-        {/* High Profile Expose Section */}
+        {/* High Profile Cases Section */}
         <div className="mt-40">
-          <HighProfileExpose />
+          <HighProfileCases />
         </div>
 
         {/* Special Module - Land Verification */}
@@ -65,7 +65,7 @@ export default function Home() {
         </div>
 
         <div className="mt-40">
-          <AutonomousBrainStatus />
+          <SystemStatus />
         </div>
 
         {/* Pipeline / Reporting Flow */}

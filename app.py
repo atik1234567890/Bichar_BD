@@ -53,7 +53,12 @@ def brain_status():
 
 @app.route('/health')
 def health():
-    return jsonify({"status": "ok", "timestamp": "ISO8601"})
+    from datetime import datetime
+    return jsonify({
+        "status": "healthy",
+        "timestamp": datetime.utcnow().isoformat(),
+        "uptime": "24/7 autonomous monitoring active"
+    })
 
 @app.route('/')
 def index():

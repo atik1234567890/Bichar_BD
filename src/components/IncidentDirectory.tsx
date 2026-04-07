@@ -151,8 +151,8 @@ export default function IncidentDirectory() {
 
       <div className="space-y-4">
         <AnimatePresence mode="popLayout">
-          {filteredIncidents.length > 0 ? (
-            filteredIncidents.map((incident) => (
+          {incidents.length > 0 ? (
+            incidents.map((incident) => (
               <motion.div 
                 key={incident.id}
                 initial={{ opacity: 0, x: -20 }}
@@ -165,32 +165,20 @@ export default function IncidentDirectory() {
                 <div className="flex flex-col lg:flex-row justify-between gap-6">
                   <div className="flex-1 space-y-4">
                     <div className="flex flex-wrap items-center gap-3">
-                      <span className={`px-2 py-0.5 text-[0.6rem] font-mono uppercase tracking-widest border ${
-                        incident.severity === 'critical' ? 'bg-blood/10 border-blood text-blood' :
-                        incident.severity === 'high' ? 'bg-gold/10 border-gold text-gold' :
-                        'bg-teal/10 border-teal text-teal'
-                      }`}>
-                        {incident.type}
+                      <span className={`px-2 py-0.5 text-[0.6rem] font-mono uppercase tracking-widest border bg-blood/10 border-blood text-blood`}>
+                        {incident.incident_type.replace('_', ' ')}
                       </span>
-                      <span className="text-text-faint text-[0.7rem] font-mono">ID: #BD-2026-{incident.id.toString().padStart(4, '0')}</span>
+                      <span className="text-text-faint text-[0.7rem] font-mono">ID: {incident.incident_id}</span>
                       
                       <div className="flex gap-2">
-                        {incident.verifiedBy ? (
-                          (incident.verifiedBy as string[]).map((source: string, i: number) => (
-                            <span key={i} className="flex items-center gap-1.5 bg-green/10 border border-green/30 px-2 py-0.5 text-[0.6rem] text-green font-mono uppercase tracking-widest">
-                              <CheckCircle2 size={10} /> {source}
-                            </span>
-                          ))
-                        ) : incident.source_name ? (
-                          <span className="flex items-center gap-1.5 bg-green/10 border border-green/30 px-2 py-0.5 text-[0.6rem] text-green font-mono uppercase tracking-widest">
-                            <CheckCircle2 size={10} /> {incident.source_name}
-                          </span>
-                        ) : null}
+                        <span className="flex items-center gap-1.5 bg-green/10 border border-green/30 px-2 py-0.5 text-[0.6rem] text-green font-mono uppercase tracking-widest">
+                          <CheckCircle2 size={10} /> {incident.source_name || "Verified Source"}
+                        </span>
                       </div>
                     </div>
                     
                     <h3 className="text-lg font-bold text-white group-hover:text-blood transition-colors">
-                      {incident.title || incident.description}
+                      {incident.title}
                     </h3>
 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-[0.75rem] font-mono text-text-dim">
@@ -199,26 +187,31 @@ export default function IncidentDirectory() {
                         <span>{incident.district}, {incident.thana || "N/A"}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Calendar size={14} className="text-blood" />
-                        <span>{incident.created_at ? new Date(incident.created_at).toLocaleDateString() : (incident.date || "N/A")}</span>
+                        <Calendar size={14} className="text-gold" />
+                        <span>{new Date(incident.created_at).toLocaleDateString('bn-BD')}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <User size={14} className="text-blood" />
-                        <span className="truncate">অভিযুক্ত: {incident.accused || "অজ্ঞাত"}</span>
+                        <Clock size={14} className="text-teal" />
+                        <span>{incident.status.replace('_', ' ')}</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <ShieldAlert size={14} className="text-blood" />
-                        <span className={incident.status === 'verdict' ? 'text-green font-bold' : 'text-blood font-bold'}>
-                          {incident.status === 'verdict' ? 'নিষ্পত্তি হয়েছে' : 'তদন্তাধীন'}
-                        </span>
+                      <div className="flex items-center gap-3">
+                        <FileText size={14} className="text-sky" />
+                        <span>Case Document</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4 border-t lg:border-t-0 lg:border-l border-border pt-4 lg:pt-0 lg:pl-8">
-                    <button className="px-6 py-3 bg-bg border border-border text-[0.7rem] font-mono uppercase tracking-widest text-text-dim hover:text-white hover:border-blood transition-all flex items-center gap-2">
-                      <FileText size={14} /> বিস্তারিত দেখুন
-                    </button>
+                  <div className="flex items-center lg:justify-end">
+                    <div className="flex flex-col items-center justify-center p-4 bg-surface2 border border-border group-hover:border-blood transition-all">
+                      <span className="text-[0.6rem] font-mono text-text-faint uppercase mb-1">Status</span>
+                      <span className={`text-[0.7rem] font-bold font-mono uppercase tracking-widest ${
+                        incident.status === 'verdict' ? 'text-green' : 
+                        incident.status === 'under_investigation' ? 'text-sky' : 
+                        'text-blood'
+                      }`}>
+                        {incident.status.replace('_', ' ')}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -227,7 +220,7 @@ export default function IncidentDirectory() {
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="py-20 text-center border border-dashed border-border bg-surface/30"
+              className="py-20 text-center border border-dashed border-border-light bg-surface/30 col-span-full"
             >
               <div className="text-blood mb-4 flex justify-center">
                 <ShieldAlert size={48} />
@@ -238,9 +231,8 @@ export default function IncidentDirectory() {
               </p>
               <button 
                 onClick={() => {
-                  setSelectedType("All");
                   setSelectedDistrict("All");
-                  setSelectedThana("All");
+                  setSelectedType("All");
                   setSelectedEra("All");
                   setSearchTerm("");
                 }}
