@@ -6,6 +6,7 @@ import CrisisGrid from "@/components/CrisisGrid";
 import MapSection from "@/components/MapSection";
 import IncidentDirectory from "@/components/IncidentDirectory";
 import HistoricalArchive from "@/components/HistoricalArchive"; // Historical justice records module
+import JulyUprisingExpose from "@/components/JulyUprisingExpose"; // July 2024 Special Module
 import PublicFigureSearch from "@/components/PublicFigureSearch";
 import LandVerification from "@/components/LandVerification";
 import AutonomousBrainStatus from "@/components/AutonomousBrainStatus";
@@ -34,6 +35,10 @@ export default function Home() {
         </div>
 
         <Stats />
+
+        {/* July 2024 Special Expose - Prominent Positioning */}
+        <JulyUprisingExpose />
+
         <CrisisGrid />
         <DailyCrimeNews />
         <MapSection />

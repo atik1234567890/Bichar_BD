@@ -134,6 +134,76 @@ def seed_historical_archive():
             "source_name": "Al Jazeera",
             "verification_label": "archival_verified",
             "created_at": datetime(2024, 7, 16)
+        },
+        {
+            "incident_id": "HIST-2024-DHAKA-011",
+            "title": "Abu Sayed - Murder in Rangpur (July Uprising)",
+            "description": "The killing of Abu Sayed, a student of Begum Rokeya University, during the July Uprising. The video of him standing with arms open before being shot became a symbol of the movement.",
+            "incident_type": "murder",
+            "era": "Modern",
+            "division": "Rangpur",
+            "district": "Rangpur",
+            "status": "under_investigation",
+            "source_url": "https://www.thedailystar.net/news/bangladesh/news/abu-sayed-murder-ict-issues-arrest-warrant-against-former-sp-3751241",
+            "source_name": "The Daily Star",
+            "verification_label": "archival_verified",
+            "created_at": datetime(2024, 7, 16)
+        },
+        {
+            "incident_id": "HIST-2024-CHITTAGONG-012",
+            "title": "Chittagong Student Massacre (July 2024)",
+            "description": "The violent crackdown on students in Chittagong city during the July uprising, resulting in multiple deaths and hundreds of injuries.",
+            "incident_type": "political_violence",
+            "era": "Modern",
+            "division": "Chittagong",
+            "district": "Chittagong",
+            "status": "under_investigation",
+            "source_url": "https://www.aljazeera.com/news/2024/7/16/deaths-reported-as-bangladesh-students-protest-over-government-jobs",
+            "source_name": "Al Jazeera",
+            "verification_label": "archival_verified",
+            "created_at": datetime(2024, 7, 16)
+        },
+        {
+            "incident_id": "HIST-2023-NAOGAON-009",
+            "title": "Sultana Ahmed - RAB Custody Death in Naogaon",
+            "description": "The controversial death of Sultana Ahmed, a government employee, after being picked up by RAB in Naogaon. Sparked nationwide concern over custodial safety.",
+            "incident_type": "enforced_disappearance",
+            "era": "Modern",
+            "division": "Rajshahi",
+            "district": "Naogaon",
+            "status": "under_investigation",
+            "source_url": "https://www.thedailystar.net/news/bangladesh/news/rab-custody-death-naogaon-court-orders-judicial-probe-3282276",
+            "source_name": "The Daily Star",
+            "verification_label": "archival_verified",
+            "created_at": datetime(2023, 3, 24)
+        },
+        {
+            "incident_id": "HIST-1971-NAOGAON-010",
+            "title": "Paharpur Massacre 1971",
+            "description": "Mass killing of civilians by Pakistani occupation forces near Paharpur during the Liberation War of 1971.",
+            "incident_type": "genocide",
+            "era": "1971_War",
+            "division": "Rajshahi",
+            "district": "Naogaon",
+            "status": "historic_documented",
+            "source_url": "https://banglapedia.org/Naogaon_Sadar_Upazila",
+            "source_name": "Banglapedia",
+            "verification_label": "archival_verified",
+            "created_at": datetime(1971, 4, 15)
+        },
+        {
+            "incident_id": "HIST-2024-NAOGAON-013",
+            "title": "Naogaon Student Protests (July 2024)",
+            "description": "Peaceful student protests in Naogaon city during the July uprising, which were met with resistance from local political groups.",
+            "incident_type": "political_protest",
+            "era": "Modern",
+            "division": "Rajshahi",
+            "district": "Naogaon",
+            "status": "under_investigation",
+            "source_url": "https://www.thedailystar.net/news/bangladesh/news/student-protests-ongoing-naogaon-3660521",
+            "source_name": "The Daily Star",
+            "verification_label": "archival_verified",
+            "created_at": datetime(2024, 7, 18)
         }
     ]
     

@@ -79,7 +79,7 @@ export default function IncidentDirectory() {
           পাবলিক ফিড ও মামলা ট্র্যাকার
         </h2>
         <p className="chapter-sub text-[1rem] text-text-dim font-light italic">
-          {selectedDistrict !== "All" ? `${selectedDistrict} জেলায় মোট ${meta.total}টি মামলা নথিভুক্ত আছে` : `সারাদেশে বর্তমানে ${meta.total}টি মামলার বিস্তারিত রেকর্ড আমাদের সিস্টেমে আছে`}
+          {selectedDistrict !== "All" ? `${selectedDistrict} জেলায় বর্তমানে ${meta.total}টি মামলা নথিভুক্ত আছে` : `সারাদেশে বর্তমানে ${meta.total}টি মামলার বিস্তারিত রেকর্ড আমাদের সিস্টেমে আছে`}
         </p>
       </div>
 
@@ -151,84 +151,106 @@ export default function IncidentDirectory() {
 
       <div className="space-y-4">
         <AnimatePresence mode="popLayout">
-          {filteredIncidents.map((incident) => (
-            <motion.div 
-              key={incident.id}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              layout
-              className="group bg-surface border border-border p-6 hover:border-blood/50 transition-all cursor-pointer"
-              onClick={() => setSelectedIncident(incident)}
-            >
-              <div className="flex flex-col lg:flex-row justify-between gap-6">
-                <div className="flex-1 space-y-4">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <span className={`px-2 py-0.5 text-[0.6rem] font-mono uppercase tracking-widest border ${
-                      incident.severity === 'critical' ? 'bg-blood/10 border-blood text-blood' :
-                      incident.severity === 'high' ? 'bg-gold/10 border-gold text-gold' :
-                      'bg-teal/10 border-teal text-teal'
-                    }`}>
-                      {incident.type}
-                    </span>
-                    <span className="text-text-faint text-[0.7rem] font-mono">ID: #BD-2026-{incident.id.toString().padStart(4, '0')}</span>
-                    
-                    <div className="flex gap-2">
-                      {incident.verifiedBy ? (
-                        (incident.verifiedBy as string[]).map((source: string, i: number) => (
-                          <span key={i} className="flex items-center gap-1.5 bg-green/10 border border-green/30 px-2 py-0.5 text-[0.6rem] text-green font-mono uppercase tracking-widest">
-                            <CheckCircle2 size={10} /> {source}
-                          </span>
-                        ))
-                      ) : incident.source_name ? (
-                        <span className="flex items-center gap-1.5 bg-green/10 border border-green/30 px-2 py-0.5 text-[0.6rem] text-green font-mono uppercase tracking-widest">
-                          <CheckCircle2 size={10} /> {incident.source_name}
-                        </span>
-                      ) : null}
-                    </div>
-                  </div>
-                  
-                  <h3 className="text-lg font-bold text-white group-hover:text-blood transition-colors">
-                    {incident.title || incident.description}
-                  </h3>
-
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-[0.75rem] font-mono text-text-dim">
-                    <div className="flex items-center gap-2">
-                      <MapPin size={14} className="text-blood" />
-                      <span>{incident.district}, {incident.thana || "N/A"}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Calendar size={14} className="text-blood" />
-                      <span>{incident.created_at ? new Date(incident.created_at).toLocaleDateString() : (incident.date || "N/A")}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <User size={14} className="text-blood" />
-                      <span className="truncate">অভিযুক্ত: {incident.accused || "অজ্ঞাত"}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <ShieldAlert size={14} className="text-blood" />
-                      <span className={incident.status === 'verdict' ? 'text-green font-bold' : 'text-blood font-bold'}>
-                        {incident.status === 'verdict' ? 'নিষ্পত্তি হয়েছে' : 'তদন্তাধীন'}
+          {filteredIncidents.length > 0 ? (
+            filteredIncidents.map((incident) => (
+              <motion.div 
+                key={incident.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                layout
+                className="group bg-surface border border-border p-6 hover:border-blood/50 transition-all cursor-pointer"
+                onClick={() => setSelectedIncident(incident)}
+              >
+                <div className="flex flex-col lg:flex-row justify-between gap-6">
+                  <div className="flex-1 space-y-4">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className={`px-2 py-0.5 text-[0.6rem] font-mono uppercase tracking-widest border ${
+                        incident.severity === 'critical' ? 'bg-blood/10 border-blood text-blood' :
+                        incident.severity === 'high' ? 'bg-gold/10 border-gold text-gold' :
+                        'bg-teal/10 border-teal text-teal'
+                      }`}>
+                        {incident.type}
                       </span>
+                      <span className="text-text-faint text-[0.7rem] font-mono">ID: #BD-2026-{incident.id.toString().padStart(4, '0')}</span>
+                      
+                      <div className="flex gap-2">
+                        {incident.verifiedBy ? (
+                          (incident.verifiedBy as string[]).map((source: string, i: number) => (
+                            <span key={i} className="flex items-center gap-1.5 bg-green/10 border border-green/30 px-2 py-0.5 text-[0.6rem] text-green font-mono uppercase tracking-widest">
+                              <CheckCircle2 size={10} /> {source}
+                            </span>
+                          ))
+                        ) : incident.source_name ? (
+                          <span className="flex items-center gap-1.5 bg-green/10 border border-green/30 px-2 py-0.5 text-[0.6rem] text-green font-mono uppercase tracking-widest">
+                            <CheckCircle2 size={10} /> {incident.source_name}
+                          </span>
+                        ) : null}
+                      </div>
+                    </div>
+                    
+                    <h3 className="text-lg font-bold text-white group-hover:text-blood transition-colors">
+                      {incident.title || incident.description}
+                    </h3>
+
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-[0.75rem] font-mono text-text-dim">
+                      <div className="flex items-center gap-2">
+                        <MapPin size={14} className="text-blood" />
+                        <span>{incident.district}, {incident.thana || "N/A"}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Calendar size={14} className="text-blood" />
+                        <span>{incident.created_at ? new Date(incident.created_at).toLocaleDateString() : (incident.date || "N/A")}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <User size={14} className="text-blood" />
+                        <span className="truncate">অভিযুক্ত: {incident.accused || "অজ্ঞাত"}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <ShieldAlert size={14} className="text-blood" />
+                        <span className={incident.status === 'verdict' ? 'text-green font-bold' : 'text-blood font-bold'}>
+                          {incident.status === 'verdict' ? 'নিষ্পত্তি হয়েছে' : 'তদন্তাধীন'}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="flex items-center gap-4 border-t lg:border-t-0 lg:border-l border-border pt-4 lg:pt-0 lg:pl-8">
-                  <button className="px-6 py-3 bg-bg border border-border text-[0.7rem] font-mono uppercase tracking-widest text-text-dim hover:text-white hover:border-blood transition-all flex items-center gap-2">
-                    <FileText size={14} /> বিস্তারিত দেখুন
-                  </button>
+                  <div className="flex items-center gap-4 border-t lg:border-t-0 lg:border-l border-border pt-4 lg:pt-0 lg:pl-8">
+                    <button className="px-6 py-3 bg-bg border border-border text-[0.7rem] font-mono uppercase tracking-widest text-text-dim hover:text-white hover:border-blood transition-all flex items-center gap-2">
+                      <FileText size={14} /> বিস্তারিত দেখুন
+                    </button>
+                  </div>
                 </div>
+              </motion.div>
+            ))
+          ) : (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="py-20 text-center border border-dashed border-border bg-surface/30"
+            >
+              <div className="text-blood mb-4 flex justify-center">
+                <ShieldAlert size={48} />
               </div>
+              <h3 className="text-xl font-bold text-white mb-2">এই ফিল্টারে কোনো রেকর্ড পাওয়া যায়নি</h3>
+              <p className="text-text-dim text-sm max-w-[500px] mx-auto leading-relaxed">
+                আমাদের সিস্টেম ২৪ ঘণ্টা নিউজ স্ক্র্যাপ করে এবং তথ্য সংগ্রহ করে। আপনি যদি এই অঞ্চলে বা বিভাগে কোনো অপরাধের কথা জানেন, তবে নিচে রিপোর্ট করুন।
+              </p>
+              <button 
+                onClick={() => {
+                  setSelectedType("All");
+                  setSelectedDistrict("All");
+                  setSelectedThana("All");
+                  setSelectedEra("All");
+                  setSearchTerm("");
+                }}
+                className="mt-6 px-6 py-2 border border-blood text-blood hover:bg-blood hover:text-white transition-all text-xs font-mono uppercase tracking-widest"
+              >
+                Reset Filters
+              </button>
             </motion.div>
-          ))}
+          )}
         </AnimatePresence>
-
-        {filteredIncidents.length === 0 && (
-          <div className="py-20 text-center bg-surface border border-border border-dashed">
-            <p className="text-text-dim font-mono italic">দুঃখিত, আপনার সার্চের সাথে মিল রয়েছে এমন কোনো মামলা পাওয়া যায়নি।</p>
-          </div>
-        )}
       </div>
 
       {/* Incident Detail Modal */}

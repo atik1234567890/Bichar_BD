@@ -23,7 +23,7 @@ export default function Hero() {
           </span>
           <div className="h-4 w-[1px] bg-border-light hidden md:block" />
           <span className="flex items-center gap-2 text-blood font-bold before:content-[''] before:w-1.5 before:h-1.5 before:bg-blood before:rounded-full before:block animate-pulse">
-            LIVE SYNC ACTIVE
+            24/7 AUTONOMOUS MONITORING
           </span>
         </div>
         
