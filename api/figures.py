@@ -72,7 +72,7 @@ The figure remains a subject of intense public debate. Social media deep-scannin
 
 @figures_bp.route('/search', methods=['GET'])
 def search_figures():
-    query_str = request.args.get('q', '')
+    query_str = request.args.get('q', '').strip()
     lang = request.args.get('lang', 'en')
     if not query_str:
         return jsonify({"success": True, "data": []})
@@ -108,23 +108,29 @@ def search_figures():
             "ai_sources": json.loads(ai_report.sources) if ai_report and ai_report.sources else []
         })
     
-    # 2. If no local figure found, or if user wants a "Deep Search"
-    if not data and len(query_str) > 3:
+    # 2. ALWAYS return an AI-generated profile if query is long enough, 
+    # even if database results exist, to give that "AI Search" feel.
+    # We append it as a "Neural Search Result"
+    if len(query_str) >= 2:
         report_content, sources = generate_ai_report(query_str, lang)
         
-        # Create a temporary entry
-        temp_data = {
-            "id": 0,
-            "name": query_str,
-            "role": "পাবলিক ফিগার / সার্চ রেজাল্ট" if lang == 'bn' else "Public Figure / Search Result",
-            "party": "অযাচাইকৃত" if lang == 'bn' else "Unverified",
-            "status": "under_scanning",
-            "description": "এটি আমাদের AI সার্চ ইঞ্জিন ব্যবহার করে ডাইনামিকালি তৈরি একটি রিপোর্ট।" if lang == 'bn' else "This is a dynamically generated report using our AI search engine.",
-            "ai_report": report_content,
-            "ai_sources": sources,
-            "is_dynamic": True
-        }
-        data.append(temp_data)
+        # Check if this name already exists in database results to avoid obvious duplicates
+        exists_in_db = any(f.name.lower() == query_str.lower() for f in figures)
+        
+        if not exists_in_db:
+            temp_data = {
+                "id": f"dynamic-{datetime.now().timestamp()}",
+                "name": query_str,
+                "role": "পাবলিক ফিগার / ইন্টেলিজেন্স প্রোফাইল" if lang == 'bn' else "Public Figure / Intelligence Profile",
+                "party": "নিউরাল ইঞ্জিনে স্ক্যানিং চলছে" if lang == 'bn' else "Scanning in Neural Engine",
+                "status": "under_scanning",
+                "description": "এটি আমাদের AI সার্চ ইঞ্জিন ব্যবহার করে ডাইনামিকালি তৈরি একটি ইন্টেলিজেন্স রিপোর্ট।" if lang == 'bn' else "This is a dynamically generated intelligence report using our AI search engine.",
+                "ai_report": report_content,
+                "ai_sources": sources,
+                "is_dynamic": True,
+                "incidents_count": "SCANNING"
+            }
+            data.insert(0, temp_data) # Put dynamic result at top
         
     return jsonify({
         "success": True,

@@ -12,7 +12,8 @@ export default function PublicFigureSearch() {
   const [scanningStatus, setScanningStatus] = useState("");
 
   const handleSearch = async () => {
-    if (!searchTerm) return;
+    const term = searchTerm.trim();
+    if (!term || term.length < 2) return;
     setLoading(true);
     setScanningStatus(language === 'bn' ? "নিউরাল ইঞ্জিন চালু হচ্ছে..." : "Initializing Neural Engine...");
     
@@ -25,7 +26,7 @@ export default function PublicFigureSearch() {
       setTimeout(() => setScanningStatus(language === 'bn' ? "পাবলিক রেকর্ড এবং হলফনামা যাচাই করা হচ্ছে..." : "Cross-referencing Public Records & Affidavits..."), 2500);
       setTimeout(() => setScanningStatus(language === 'bn' ? "AI ব্যবহার করে ইন্টেলিজেন্স রিপোর্ট তৈরি করা হচ্ছে..." : "Generating Intelligence Report using AI..."), 4000);
 
-      const response = await fetch(`${API_URL}/api/figures/search?q=${encodeURIComponent(searchTerm)}&lang=${language}`);
+      const response = await fetch(`${API_URL}/api/figures/search?q=${encodeURIComponent(term)}&lang=${language}`);
       const result = await response.json();
       if (result.success) {
         setResults(result.data);
