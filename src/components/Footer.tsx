@@ -88,7 +88,7 @@ export default function Footer() {
             </p>
             <div className="hidden md:block w-4 h-[1px] bg-border" />
             <div className="flex items-center gap-3 text-[0.7rem] font-mono text-text-faint uppercase tracking-widest">
-              {t("developedBy")} <span className="text-white font-bold tracking-normal italic">NeuronAI Labs</span>
+              {t("developedBy")} <span className="text-white font-bold tracking-normal">Md Atikur Rahman</span>
             </div>
           </div>
 

@@ -90,5 +90,84 @@ export const pmProfiles = [
   }
 ];
 
-export const verifiedIncidents: any[] = [];
+export const verifiedIncidents: any[] = [
+  {
+    id: "H001",
+    title: "১৯৭১ স্বাধীনতা যুদ্ধের গণহত্যা ও বিচার",
+    district: "Dhaka",
+    date: "1971-03-25",
+    description: "২৫শে মার্চ কালরাত্রি থেকে শুরু হওয়া গণহত্যা এবং পরবর্তীতে আন্তর্জাতিক অপরাধ ট্রাইব্যুনালের বিচারিক কার্যক্রম।",
+    category: "Genocide",
+    status: "Resolved",
+    evidence: "ICT Records, UN Reports",
+    source: "International Crimes Tribunal"
+  },
+  {
+    id: "H002",
+    title: "১৫ই আগস্ট ১৯৭৫: সপরিবারে বঙ্গবন্ধু হত্যাকাণ্ড",
+    district: "Dhaka",
+    date: "1975-08-15",
+    description: "বাংলাদেশের প্রতিষ্ঠাতা রাষ্ট্রপতি শেখ মুজিবুর রহমানকে সপরিবারে হত্যাকাণ্ডের বিচারিক প্রক্রিয়া এবং উচ্চ আদালতের রায়।",
+    category: "Political Assassination",
+    status: "Resolved",
+    evidence: "Supreme Court Verdict",
+    source: "Ministry of Law"
+  },
+  {
+    id: "H003",
+    title: "৩রা নভেম্বর ১৯৭৫: জেল হত্যা মামলা",
+    district: "Dhaka",
+    date: "1975-11-03",
+    description: "ঢাকা কেন্দ্রীয় কারাগারে জাতীয় চার নেতাকে হত্যার বিচার এবং দীর্ঘ আইনি লড়াই।",
+    category: "Political Assassination",
+    status: "Resolved",
+    evidence: "Court Records",
+    source: "National Archives"
+  },
+  {
+    id: "H004",
+    title: "২০০৪ সালের ২১শে আগস্ট গ্রেনেড হামলা",
+    district: "Dhaka",
+    date: "2004-08-21",
+    description: "আওয়ামী লীগের জনসভায় ভয়াবহ গ্রেনেড হামলা এবং তার বিচারিক কার্যক্রম।",
+    category: "Terrorism",
+    status: "Resolved",
+    evidence: "Special Court Verdict",
+    source: "Police Records"
+  },
+  {
+    id: "H005",
+    title: "বিডিআর বিদ্রোহ ও পিলখানা হত্যাকাণ্ড",
+    district: "Dhaka",
+    date: "2009-02-25",
+    description: "বিডিআর সদর দপ্তরে সেনাসদস্যদের হত্যাকাণ্ডের বিচার এবং কয়েক হাজার অভিযুক্তের বিচারিক প্রক্রিয়া।",
+    category: "Mutiny",
+    status: "Resolved",
+    evidence: "Special Tribunal",
+    source: "BGB Records"
+  },
+  {
+    id: "H006",
+    title: "১৯৭১: চুকনগর গণহত্যা (খুলনা)",
+    district: "Khulna",
+    date: "1971-05-20",
+    description: "মুক্তিযুদ্ধকালীন সময়ে খুলনার চুকনগরে পাকিস্তানি বাহিনীর ভয়াবহ গণহত্যা।",
+    category: "Genocide",
+    status: "Documented",
+    evidence: "Witness Testimony, Historical Records",
+    source: "War Crimes Archive"
+  },
+  {
+    id: "H007",
+    title: "১৯৭১: অপারেশন সার্চলাইট (চট্টগ্রাম)",
+    district: "Chittagong",
+    date: "1971-03-26",
+    description: "চট্টগ্রামে পাকিস্তানি বাহিনীর প্রতিরোধ এবং গণহত্যা শুরুর ইতিহাস।",
+    category: "Genocide",
+    status: "Documented",
+    evidence: "Historical Archive",
+    source: "Bangladesh Liberation War Museum"
+  }
+];
 export const politicianProfiles: any[] = [];
+

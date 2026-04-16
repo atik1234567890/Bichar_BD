@@ -259,6 +259,21 @@ export const translations = {
     historicalArchiveDesc: "বাংলাদেশের ইতিহাসের গুরুত্বপূর্ণ ঘটনার বিচারিক রেকর্ড এবং আর্কাইভ থেকে সংগৃহীত তথ্য",
     noHistoricalData: "এই সময়কালের কোনো তথ্য পাওয়া যায়নি",
     browseFullArchive: "সম্পূর্ণ আর্কাইভ ব্রাউজ করুন →",
+
+    // Hub Categories
+    exploreCategories: "আর্কাইভ এক্সপ্লোর করুন",
+    uprisingArchive: "জুলাই বিপ্লব",
+    politicalArchive: "রাজনৈতিক ইতিহাস",
+    crimeAnalytics: "অপরাধ বিশ্লেষণ",
+    crisisTracker: "সংকট ট্র্যাকার",
+    districtWiseReport: "জেলা ভিত্তিক রিপোর্ট",
+    historicalMilestones: "ঐতিহাসিক মাইলফলক",
+    viewAll: "সব দেখুন",
+    close: "বন্ধ করুন",
+    back: "ফিরে যান",
+    selectDistrict: "জেলা নির্বাচন করুন",
+    reportsSince1971: "১৯৭১ থেকে সকল রিপোর্ট",
+    noDataForDistrict: "এই জেলার জন্য এখনও কোনো তথ্য নথিভুক্ত হয়নি।",
   },
   en: {
     // Navbar / Credit Bar
@@ -267,11 +282,11 @@ export const translations = {
     lincolnUniversity: "Lincoln University College",
 
     // Hero Section
-    archiveRange: "1971 - 2026 ARCHIVE",
-    neuralVerification: "NEURAL VERIFICATION",
-    autonomousMonitoring: "24/7 AUTONOMOUS MONITORING",
-    heroSubtitle1: "History and Present of Injustice —",
-    heroTitle: "Bichar",
+    archiveRange: "1971 - 2026 Archive",
+    neuralVerification: "Neural Verification",
+    autonomousMonitoring: "24/7 Autonomous Monitoring",
+    heroSubtitle1: "History & Reality of Injustice —",
+    heroTitle: "BICHAR",
     heroDescription: "A comprehensive archive of every judicial record, human rights violation, and legal battle in Bangladesh from the 1971 War of Independence to the present day.",
     browseArchive: "Browse Archive",
     submitReport: "Submit Report",
@@ -283,28 +298,28 @@ export const translations = {
 
     // Pipeline
     pipelineKicker: "Reporting Flow",
-    pipelineTitle: "How Your Complaint Works",
-    pipelineSub: "Secure and direct — delivering complaints to the international level without any middlemen.",
+    pipelineTitle: "How your complaint works",
+    pipelineSub: "Secure and direct — delivering complaints to international levels without intermediaries.",
     step01Title: "Anonymous Submission",
-    step01Desc: "Upload complaints or evidence while keeping your identity completely anonymous.",
+    step01Desc: "Upload complaints or evidence keeping your identity completely secret.",
     step02Title: "AI Verification",
-    step02Desc: "Our AI and moderator panel will initially verify the truth of the information.",
+    step02Desc: "Our AI and moderator panel will conduct initial truth verification.",
     step03Title: "International Alert",
-    step03Desc: "Direct alerts will be sent to international organizations (UN, ILO, Buyers) based on the type of complaint.",
+    step03Desc: "Direct alerts sent to international organizations (UN, ILO, Buyers) based on incident type.",
     step04Title: "Public Pressure",
-    step04Desc: "The incident will go live on our dashboard and map so the world and media can be informed.",
+    step04Desc: "The incident goes live on our dashboard and map for the world and media to see.",
 
     // Quote
     quote: '"Injustice anywhere is a threat to justice everywhere."',
 
     // Footer
     struggleForJustice: "Struggle for Justice",
-    footerDesc: "BicharBD collects and verifies every important judicial record and human rights violation in Bangladesh from 1971 to the present day. It is an independent and neutral archive.",
+    footerDesc: "BicharBD collects and verifies every important judicial record and human rights violation in Bangladesh from 1971 to the present. It is an independent and neutral archive.",
     contact: "Contact",
     legalDisclaimer: "Legal Disclaimer",
-    legalDesc: "BicharBD collects all information from verified news sources. All accused individuals are innocent in the eyes of the law until proven guilty by a court. Community reports are clearly marked as Unverified.",
+    legalDesc: "BicharBD collects information from verified news sources. All accused are innocent until proven guilty by a court of law. Community reports are clearly marked as Unverified.",
     copyright: "© 2026 BicharBD — Justice for all in Bangladesh",
-    developedBy: "Developed by",
+    developedBy: "Developed By",
 
     // Case Statuses
     statusUnderTrial: "Under Trial",
@@ -315,77 +330,77 @@ export const translations = {
     // Stats Section
     totalRecords: "Total Documented\nJudicial Records",
     justiceRate: "Average Justice Rate\n(1971–2026)",
-    pendingCases: "Ongoing &\nInvestigation Cases",
+    pendingCases: "Active &\nPending Cases",
     verifiedSource: "100% Verified\nOfficial Sources",
     crimeTypeDistribution: "Crime Type Distribution",
-    enforcedDisappearances: "850+\nEnforced Disappearances (2009–2026)",
-    rapeCaseConviction: "19%\nConviction Rate in Rape Cases",
-    childMarriageRate: "45%\nChild Marriage Rate in Rural Areas",
-    rmgWorkersRights: "3.6 Million\nRMG Workers Deprived of Rights",
+    enforcedDisappearances: "Enforced\nDisappearances (2009–2026)",
+    rapeCaseConviction: "Rape Case\nConviction Rate",
+    childMarriageRate: "Child Marriage Rate\nin Rural Areas",
+    rmgWorkersRights: "3.6 Million\nRMG Workers\nDeprived of Rights",
 
     // Crisis Grid
     crisisKicker: "Urgent Crises",
     crisisTitle: "Current Situation",
     crises: {
       rape: {
-        severityLabel: "Critical · Social Malady",
+        severityLabel: "Critical · Social Disease",
         title: "Rape & Sexual Assault Tracker",
-        context: "A horrific picture of violence against women and children in Bangladesh, used as a tool since the 1971 war crimes.",
-        solution: "Thorough records of every historical and current incident, case tracking, and connection with the International Crimes Tribunal.",
-        features: ["1971 War Crimes Records", "Rape & Gang Rape Case Tracking", "Lawyer Connection for Legal Aid", "Offender Profile Archiving"]
+        context: "A horrific picture of violence against women and children in Bangladesh, used as a weapon since the 1971 war crimes.",
+        solution: "Detailed records of historical and current incidents, case tracking, and connection with international crime tribunals.",
+        features: ["1971 War Crime Records", "Rape & Gang-rape Case Tracking", "Lawyer Connection for Legal Aid", "Criminal Profile Preservation"]
       },
       murder: {
-        severityLabel: "Critical · Life-Threatening Crime",
+        severityLabel: "Critical · Life-Threatening",
         title: "Political Murder & Disappearance Monitor",
-        context: "A digital archive of every political murder and enforced disappearance from independence to the present day.",
-        solution: "Demanding justice by preserving timestamps, individuals involved, and witness statements.",
-        features: ["1975 Tragedy & Subsequent Cases", "Political Murder Tracking", "Autopsy & Forensic Updates", "Alerts to International Agencies"]
+        context: "A digital archive of every political murder and enforced disappearance from independence to today.",
+        solution: "Demanding justice by preserving timelines, involved individuals, and witness testimonies.",
+        features: ["1975 Tragedy & Subsequent Cases", "Political Murder Tracking", "Autopsy & Forensic Updates", "International Organization Alerts"]
       },
       enforced_disappearance: {
-        severityLabel: "Critical · Disappearance & Missing",
+        severityLabel: "Critical · Disappearance",
         title: "Enforced Disappearance Tracker",
         context: "Enforced Disappearance is a well-known tragedy in Bangladesh. Families don't know if their loved ones are alive or dead.",
-        solution: "Disappearances can be reported with last seen location, date, and circumstances. Connected to international human rights databases.",
-        features: ["Anonymous Family Report System", "Reports in UN Working Group Format", "International Human Rights Org Alerts", "Track \"Crossfire\" & Custody Deaths"]
+        solution: "Report disappearances with last seen location, date, and circumstances. Connect with international human rights databases.",
+        features: ["Anonymous family report system", "UN Working Group format reports", "International HR org alerts", "Track \"Crossfire\" & custody deaths"]
       },
       land_grab: {
         severityLabel: "High · Land Crisis",
-        title: "Land Grabbing & Document Forgery Tracker",
-        context: "\"Occupation\" is an epidemic in Bangladesh. Politically influential people grab land from the poor and forge documents.",
-        solution: "AI checks authenticity of uploaded land documents. Cross-reference with land registry. Grabbing incidents shown on map.",
-        features: ["Land Document AI Verification", "Registry Cross-Reference", "Grab Hotspot Heatmap", "Automatic Legal Aid Referral"]
+        title: "Land Grab & Document Forgery Tracker",
+        context: "Land grabbing is an epidemic in Bangladesh. Influential people grab poor people's land using forged documents.",
+        solution: "AI authenticity check for land documents. Cross-reference with land registry. Heatmap of grabs on the map.",
+        features: ["Land document AI verification", "Registry cross-reference", "Grab hotspot heatmap", "Automatic legal aid referral"]
       },
       labor_violation: {
         severityLabel: "High · Labor Rights",
         title: "RMG Worker Rights Violation Monitor",
-        context: "Wage theft, physical abuse, and unsafe working environments for 3.6 million RMG workers in Bangladesh — no one speaks up.",
-        solution: "Factory-wise complaint system. Anonymous reports. International brand alerts (H&M, Zara). Connected with BGMEA and international labor monitors.",
-        features: ["Factory Name & Location Tracking", "International Brand Alerts (H&M, Zara)", "Worker Rights Violation Score", "BGMEA & ILO Report Integration"]
+        context: "Wage theft, physical abuse, and unsafe environments for 3.6 million RMG workers — often ignored.",
+        solution: "Factory-wise complaint system. Anonymous reporting. International brand alerts (H&M, Zara). Connected with ILO monitors.",
+        features: ["Factory name & location tracking", "International brand alerts", "Worker rights violation score", "BGMEA & ILO report integration"]
       }
     },
 
     // Daily News
     liveUpdate: "Live Update",
-    dailyNewsTitle: "Today's Important Crime News",
-    dailyNewsSub: "Collected from verified news sources nationwide — auto-updates every 30 minutes.",
-    newsFound: "Important news items found",
-    lastUpdated: "Last updated: ",
+    dailyNewsTitle: "Today's Critical Crime News",
+    dailyNewsSub: "Collected from verified sources across the country — auto-updates every 30 minutes.",
+    newsFound: "critical news found",
+    lastUpdated: "Last Updated: ",
     secondsAgo: " seconds ago",
     minutesAgo: " minutes ago",
     justNow: "Just now",
     updatingNews: "Updating news...",
     readMore: "Read More",
-    noNews: "No important news found for today yet.",
+    noNews: "No critical news found today yet.",
 
     // Live Ticker
     liveUpdates: "Live Updates",
-    systemMonitoring: "System Status: Monitoring 24/7",
+    systemMonitoring: "System Status: 24/7 Monitoring",
     fallbackNews: [
-      "HISTORIC: New archive records of 1971 war crimes verified.",
-      "UPDATE: 15th August 1975 judicial documents saved in digital format.",
-      "LIVE: Protests ongoing in Savar for garment workers' unpaid wages.",
-      "VERIFIED: Our AI system identified 5 fake documents in Patiya region.",
-      "BREAKING: BicharBD submitted new human rights violation evidence to the International Court."
+      "Historical: New 1971 war crime archive records verified.",
+      "Update: August 15, 1975 judicial documents preserved in digital format.",
+      "Live: Protests ongoing in Savar by garment workers for unpaid wages.",
+      "Verified: Our AI identified 5 fake documents in Patiya region.",
+      "Breaking: BicharBD submitted new evidence of HR violations to international court."
     ],
 
     // System Status
@@ -399,9 +414,9 @@ export const translations = {
 
     // High Profile Cases
     highProfileKicker: "High-Profile Cases",
-    highProfileTitle: "Important & Sensitive Cases",
-    highProfileSub: "These cases are collected from verified news sources. Each case includes a link to the news source and judicial documents.",
-    noHighProfile: "No high-profile cases currently documented",
+    highProfileTitle: "Critical & Sensitive Cases",
+    highProfileSub: "These cases are collected from verified news sources. Each case includes source links and judicial document references.",
+    noHighProfile: "No high-profile cases documented currently",
     source: "Source",
 
     // Analytics
@@ -414,7 +429,7 @@ export const translations = {
     active: "Active",
     verdictGiven: "Verdict Given",
     underInvestigation: "Under Investigation",
-    casesPerMonth: "Cases per Month",
+    casesPerMonth: "Cases Per Month",
     breaking: "Breaking",
     pressureScore: "Pressure Score",
     low: "Low",
@@ -458,7 +473,7 @@ export const translations = {
     // July Uprising
     julySpecialInvestigation: "July 2024 Special Investigation",
     julyGenocideTitle: "July Genocide: ",
-    julyGenocideSubtitle: "Bangladesh on the path to Justice",
+    julyGenocideSubtitle: "Bangladesh on the path to justice",
     julyUprisingDesc: "A special module for preserving judicial progress and evidence of every killing during the student-led uprising in July-August 2024.",
     totalCasualties: "Total Casualties",
     killedPrimary: "Killed (Primary Data)",
@@ -517,8 +532,23 @@ export const translations = {
     // Historical Archive
     historicalArchiveKicker: "Historical Archive",
     historicalArchiveTitle: "1971 to Present: The Path to Justice",
-    historicalArchiveDesc: "Judicial records and archived info of significant historical events in Bangladesh",
-    noHistoricalData: "No information found for this era",
+    historicalArchiveDesc: "Judicial records and information collected from archives of important events in the history of Bangladesh",
+    noHistoricalData: "No data found for this period",
     browseFullArchive: "Browse Full Archive →",
+
+    // Hub Categories
+    exploreCategories: "Explore Archive",
+    uprisingArchive: "July Revolution",
+    politicalArchive: "Political History",
+    crimeAnalytics: "Crime Analytics",
+    crisisTracker: "Crisis Tracker",
+    districtWiseReport: "District Wise Report",
+    historicalMilestones: "Historical Milestones",
+    viewAll: "View All",
+    close: "Close",
+    back: "Back",
+    selectDistrict: "Select District",
+    reportsSince1971: "All reports since 1971",
+    noDataForDistrict: "No data documented for this district yet.",
   }
 };
