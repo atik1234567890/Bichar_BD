@@ -1,113 +1,79 @@
+import pytz
 from flask import Blueprint, jsonify
 from database.models import db, Incident, DistrictStats
-from datetime import datetime
 from sqlalchemy import func
+from datetime import datetime, timedelta
 
 stats_bp = Blueprint('stats', __name__)
 
-@stats_bp.route('/detailed', methods=['GET'])
-def detailed_stats():
-    # Group by incident_type and status
-    results = db.session.query(
-        Incident.incident_type, 
-        Incident.status, 
-        func.count(Incident.id)
-    ).group_by(Incident.incident_type, Incident.status).all()
-    
-    # Process into a structured format
-    stats_map = {}
-    for crime_type, status, count in results:
-        if crime_type not in stats_map:
-            stats_map[crime_type] = {"total": 0, "resolved": 0, "pending": 0}
-        
-        stats_map[crime_type]["total"] += count
-        if status == 'verdict':
-            stats_map[crime_type]["resolved"] += count
-        else:
-            stats_map[crime_type]["pending"] += count
-            
-    return jsonify({
-        "success": True,
-        "data": stats_map,
-        "timestamp": datetime.utcnow().isoformat()
-    })
-
 @stats_bp.route('/summary', methods=['GET'])
-def summary():
+def get_summary():
     total = Incident.query.count()
-    # All statuses except 'verdict' are considered pending or in progress
-    pending = Incident.query.filter(Incident.status != 'verdict').count()
     resolved = Incident.query.filter_by(status='verdict').count()
-    today_count = Incident.query.filter(Incident.created_at >= datetime.utcnow().date()).count()
-    stalled_count = Incident.query.filter_by(status='stalled').count()
-    forgotten_count = Incident.query.filter_by(status='forgotten').count()
+    pending = Incident.query.filter(Incident.status != 'verdict').count()
+    investigation = Incident.query.filter_by(status='investigation').count()
     
     return jsonify({
         "success": True,
         "data": {
             "total": total,
-            "pending": pending,
             "resolved": resolved,
-            "today_count": today_count,
-            "stalled_count": stalled_count,
-            "forgotten_count": forgotten_count
-        },
-        "timestamp": datetime.utcnow().isoformat()
+            "pending": pending,
+            "investigation": investigation
+        }
     })
 
-@stats_bp.route('/divisions', methods=['GET'])
-def divisions():
-    # Dynamic generation of division stats based on Incident table
-    # Group by district and calculate counts
-    stats_query = db.session.query(
-        Incident.district,
-        func.count(Incident.id).label('total'),
-        func.count(func.nullif(Incident.status != 'verdict', False)).label('pending'),
-        func.count(func.nullif(Incident.status == 'verdict', False)).label('resolved')
-    ).group_by(Incident.district).all()
-    
-    # Map results to a dictionary for easy access
-    stats_map = {row.district: row for row in stats_query}
-    
-    # Get all districts from DistrictStats to ensure we return a complete list
-    all_districts = DistrictStats.query.all()
-    
+@stats_bp.route('/districts', methods=['GET'])
+def get_district_stats():
+    stats = DistrictStats.query.all()
     data = []
-    for s in all_districts:
-        row = stats_map.get(s.district)
-        total = row.total if row else 0
-        pending = row.pending if row else 0
-        resolved = row.resolved if row else 0
-        
-        # Use stored density score or calculate dynamically
-        crime_density = s.density_score or min(100, (total * 10))
-        justice_score = (resolved / total * 100) if total > 0 else 0
-        
+    for s in stats:
         data.append({
-            "division": s.district, # Frontend expects 'division' but it's district name
-            "total_cases": total,
-            "pending_cases": pending,
-            "resolved_cases": resolved,
-            "crime_density_score": round(float(crime_density), 1),
-            "justice_score": round(justice_score, 1),
-            "last_updated": s.last_updated.isoformat() if s.last_updated else datetime.utcnow().isoformat()
+            "district": s.district,
+            "total": s.total_cases,
+            "pending": s.pending_cases,
+            "resolved": s.resolved_cases,
+            "density": s.density_score
         })
-        
-    # Sort by total cases desc
-    data.sort(key=lambda x: x['total_cases'], reverse=True)
-    
-    return jsonify({
-        "success": True,
-        "data": data,
-        "timestamp": datetime.utcnow().isoformat()
-    })
+    return jsonify({"success": True, "data": data})
 
-@stats_bp.route('/types', methods=['GET'])
-def types():
-    counts = db.session.query(Incident.incident_type, func.count(Incident.id)).group_by(Incident.incident_type).all()
-    data = {t: count for t, count in counts}
+@stats_bp.route('/analytics', methods=['GET'])
+def get_analytics():
+    # 1. Timeline (Last 12 months)
+    now = datetime.utcnow()
+    timeline = []
+    for i in range(11, -1, -1):
+        month_date = now - timedelta(days=i*30)
+        month_start = datetime(month_date.year, month_date.month, 1)
+        next_month = month_start + timedelta(days=32)
+        month_end = datetime(next_month.year, next_month.month, 1)
+        
+        count = Incident.query.filter(Incident.created_at >= month_start, Incident.created_at < month_end).count()
+        timeline.append({
+            "month": month_start.strftime("%b"),
+            "count": count
+        })
+
+    # 2. Trending (Last 24h)
+    yesterday = now - timedelta(hours=24)
+    trending = Incident.query.filter(Incident.created_at >= yesterday).order_by(Incident.created_at.desc()).limit(5).all()
+    trending_data = [{
+        "id": t.incident_id,
+        "title": t.title,
+        "district": t.district,
+        "type": t.incident_type
+    } for t in trending]
+
+    # 3. Pressure Score
+    # Simplified calculation: (avg pending days / 30) * 50 + (scraped sources count / 10) * 50
+    avg_pending = db.session.query(func.avg(Incident.days_pending)).scalar() or 0
+    pressure_score = min(100, int((avg_pending / 60) * 100))
+
     return jsonify({
         "success": True,
-        "data": data,
-        "timestamp": datetime.utcnow().isoformat()
+        "data": {
+            "timeline": timeline,
+            "trending": trending_data,
+            "pressure_score": pressure_score
+        }
     })

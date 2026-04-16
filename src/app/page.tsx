@@ -15,6 +15,10 @@ import SystemStatus from "@/components/SystemStatus";
 import DailyCrimeNews from "@/components/DailyCrimeNews";
 import HighProfileCases from "@/components/HighProfileCases";
 import Footer from "@/components/Footer";
+import LiveCaseCounters from "@/components/LiveCaseCounters";
+import DistrictHeatmap from "@/components/DistrictHeatmap";
+import CasePressureMeter from "@/components/CasePressureMeter";
+import AnalyticsCharts from "@/components/AnalyticsCharts";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function Home() {
@@ -38,6 +42,19 @@ export default function Home() {
             {t("chapter01Sub")}
           </p>
         </div>
+
+        <LiveCaseCounters />
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-24">
+          <div className="lg:col-span-2">
+            <DistrictHeatmap />
+          </div>
+          <div>
+            <CasePressureMeter />
+          </div>
+        </div>
+
+        <AnalyticsCharts />
 
         <Stats />
 

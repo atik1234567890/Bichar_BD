@@ -155,6 +155,19 @@ def scrape_all_sources():
     # Emit events for each new article
     for article in new_articles_for_emit:
         socketio.emit('new_article', article)
+    
+    # Emit summary update for analytics
+    total = Incident.query.count()
+    resolved = Incident.query.filter_by(status='verdict').count()
+    pending = Incident.query.filter(Incident.status != 'verdict').count()
+    investigation = Incident.query.filter_by(status='investigation').count()
+    
+    socketio.emit('summary_update', {
+        "total": total,
+        "resolved": resolved,
+        "pending": pending,
+        "investigation": investigation
+    })
 
     # Neural status logging
     status_msg = f"Neural Engine: Scanning {len(RSS_SOURCES)} sources. {total_new} new nodes integrated."

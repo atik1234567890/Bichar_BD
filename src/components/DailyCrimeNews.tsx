@@ -138,51 +138,66 @@ export default function DailyCrimeNews() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {news.length > 0 ? news.map((item) => (
-          <div key={item.id || item.title} className="news-card bg-surface border border-border p-6 flex flex-col h-full hover:border-blood/50 transition-all group">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-[0.6rem] font-mono text-blood uppercase bg-blood/10 px-2 py-0.5 border border-blood/20">
-                {item.incident_type?.replace('_', ' ') || "ALERT"}
-              </span>
-              <div className="flex items-center gap-2 text-[0.6rem] font-mono text-text-faint">
-                <Clock size={12} />
-                {formatTime(item.created_at)}
+        {news.length > 0 ? news.map((item) => {
+          // Check for "Breaking" (within last 30 minutes)
+          const isBreaking = (dateStr: string) => {
+            if (!dateStr) return false;
+            const date = new Date(dateStr);
+            const diffInMins = Math.floor((new Date().getTime() - date.getTime()) / 60000);
+            return diffInMins <= 30;
+          };
+
+          return (
+            <div key={item.id || item.title} className="news-card bg-surface border border-border p-6 flex flex-col h-full hover:border-blood/50 transition-all group relative overflow-hidden">
+              {isBreaking(item.created_at) && (
+                <div className="absolute top-0 right-0 z-10 bg-blood text-white font-mono text-[0.55rem] font-bold uppercase px-3 py-1 animate-pulse shadow-lg border-b border-l border-white/20">
+                  {t("breaking")}
+                </div>
+              )}
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-[0.6rem] font-mono text-blood uppercase bg-blood/10 px-2 py-0.5 border border-blood/20">
+                  {item.incident_type?.replace('_', ' ') || "ALERT"}
+                </span>
+                <div className="flex items-center gap-2 text-[0.6rem] font-mono text-text-faint">
+                  <Clock size={12} />
+                  {formatTime(item.created_at)}
+                </div>
+              </div>
+              
+              <h3 className="text-white font-bold text-lg mb-3 leading-tight group-hover:text-blood transition-colors h-[3.5em] overflow-hidden">
+                {translateText(item.title)}
+              </h3>
+              
+              <p className="text-text-dim text-sm leading-relaxed mb-6 line-clamp-3">
+                {translateText(item.description)}
+              </p>
+              
+              <div className="mt-auto">
+                <div className="flex items-center gap-4 mb-4 text-[0.65rem] text-text-faint font-mono border-b border-border pb-3">
+                  <span className="flex items-center gap-1"><MapPin size={12} className="text-blood" /> {item.district}</span>
+                  <span className="flex items-center gap-1"><Globe size={12} className="text-teal" /> {item.source_name}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[0.6rem] text-text-faint italic">{item.created_at ? formatDate(item.created_at) : t("justNow")}</span>
+                  {item.source_url ? (
+                    <a 
+                      href={item.source_url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-blood hover:text-white transition-colors text-[0.7rem] font-bold uppercase tracking-widest flex items-center gap-1 bg-blood/5 px-3 py-1.5 border border-blood/20 rounded-sm"
+                    >
+                      {t("readMore")} <ExternalLink size={12} />
+                    </a>
+                  ) : (
+                    <span className="text-blood font-mono text-[0.6rem] uppercase tracking-widest flex items-center gap-1">
+                      <Zap size={10} className="fill-blood" /> {t("liveUpdate")}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
-            
-            <h3 className="text-white font-bold text-lg mb-3 leading-tight group-hover:text-blood transition-colors h-[3.5em] overflow-hidden">
-              {translateText(item.title)}
-            </h3>
-            
-            <p className="text-text-dim text-sm leading-relaxed mb-6 line-clamp-3">
-              {translateText(item.description)}
-            </p>
-            
-            <div className="mt-auto">
-              <div className="flex items-center gap-4 mb-4 text-[0.65rem] text-text-faint font-mono border-b border-border pb-3">
-                <span className="flex items-center gap-1"><MapPin size={12} className="text-blood" /> {item.district}</span>
-                <span className="flex items-center gap-1"><Globe size={12} className="text-teal" /> {item.source_name}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[0.6rem] text-text-faint italic">{item.created_at ? formatDate(item.created_at) : t("justNow")}</span>
-                {item.source_url ? (
-                  <a 
-                    href={item.source_url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-blood hover:text-white transition-colors text-[0.7rem] font-bold uppercase tracking-widest flex items-center gap-1 bg-blood/5 px-3 py-1.5 border border-blood/20 rounded-sm"
-                  >
-                    {t("readMore")} <ExternalLink size={12} />
-                  </a>
-                ) : (
-                  <span className="text-blood font-mono text-[0.6rem] uppercase tracking-widest flex items-center gap-1">
-                    <Zap size={10} className="fill-blood" /> {t("liveUpdate")}
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-        )) : (
+          );
+        }) : (
           <div className="col-span-full py-20 text-center border border-dashed border-border bg-bg/30">
             <Newspaper size={48} className="mx-auto text-text-faint opacity-20 mb-4" />
             <p className="text-text-dim font-mono text-sm uppercase tracking-widest">{t("noNews")}</p>
