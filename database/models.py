@@ -91,4 +91,18 @@ class PublicFigure(db.Model):
     property_details = db.Column(db.Text)
     case_history = db.Column(db.Text)
     permanent_address = db.Column(db.String(500))
+    current_location = db.Column(db.String(500))
+    image_url = db.Column(db.String(500))
+    description = db.Column(db.Text)
+    assets_total = db.Column(db.String(200))
+    property_details = db.Column(db.Text) # JSON list
+    case_history = db.Column(db.Text) # JSON list
     last_updated = db.Column(db.DateTime, default=datetime.utcnow)
+
+class FigureReport(db.Model):
+    __tablename__ = 'figure_reports'
+    id = db.Column(db.Integer, primary_key=True)
+    figure_id = db.Column(db.Integer, db.ForeignKey('public_figures.id'))
+    report_content = db.Column(db.Text)
+    sources = db.Column(db.Text) # JSON list of URLs
+    generated_at = db.Column(db.DateTime, default=datetime.utcnow)
