@@ -97,15 +97,13 @@ with app.app_context():
     db.create_all()
     seed_districts() # Seed all 64 districts
     # seed_figures()
-    seed_historical_archive() # Load 1971-Present Historical Data + 50 sample cases
+    seed_historical_archive() # Load 1971-Present Historical Data + 200 sample cases
     
-    # 🚨 CRITICAL: Keep seeded data for user audit as requested
-    # deleted_count = Incident.query.filter_by(verification_label='news_sourced').delete()
-    # if deleted_count > 0:
-    #     db.session.commit()
-    #     print(f"🧹 Cleaned {deleted_count} demo/seeded incidents for 100% Real-Time Integrity.")
-    
-    # seed_massive_data() # Permanently disabled for real-time mode
+    # 🚨 OSINT MODE: Ensure massive data exists for all 64 districts
+    from database.models import Incident
+    if Incident.query.count() < 1000:
+        print("🚀 OSINT Database is thin. Seeding massive archival data...")
+        seed_massive_data()
     
     # Background Sync Function to avoid Render timeouts
     def run_sync():

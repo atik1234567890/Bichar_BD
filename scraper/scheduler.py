@@ -18,8 +18,11 @@ def update_pending_days():
     status_changed = []
     for inc in incidents:
         old_status = inc.status
-        # Convert incident date to BD time if it's naive
-        inc_date = inc.incident_date
+        # Convert incident date to BD time if it's naive, fallback to created_at
+        inc_date = inc.incident_date or inc.created_at
+        if inc_date is None:
+            continue
+            
         if inc_date.tzinfo is None:
             inc_date = pytz.utc.localize(inc_date).astimezone(bd_tz)
         
