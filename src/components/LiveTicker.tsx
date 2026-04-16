@@ -5,17 +5,17 @@ import { AlertCircle, Zap } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { translations } from "@/translations";
 
+import { getApiUrl, safeFetch } from "@/lib/api";
+
 export default function LiveTicker() {
   const { t, language } = useLanguage();
   const [index, setIndex] = useState(0);
   const [newsItems, setNewsItems] = useState<string[]>(translations[language].fallbackNews);
 
   useEffect(() => {
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
     async function fetchFeed() {
         try {
-          const response = await fetch(`${API_URL}/api/feed/live`);
-          const result = await response.json();
+          const result = await safeFetch("/api/feed/live");
           if (result.success && result.data.length > 0) {
             const formattedItems = result.data.map((item: any) => {
                 const districtStr = item.district && item.district !== "National" ? ` in ${item.district}` : "";
@@ -24,7 +24,7 @@ export default function LiveTicker() {
             setNewsItems(formattedItems);
           }
         } catch (error) {
-          console.error("Error fetching feed:", error);
+          // safeFetch already logs to console.error
         }
       }
      

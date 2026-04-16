@@ -39,7 +39,7 @@ function initReportForm() {
                 alert(`Error: ${result.error || 'Submission failed'}`);
             }
         } catch (error) {
-            console.error('Submission error:', error);
+            // console.error('Submission error:', error);
             alert('A network error occurred. Please try again.');
         } finally {
             submitBtn.disabled = false;

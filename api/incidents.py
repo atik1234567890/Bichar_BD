@@ -65,7 +65,8 @@ def list_incidents():
     if search:
         query = query.filter(
             (Incident.title.ilike(f'%{search}%')) | 
-            (Incident.description.ilike(f'%{search}%'))
+            (Incident.description.ilike(f'%{search}%')) |
+            (Incident.district.ilike(f'%{search}%'))
         )
     
     pagination = query.order_by(Incident.created_at.desc()).paginate(page=page, per_page=limit)

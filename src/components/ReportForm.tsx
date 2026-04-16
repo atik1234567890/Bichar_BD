@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { X, Send, ShieldCheck, Upload } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import { safeFetch } from "@/lib/api";
 
 export default function ReportForm({ crisisId, onClose }: { crisisId: string, onClose: () => void }) {
   const { t } = useLanguage();
@@ -20,9 +21,6 @@ export default function ReportForm({ crisisId, onClose }: { crisisId: string, on
     e.preventDefault();
     setIsSubmitting(true);
     
-    let API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-    if (API_URL.endsWith("/")) API_URL = API_URL.slice(0, -1);
-    
     const submitData = new FormData();
     submitData.append("incident_type", crisisId);
     submitData.append("description", formData.description);
@@ -32,11 +30,10 @@ export default function ReportForm({ crisisId, onClose }: { crisisId: string, on
     if (file) submitData.append("evidence_file", file);
 
     try {
-      const response = await fetch(`${API_URL}/api/report/submit`, {
+      const result = await safeFetch("/api/report/submit", {
         method: "POST",
         body: submitData,
       });
-      const result = await response.json();
       if (result.success) {
         alert(t("successMessage") + result.token);
         onClose();
@@ -44,7 +41,7 @@ export default function ReportForm({ crisisId, onClose }: { crisisId: string, on
         alert(t("errorMessage") + result.message);
       }
     } catch (error) {
-      console.error("Submission error:", error);
+      // Handled in safeFetch
       alert(t("serverError"));
     } finally {
       setIsSubmitting(false);

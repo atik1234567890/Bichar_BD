@@ -16,6 +16,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { useSocket } from "@/context/SocketContext";
 import { TrendingUp, Clock, AlertCircle } from "lucide-react";
 import { ChartSkeleton, Skeleton } from "./Skeletons";
+import { safeFetch } from "@/lib/api";
 
 export default function AnalyticsCharts() {
   const { t, formatNumber, language } = useLanguage();
@@ -25,16 +26,14 @@ export default function AnalyticsCharts() {
   const [loading, setLoading] = useState(true);
 
   const fetchAnalytics = async () => {
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
     try {
-      const response = await fetch(`${API_URL}/api/stats/analytics`);
-      const result = await response.json();
+      const result = await safeFetch("/api/stats/analytics");
       if (result.success) {
         setTimeline(result.data.timeline);
         setTrending(result.data.trending);
       }
     } catch (error) {
-      console.error("Error fetching charts data:", error);
+      // Handled in safeFetch
     } finally {
       setLoading(false);
     }

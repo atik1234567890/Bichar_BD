@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Search, Filter, ShieldAlert, MapPin, Calendar, User, X, CheckCircle2, FileText, Clock, ExternalLink } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { districtsAndUpazillas, allDistricts, verifiedIncidents as fallbackIncidents } from "@/lib/data";
+import { safeFetch } from "@/lib/api";
 
 export default function IncidentDirectory() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -18,23 +19,19 @@ export default function IncidentDirectory() {
   const [meta, setMeta] = useState<any>({ total: 0 });
 
   useEffect(() => {
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
     async function fetchIncidents() {
       setLoading(true);
       try {
-        const url = new URL(`${API_URL}/api/incidents`);
-        url.searchParams.append("limit", "100"); // Fetch more for better directory experience
-        if (selectedDistrict !== "All") url.searchParams.append("district", selectedDistrict);
-        if (selectedThana !== "All") url.searchParams.append("thana", selectedThana);
-        if (selectedType !== "All") url.searchParams.append("type", selectedType);
-        if (selectedEra !== "All") url.searchParams.append("era", selectedEra);
-        if (searchTerm) url.searchParams.append("search", searchTerm);
+        let url = "/api/incidents?limit=100";
+        if (selectedDistrict !== "All") url += `&district=${encodeURIComponent(selectedDistrict)}`;
+        if (selectedThana !== "All") url += `&thana=${encodeURIComponent(selectedThana)}`;
+        if (selectedType !== "All") url += `&type=${encodeURIComponent(selectedType)}`;
+        if (selectedEra !== "All") url += `&era=${encodeURIComponent(selectedEra)}`;
+        if (searchTerm) url += `&search=${encodeURIComponent(searchTerm)}`;
         
-        const response = await fetch(url.toString());
-        const result = await response.json();
+        const result = await safeFetch(url);
         
         if (result.success) {
-          // Sort incidents: prioritize historical/high profile
           const sortedData = result.data.sort((a: any, b: any) => {
             if (a.status === 'high_profile') return -1;
             return 0;
@@ -43,7 +40,7 @@ export default function IncidentDirectory() {
           setMeta(result.meta);
         }
       } catch (error) {
-        console.error("Error fetching incidents:", error);
+        // Handled in safeFetch
       } finally {
         setLoading(false);
       }

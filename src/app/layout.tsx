@@ -1,15 +1,19 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { SocketProvider } from "@/context/SocketContext";
 import PageTransition from "@/components/PageTransition";
 import { Toaster } from "react-hot-toast";
 
+export const viewport: Viewport = {
+  themeColor: "#8b1a1a",
+};
+
 export const metadata: Metadata = {
+  metadataBase: new URL("https://bichar-bd-bm56.vercel.app/"),
   title: "BicharBD — বাংলাদেশের বিচারিক রেকর্ড ও ঐতিহাসিক আর্কাইভ (১৯৭১–২০২৬)",
   description: "১৯৭১ সালের স্বাধীনতা যুদ্ধ থেকে বর্তমান সময় পর্যন্ত বাংলাদেশের প্রতিটি বিচারিক রেকর্ড, মানবাধিকার লঙ্ঘন এবং আইনি লড়াইয়ের পূর্ণাঙ্গ আর্কাইভ।",
   manifest: "/manifest.json",
-  themeColor: "#8b1a1a",
   openGraph: {
     title: "BicharBD — Justice Archive",
     description: "Digital archive of judicial records and human rights in Bangladesh (1971-2026).",

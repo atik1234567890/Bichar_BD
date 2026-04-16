@@ -9,6 +9,7 @@ import {
 } from "react-simple-maps";
 import { scaleQuantile } from "d3-scale";
 import { useLanguage } from "@/context/LanguageContext";
+import { safeFetch } from "@/lib/api";
 
 // Simplified Bangladesh District GeoJSON URL
 const GEO_URL = "https://raw.githubusercontent.com/mahmud-p-r/bangladesh-geojson/master/bd-districts.json";
@@ -25,15 +26,13 @@ export default function DistrictHeatmap() {
 
   useEffect(() => {
     async function fetchData() {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
       try {
-        const response = await fetch(`${API_URL}/api/stats/districts`);
-        const result = await response.json();
+        const result = await safeFetch("/api/stats/districts");
         if (result.success) {
           setData(result.data);
         }
       } catch (error) {
-        console.error("Error fetching district stats:", error);
+        // Handled in safeFetch
       }
     }
     fetchData();

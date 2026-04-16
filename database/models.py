@@ -25,7 +25,7 @@ class Incident(db.Model):
     url_hash        = db.Column(db.String(64), unique=True)
     is_verified     = db.Column(db.Boolean, default=False)
     is_community    = db.Column(db.Boolean, default=False)
-    verify_label    = db.Column(db.String(30), default='news_sourced') # ai_verified, news_sourced, community_report, disputed, archival_verified
+    verification_label = db.Column(db.String(30), default='news_sourced') # ai_verified, news_sourced, community_report, disputed, archival_verified
     evidence_hash   = db.Column(db.String(200))
     created_at      = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at      = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

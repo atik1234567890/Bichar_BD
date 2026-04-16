@@ -15,25 +15,27 @@ const SocketContext = createContext<SocketContextType>({
   isConnected: false,
 });
 
+import { getApiUrl } from "@/lib/api";
+
 export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const { language } = useLanguage();
 
   useEffect(() => {
-    const socketUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    const socketUrl = getApiUrl();
     const socketInstance = io(socketUrl, {
       transports: ["websocket"],
       reconnectionAttempts: 5,
     });
 
     socketInstance.on("connect", () => {
-      console.log("Connected to SocketIO server");
+      // console.log("Connected to SocketIO server");
       setIsConnected(true);
     });
 
     socketInstance.on("disconnect", () => {
-      console.log("Disconnected from SocketIO server");
+      // console.log("Disconnected from SocketIO server");
       setIsConnected(false);
     });
 

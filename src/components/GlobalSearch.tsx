@@ -5,50 +5,40 @@ import { Search, X, Share2, Copy, Check } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import Fuse from "fuse.js";
 import toast from "react-hot-toast";
+import { safeFetch } from "@/lib/api";
 
 export default function GlobalSearch() {
   const { t, language } = useLanguage();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<any[]>([]);
   const [isFocused, setIsFocused] = useState(false);
-  const [allItems, setAllItems] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
-    async function fetchAll() {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    async function performSearch() {
+      if (query.length < 2) {
+        setResults([]);
+        return;
+      }
+      
+      setIsSearching(true);
       try {
-        const [newsRes, incidentsRes] = await Promise.all([
-          fetch(`${API_URL}/api/incidents/daily`),
-          fetch(`${API_URL}/api/incidents?limit=100`)
-        ]);
-        const news = await newsRes.json();
-        const incidents = await incidentsRes.json();
-        
-        const combined = [
-          ...(news.success ? news.data.map((i: any) => ({ ...i, type: 'news' })) : []),
-          ...(incidents.success ? incidents.data.map((i: any) => ({ ...i, type: 'incident' })) : [])
-        ];
-        setAllItems(combined);
+        const result = await safeFetch(`/api/incidents?search=${encodeURIComponent(query)}&limit=10`);
+        if (result.success) {
+          setResults(result.data.map((i: any) => ({ ...i, type: 'incident' })));
+        }
       } catch (e) {
-        console.error("Search fetch error", e);
+        // Handled in safeFetch
+      } finally {
+        setIsSearching(false);
       }
     }
-    fetchAll();
-  }, []);
 
-  const fuse = new Fuse(allItems, {
-    keys: ["title", "description", "district", "incident_type"],
-    threshold: 0.4,
-    distance: 100
-  });
+    const timer = setTimeout(() => {
+      performSearch();
+    }, 300);
 
-  useEffect(() => {
-    if (query.length > 1) {
-      const searchResults = fuse.search(query);
-      setResults(searchResults.map(r => r.item).slice(0, 8));
-    } else {
-      setResults([]);
-    }
+    return () => clearTimeout(timer);
   }, [query]);
 
   const handleShare = (item: any) => {

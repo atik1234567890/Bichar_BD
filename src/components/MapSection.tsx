@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { allDistricts } from "@/lib/data";
 import { MapPin, AlertTriangle, ShieldCheck, Clock, TrendingUp, Search } from "lucide-react";
 
+import { getApiUrl, safeFetch } from "@/lib/api";
+
 export default function MapSection() {
   const [mounted, setMounted] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
@@ -14,29 +16,26 @@ export default function MapSection() {
 
   useEffect(() => {
     setMounted(true);
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
     
     async function fetchStats() {
       try {
-        const response = await fetch(`${API_URL}/api/stats/divisions`);
-        const result = await response.json();
+        const result = await safeFetch("/api/stats/divisions");
         if (result.success) {
           setStats(result.data);
         }
       } catch (error) {
-        console.error("Error fetching map stats:", error);
+        // Handled in safeFetch
       }
     }
 
     async function fetchLiveEvents() {
       try {
-        const response = await fetch(`${API_URL}/api/feed/live`);
-        const result = await response.json();
+        const result = await safeFetch("/api/feed/live?limit=5");
         if (result.success) {
           setLiveEvents(result.data.slice(0, 3)); // Get latest 3
         }
       } catch (error) {
-        console.error("Error fetching map live events:", error);
+        // Handled in safeFetch
       }
     }
 

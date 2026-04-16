@@ -41,7 +41,7 @@ async function updateTicker(container) {
             });
         }
     } catch (error) {
-        console.error('Error updating ticker:', error);
+        // console.error('Error updating ticker:', error);
     }
 }
 

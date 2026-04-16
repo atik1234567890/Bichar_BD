@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Activity, Database, Newspaper, Clock } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import { safeFetch } from "@/lib/api";
 
 export default function SystemStatus() {
   const { t, formatNumber } = useLanguage();
@@ -10,13 +11,11 @@ export default function SystemStatus() {
 
   useEffect(() => {
     async function fetchStatus() {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
       try {
-        const response = await fetch(`${API_URL}/health`);
-        const result = await response.json();
+        const result = await safeFetch("/health");
         setStatus(result);
       } catch (error) {
-        console.error("Error fetching health status:", error);
+        // Handled in safeFetch
       }
     }
     fetchStatus();

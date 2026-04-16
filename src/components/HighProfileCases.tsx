@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ExternalLink, ShieldAlert, AlertCircle } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import { safeFetch } from "@/lib/api";
 
 export default function HighProfileCases() {
   const { t, language } = useLanguage();
@@ -12,15 +13,13 @@ export default function HighProfileCases() {
 
   useEffect(() => {
     async function fetchHighProfile() {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
       try {
-        const response = await fetch(`${API_URL}/api/incidents?status=high_profile&limit=6`);
-        const result = await response.json();
+        const result = await safeFetch("/api/incidents?status=high_profile&limit=6");
         if (result.success) {
           setCases(result.data);
         }
       } catch (error) {
-        console.error("Error fetching high profile cases:", error);
+        // Handled in safeFetch
       } finally {
         setLoading(false);
       }

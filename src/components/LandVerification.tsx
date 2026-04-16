@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Upload, CheckCircle2, AlertTriangle, FileText, Loader2, RefreshCw } from "lucide-react";
+import { safeFetch } from "@/lib/api";
 
 export default function LandVerification() {
   const [file, setFile] = useState<File | null>(null);
@@ -21,19 +22,17 @@ export default function LandVerification() {
     
     const formData = new FormData();
     formData.append("document", file);
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
     try {
-      const response = await fetch(`${API_URL}/api/report/verify-document`, {
+      const data = await safeFetch("/api/report/verify-document", {
         method: "POST",
         body: formData,
       });
-      const data = await response.json();
       if (data.success) {
         setResult(data.analysis);
       }
     } catch (error) {
-      console.error("Error verifying document:", error);
+      // Handled in safeFetch
     } finally {
       setLoading(false);
     }

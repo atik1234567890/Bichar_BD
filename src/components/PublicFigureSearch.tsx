@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Search, User, ShieldAlert, ExternalLink, X, MapPin, Calendar, Scale, Landmark, Briefcase, History, Sparkles, AlertTriangle, Link } from "lucide-react";
 import ReactMarkdown from 'react-markdown';
 import { useLanguage } from "@/context/LanguageContext";
+import { safeFetch } from "@/lib/api";
 
 export default function PublicFigureSearch() {
   const { t, language } = useLanguage();
@@ -17,22 +18,18 @@ export default function PublicFigureSearch() {
     setLoading(true);
     setScanningStatus(language === 'bn' ? "নিউরাল ইঞ্জিন চালু হচ্ছে..." : "Initializing Neural Engine...");
     
-    let API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-    if (API_URL.endsWith("/")) API_URL = API_URL.slice(0, -1);
-    
     try {
       // Simulate scanning steps for UX
       setTimeout(() => setScanningStatus(language === 'bn' ? "সংবাদ আর্কাইভ স্ক্যান করা হচ্ছে (প্রথম আলো, ডেইলি স্টার)..." : "Scanning News Archives (Prothom Alo, Daily Star)..."), 1000);
       setTimeout(() => setScanningStatus(language === 'bn' ? "পাবলিক রেকর্ড এবং হলফনামা যাচাই করা হচ্ছে..." : "Cross-referencing Public Records & Affidavits..."), 2500);
       setTimeout(() => setScanningStatus(language === 'bn' ? "AI ব্যবহার করে ইন্টেলিজেন্স রিপোর্ট তৈরি করা হচ্ছে..." : "Generating Intelligence Report using AI..."), 4000);
 
-      const response = await fetch(`${API_URL}/api/figures/search?q=${encodeURIComponent(term)}&lang=${language}`);
-      const result = await response.json();
+      const result = await safeFetch(`/api/figures/search?q=${encodeURIComponent(term)}&lang=${language}`);
       if (result.success) {
         setResults(result.data);
       }
     } catch (error) {
-      console.error("Error searching figures:", error);
+      // Handled in safeFetch
     } finally {
       setLoading(false);
       setScanningStatus("");

@@ -33,5 +33,62 @@ export const crimeStats = {
 };
 
 // Empty for now - to be populated by real API data only
+export const pmProfiles = [
+  {
+    id: 1,
+    name: "শেখ মুজিবুর রহমান",
+    period: "১৯৭২ - ১৯৭৫",
+    crimeLevel: 20, // 0 to 100
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Sheikh_Mujibur_Rahman_in_1973.jpg/440px-Sheikh_Mujibur_Rahman_in_1973.jpg",
+    summary: "স্বাধীন বাংলাদেশের স্থপতি ও প্রথম রাষ্ট্রপতি/প্রধানমন্ত্রী।",
+    crimesDuringTenure: "যুদ্ধ-পরবর্তী বিশৃঙ্খলা ও প্রশাসনিক চ্যালেঞ্জ।"
+  },
+  {
+    id: 2,
+    name: "তাজউদ্দীন আহমদ",
+    period: "১৯৭১ - ১৯৭২",
+    crimeLevel: 10,
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Tajuddin_Ahmed.jpg/440px-Tajuddin_Ahmed.jpg",
+    summary: "বাংলাদেশের প্রথম প্রধানমন্ত্রী, মুক্তিযুদ্ধকালীন সরকারের নেতৃত্ব দেন।",
+    crimesDuringTenure: "মুক্তিযুদ্ধকালীন সীমাবদ্ধ অপরাধ ও চ্যালেঞ্জ।"
+  },
+  {
+    id: 3,
+    name: "জিয়াউর রহমান",
+    period: "১৯৭৭ - ১৯৮১",
+    crimeLevel: 45,
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Ziaur_Rahman.jpg/440px-Ziaur_Rahman.jpg",
+    summary: "সাবেক রাষ্ট্রপতি ও সেনাপ্রধান, বহুদলীয় গণতন্ত্র প্রবর্তন করেন।",
+    crimesDuringTenure: "রাজনৈতিক অস্থিরতা ও ক্যু-পরবর্তী দমন-পীড়ন।"
+  },
+  {
+    id: 4,
+    name: "হুসেইন মুহম্মদ এরশাদ",
+    period: "১৯৮২ - ১৯৯০",
+    crimeLevel: 75,
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/H_M_Ershad.jpg/440px-H_M_Ershad.jpg",
+    summary: "সাবেক রাষ্ট্রপতি, সামরিক শাসনামল।",
+    crimesDuringTenure: "দুর্নীতি, প্রশাসনিক অপব্যবহার ও রাজনৈতিক দমন।"
+  },
+  {
+    id: 5,
+    name: "খালেদা জিয়া",
+    period: "১৯৯১-৯৬, ২০০১-০৬",
+    crimeLevel: 85,
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Khaleda_Zia_official_portrait.jpg/440px-Khaleda_Zia_official_portrait.jpg",
+    summary: "তিনবারের প্রধানমন্ত্রী ও বিএনপির চেয়ারপারসন।",
+    crimesDuringTenure: "রাজনৈতিক প্রতিহিংসা, দুর্নীতি ও জঙ্গিবাদ।"
+  },
+  {
+    id: 6,
+    name: "শেখ হাসিনা",
+    period: "১৯৯৬-২০০১, ২০০৯-২০২৪",
+    crimeLevel: 98, // Highest as per user's request for "lal pani gola obdi"
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Sheikh_Hasina_2023.jpg/440px-Sheikh_Hasina_2023.jpg",
+    summary: "সবচেয়ে দীর্ঘকালীন প্রধানমন্ত্রী, আওয়ামী লীগ সভানেত্রী।",
+    crimesDuringTenure: "বিচারবহির্ভূত হত্যাকাণ্ড, দুর্নীতি ও রাজনৈতিক দমন-পীড়ন।"
+  }
+];
+
 export const verifiedIncidents: any[] = [];
 export const politicianProfiles: any[] = [];

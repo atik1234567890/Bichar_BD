@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Brain, Activity, Zap, RefreshCcw, ShieldCheck } from "lucide-react";
+import { safeFetch } from "@/lib/api";
 
 export default function AutonomousBrainStatus() {
   const [status, setStatus] = useState<any>(null);
@@ -10,14 +11,12 @@ export default function AutonomousBrainStatus() {
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-        const response = await fetch(`${API_URL}/api/brain/status`);
-        const data = await response.json();
+        const data = await safeFetch("/api/brain/status");
         if (data.success) {
           setStatus(data);
         }
       } catch (error) {
-        console.error("Error fetching brain status:", error);
+        // Handled in safeFetch
       } finally {
         setLoading(false);
       }

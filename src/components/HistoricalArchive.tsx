@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { BookOpen, MapPin, ExternalLink, ShieldCheck } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { safeFetch } from "@/lib/api";
 
 const ERAS = [
   { id: "1971_War", label: "১৯৭১: স্বাধীনতা যুদ্ধ", color: "text-blood border-blood" },
@@ -19,15 +20,13 @@ export default function HistoricalArchive() {
   useEffect(() => {
     async function fetchHistoricalData() {
       setLoading(true);
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
       try {
-        const response = await fetch(`${API_URL}/api/incidents?era=${selectedEra}&limit=10`);
-        const result = await response.json();
+        const result = await safeFetch(`/api/incidents?era=${selectedEra}&limit=10`);
         if (result.success) {
           setIncidents(result.data);
         }
       } catch (error) {
-        console.error("Error fetching historical data:", error);
+        // Handled in safeFetch
       } finally {
         setLoading(false);
       }

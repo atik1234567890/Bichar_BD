@@ -32,7 +32,7 @@ async function fetchHeroStats() {
             }
         }
     } catch (error) {
-        console.error('Error fetching hero stats:', error);
+        // console.error('Error fetching hero stats:', error);
     }
 }
 
@@ -56,7 +56,7 @@ async function fetchRecentIncidents() {
             });
         }
     } catch (error) {
-        console.error('Error fetching incidents:', error);
+        // console.error('Error fetching incidents:', error);
     }
 }
 

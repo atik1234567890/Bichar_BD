@@ -17,7 +17,7 @@ async function fetchStats() {
             // If Chart.js is available, we could draw charts here
         }
     } catch (error) {
-        console.error('Error fetching stats:', error);
+        // console.error('Error fetching stats:', error);
     }
 }
 

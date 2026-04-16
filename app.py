@@ -99,46 +99,47 @@ with app.app_context():
     
     # seed_massive_data() # Permanently disabled for real-time mode
     
-    # Run initial sync immediately on startup
-    from scraper.news_scraper import scrape_all_sources
-    from scraper.scheduler import update_division_stats, update_pending_days
-    from database.models import LiveFeedEvent
-    
-    # Add a neural log for startup
-    db.session.add(LiveFeedEvent(
-        event_type="HEAL",
-        message="Neural Core Initialized. Synchronizing 1971-2026 Justice Archive...",
-        district="Dhaka"
-    ))
-    db.session.commit()
-    
-    scrape_all_sources()
-    update_division_stats()
-    update_pending_days()
-    
-    # Add another log after sync
-    db.session.add(LiveFeedEvent(
-        event_type="GROWTH",
-        message="Neural Sync Complete. Real-time monitoring active across 64 districts.",
-        district="National"
-    ))
-    db.session.commit()
-    
-    # 🚨 CRITICAL FIX: Ensure all 64 districts have stats entry even if 0 cases
-    from database.models import DistrictStats
-    from scraper.nlp_processor import BANGLADESH_DISTRICTS
-    for dist_bn, data in BANGLADESH_DISTRICTS.items():
-        if not DistrictStats.query.filter_by(district=data['en']).first():
-            db.session.add(DistrictStats(district=data['en'], division=data['division']))
-    db.session.commit()
+    # Background Sync Function to avoid Render timeouts
+    def run_sync():
+        with app.app_context():
+            from scraper.news_scraper import scrape_all_sources
+            from scraper.scheduler import update_division_stats, update_pending_days
+            from database.models import LiveFeedEvent
+            
+            # Add a neural log for startup
+            db.session.add(LiveFeedEvent(
+                event_type="HEAL",
+                message="Neural Core Initialized. Synchronizing 1971-2026 Justice Archive...",
+                district="Dhaka"
+            ))
+            db.session.commit()
+            
+            scrape_all_sources()
+            update_division_stats()
+            update_pending_days()
+            
+            # Add another log after sync
+            db.session.add(LiveFeedEvent(
+                event_type="GROWTH",
+                message="Neural Sync Complete. Real-time monitoring active across 64 districts.",
+                district="National"
+            ))
+            db.session.commit()
+            
+            # 🚨 CRITICAL FIX: Ensure all 64 districts have stats entry even if 0 cases
+            from database.models import DistrictStats
+            from scraper.nlp_processor import BANGLADESH_DISTRICTS
+            for dist_bn, data in BANGLADESH_DISTRICTS.items():
+                if not DistrictStats.query.filter_by(district=data['en']).first():
+                    db.session.add(DistrictStats(district=data['en'], division=data['division']))
+            db.session.commit()
+
+    import threading
+    threading.Thread(target=run_sync).start()
     
     brain = start_brain(app) # Start the Autonomous Brain
     if not scheduler.running:
         scheduler.start()
-
-@app.route('/health')
-def health():
-    return jsonify({"status": "healthy", "timestamp": datetime.utcnow().isoformat(), "uptime": "24/7 autonomous monitoring active"})
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))

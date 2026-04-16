@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { BarChart3, TrendingUp, AlertTriangle } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
+import { safeFetch } from "@/lib/api";
 
 export default function Stats() {
   const { t, formatNumber } = useLanguage();
@@ -11,23 +12,17 @@ export default function Stats() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-    if (API_URL.endsWith("/")) API_URL = API_URL.slice(0, -1);
-    
     async function fetchData() {
       try {
-        const [summaryRes, typesRes] = await Promise.all([
-          fetch(`${API_URL}/api/stats/summary`),
-          fetch(`${API_URL}/api/stats/types`)
+        const [summaryData, typesData] = await Promise.all([
+          safeFetch("/api/stats/summary"),
+          safeFetch("/api/stats/types")
         ]);
-        
-        const summaryData = await summaryRes.json();
-        const typesData = await typesRes.json();
         
         if (summaryData.success) setSummary(summaryData.data);
         if (typesData.success) setTypes(typesData.data);
       } catch (error) {
-        console.error("Error fetching stats:", error);
+        // Handled in safeFetch
       } finally {
         setLoading(false);
       }

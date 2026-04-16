@@ -7,10 +7,13 @@ BicharBD is a modern, impact-focused platform designed to track and report human
 ## Key Features
 
 - **Crisis Tracking**: Specialized trackers for Enforced Disappearances, Election Violence, Minority Oppression, RMG Worker Rights, and Land Grabbing.
-- **Interactive Map**: Real-time visualization of reported incidents across different districts of Bangladesh.
+- **Interactive Map**: Real-time visualization of reported incidents across 64 districts of Bangladesh.
+- **District History Archive**: Comprehensive historical records and judicial reports for 24 major districts from 1971 to present.
+- **Prime Ministers Archive**: Historical overview of all Prime Ministers of Bangladesh with visual indicators of crime levels during their tenures.
 - **Anonymous Reporting**: A secure, encrypted reporting system for victims and witnesses to submit information safely.
 - **AI Verification**: Simulated AI systems for verifying land documents and incident reports.
 - **International Integration**: Direct alerts to international bodies like the UN, ILO, and global human rights organizations.
+- **Smart Search**: Advanced search functionality to find cases by district name, crime type, or description.
 
 ## Tech Stack
 

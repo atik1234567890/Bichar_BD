@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { useLanguage } from "@/context/LanguageContext";
 import { useSocket } from "@/context/SocketContext";
+import { safeFetch } from "@/lib/api";
 
 export default function CasePressureMeter() {
   const { t, formatNumber } = useLanguage();
@@ -12,15 +13,13 @@ export default function CasePressureMeter() {
 
   useEffect(() => {
     async function fetchData() {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
       try {
-        const response = await fetch(`${API_URL}/api/stats/analytics`);
-        const result = await response.json();
+        const result = await safeFetch("/api/stats/analytics");
         if (result.success) {
           setScore(result.data.pressure_score);
         }
       } catch (error) {
-        console.error("Error fetching analytics:", error);
+        // Handled in safeFetch
       }
     }
     fetchData();

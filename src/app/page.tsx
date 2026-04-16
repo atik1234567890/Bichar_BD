@@ -8,6 +8,8 @@ import CrisisGrid from "@/components/CrisisGrid";
 import MapSection from "@/components/MapSection";
 import IncidentDirectory from "@/components/IncidentDirectory";
 import HistoricalArchive from "@/components/HistoricalArchive"; // Historical justice records module
+import PrimeMinistersSection from "@/components/PrimeMinistersSection";
+import DistrictHistorySection from "@/components/DistrictHistorySection";
 import JulyUprisingExpose from "@/components/JulyUprisingExpose"; // July 2024 Special Module
 import PublicFigureSearch from "@/components/PublicFigureSearch";
 import LandVerification from "@/components/LandVerification";
@@ -69,6 +71,16 @@ export default function Home() {
         {/* Historical Justice Archive (1971-Present) */}
         <div className="mt-40">
           <HistoricalArchive />
+        </div>
+
+        {/* 24 Districts History Archive */}
+        <div className="mt-40">
+          <DistrictHistorySection />
+        </div>
+
+        {/* Historical Prime Ministers Archive */}
+        <div className="mt-40">
+          <PrimeMinistersSection />
         </div>
 
         {/* Search Module instead of hardcoded trackers */}

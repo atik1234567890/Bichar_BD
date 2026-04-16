@@ -31,7 +31,18 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const t = (key: string): string => {
-    return translations[language][key as keyof typeof translations["bn"]] || key;
+    const keys = key.split(".");
+    let result: any = translations[language];
+    
+    for (const k of keys) {
+      if (result && result[k]) {
+        result = result[k];
+      } else {
+        return key;
+      }
+    }
+    
+    return typeof result === "string" ? result : key;
   };
 
   const formatNumber = (num: number | string): string => {

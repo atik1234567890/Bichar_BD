@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useSocket } from "@/context/SocketContext";
 import { ShieldAlert, CheckCircle, Scale, Search } from "lucide-react";
+import { safeFetch } from "@/lib/api";
 
 export default function LiveCaseCounters() {
   const { t, formatNumber } = useLanguage();
@@ -17,15 +18,13 @@ export default function LiveCaseCounters() {
 
   useEffect(() => {
     async function fetchStats() {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
       try {
-        const response = await fetch(`${API_URL}/api/stats/summary`);
-        const result = await response.json();
+        const result = await safeFetch("/api/stats/summary");
         if (result.success) {
           setStats(result.data);
         }
       } catch (error) {
-        console.error("Error fetching counters:", error);
+        // Handled in safeFetch
       }
     }
     fetchStats();

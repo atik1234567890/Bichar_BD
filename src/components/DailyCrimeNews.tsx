@@ -5,6 +5,7 @@ import { Newspaper, Clock, ExternalLink, MapPin, ChevronRight, AlertCircle, Glob
 import { useLanguage } from "@/context/LanguageContext";
 import { useSocket } from "@/context/SocketContext";
 import { NewsSkeleton, Skeleton } from "./Skeletons";
+import { safeFetch } from "@/lib/api";
 
 export default function DailyCrimeNews() {
   const { t, language, formatNumber, formatDate } = useLanguage();
@@ -17,17 +18,13 @@ export default function DailyCrimeNews() {
   useEffect(() => {
     const fetchDailyNews = async () => {
       try {
-        let API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-        if (API_URL.endsWith("/")) API_URL = API_URL.slice(0, -1);
-        
-        const response = await fetch(`${API_URL}/api/incidents/daily`);
-        const data = await response.json();
+        const data = await safeFetch("/api/incidents/daily");
         if (data.success) {
           setNews(data.data);
           setLastUpdateTime(new Date());
         }
       } catch (error) {
-        console.error("Error fetching daily news:", error);
+        // Handled in safeFetch
       } finally {
         setLoading(false);
       }
