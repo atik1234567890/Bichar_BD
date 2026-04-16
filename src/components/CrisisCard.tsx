@@ -1,4 +1,6 @@
 import { useLanguage } from "@/context/LanguageContext";
+import { Share2 } from "lucide-react";
+import toast from "react-hot-toast";
 
 interface CrisisCardProps {
   id: string;
@@ -35,6 +37,13 @@ export default function CrisisCard({
 }: CrisisCardProps) {
   const { t, formatNumber } = useLanguage();
 
+  const handleShare = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const url = `${window.location.origin}/crisis/${id}`;
+    navigator.clipboard.writeText(url);
+    toast.success(t("linkCopied"));
+  };
+
   return (
     <div className="crisis-card bg-surface p-8 relative overflow-hidden transition-colors duration-200 hover:bg-surface2 group">
       <div className={`crisis-bar absolute top-0 left-0 right-0 h-[2px] ${barColor}`} />
@@ -60,6 +69,15 @@ export default function CrisisCard({
           {severityLabel}
         </span>
       </div>
+
+      <button 
+        onClick={handleShare}
+        className="absolute bottom-4 right-4 text-text-faint hover:text-blood transition-colors opacity-0 group-hover:opacity-100"
+        title={t("share")}
+      >
+        <Share2 size={16} />
+      </button>
+
       <span className="crisis-emoji text-[2.2rem] block mb-4">{emoji}</span>
       <h3 className="crisis-title text-[1.2rem] font-bold text-white mb-3 leading-[1.3]">
         {title}

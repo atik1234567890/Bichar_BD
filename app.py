@@ -12,10 +12,16 @@ from api.figures import figures_bp
 from api.socket_instance import socketio
 from scraper.scheduler import scheduler
 from scraper.autonomous_brain import start_brain
+from flask_caching import Cache
 import os
 
 app = Flask(__name__)
 app.config.from_object('config.Config')
+
+# Cache configuration
+app.config['CACHE_TYPE'] = 'SimpleCache'
+app.config['CACHE_DEFAULT_TIMEOUT'] = 300
+cache = Cache(app)
 
 # Initialize DB
 db.init_app(app)

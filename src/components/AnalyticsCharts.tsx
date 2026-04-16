@@ -15,12 +15,14 @@ import {
 import { useLanguage } from "@/context/LanguageContext";
 import { useSocket } from "@/context/SocketContext";
 import { TrendingUp, Clock, AlertCircle } from "lucide-react";
+import { ChartSkeleton, Skeleton } from "./Skeletons";
 
 export default function AnalyticsCharts() {
   const { t, formatNumber, language } = useLanguage();
   const { socket } = useSocket();
   const [timeline, setTimeline] = useState<any[]>([]);
   const [trending, setTrending] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchAnalytics = async () => {
     const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -33,6 +35,8 @@ export default function AnalyticsCharts() {
       }
     } catch (error) {
       console.error("Error fetching charts data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -49,6 +53,20 @@ export default function AnalyticsCharts() {
       }
     };
   }, [socket]);
+
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-24">
+        <ChartSkeleton />
+        <div className="bg-surface border border-border p-6 rounded-sm">
+          <Skeleton className="w-32 h-4 mb-8" />
+          <div className="space-y-4">
+            {[1, 2, 3, 4, 5].map(i => <Skeleton key={i} className="w-full h-16" />)}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-24">

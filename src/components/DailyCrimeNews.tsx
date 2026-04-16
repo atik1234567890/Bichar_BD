@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { Newspaper, Clock, ExternalLink, MapPin, ChevronRight, AlertCircle, Globe, Zap } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { useSocket } from "@/context/SocketContext";
+import { NewsSkeleton, Skeleton } from "./Skeletons";
 
 export default function DailyCrimeNews() {
   const { t, language, formatNumber, formatDate } = useLanguage();
@@ -78,11 +79,12 @@ export default function DailyCrimeNews() {
   }, [lastUpdateTime, t, formatNumber]);
 
   if (loading) return (
-    <div className="h-[400px] flex items-center justify-center border border-border bg-surface">
-      <div className="flex flex-col items-center gap-4">
-        <div className="w-10 h-10 border-2 border-blood border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-xs font-mono text-text-faint uppercase tracking-widest">{t("updatingNews")}</p>
+    <div className="daily-news-module mt-24">
+      <div className="chapter-header mb-12">
+        <div className="chapter-kicker"><Skeleton className="w-24 h-4" /></div>
+        <h2 className="chapter-title mt-4"><Skeleton className="w-64 h-12" /></h2>
       </div>
+      <NewsSkeleton />
     </div>
   );
 
