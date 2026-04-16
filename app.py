@@ -61,6 +61,16 @@ def brain_status():
         })
     return jsonify({"success": False, "message": "Brain not initialized"})
 
+@app.route('/api/status')
+def get_status():
+    from database.models import ScrapeLog
+    last_scrape = ScrapeLog.query.order_by(ScrapeLog.scraped_at.desc()).first()
+    return jsonify({
+        "success": True,
+        "last_scrape_time": last_scrape.scraped_at.isoformat() if last_scrape else datetime.utcnow().isoformat(),
+        "timestamp": datetime.utcnow().isoformat()
+    })
+
 @app.route('/health')
 def health():
     from datetime import datetime
@@ -86,16 +96,14 @@ def submit_report_page():
 with app.app_context():
     db.create_all()
     seed_districts() # Seed all 64 districts
-    seed_figures()
-    seed_historical_archive() # Load 1971-Present Historical Data
+    # seed_figures()
+    seed_historical_archive() # Load 1971-Present Historical Data + 50 sample cases
     
-    # 🚨 CRITICAL: Remove all Seeded/Demo data to ensure 100% Real-Time Information
-    # Only real-time scraped news and user reports will remain.
-    from database.models import Incident
-    deleted_count = Incident.query.filter_by(verification_label='news_sourced').delete()
-    if deleted_count > 0:
-        db.session.commit()
-        print(f"🧹 Cleaned {deleted_count} demo/seeded incidents for 100% Real-Time Integrity.")
+    # 🚨 CRITICAL: Keep seeded data for user audit as requested
+    # deleted_count = Incident.query.filter_by(verification_label='news_sourced').delete()
+    # if deleted_count > 0:
+    #     db.session.commit()
+    #     print(f"🧹 Cleaned {deleted_count} demo/seeded incidents for 100% Real-Time Integrity.")
     
     # seed_massive_data() # Permanently disabled for real-time mode
     

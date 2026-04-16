@@ -2,12 +2,32 @@
 
 import { motion } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
+import LanguageToggle from "./LanguageToggle";
 
 export default function Hero() {
   const { t } = useLanguage();
 
   return (
-    <div className="hero min-h-screen grid place-items-center p-16 relative border-b border-border overflow-hidden text-center">
+    <div className="hero-section relative pt-12 pb-24 md:pt-20 md:pb-32 overflow-hidden">
+      {/* Top Navigation / Status Bar */}
+      <div className="flex justify-between items-center mb-16 border-b border-border pb-6 px-6">
+        <div className="flex items-center gap-4">
+          <div className="logo font-black text-2xl tracking-tighter text-white">
+            BICHAR<span className="text-blood">BD</span>
+          </div>
+          <div className="hidden md:block h-4 w-[1px] bg-border" />
+          <div className="hidden md:flex items-center gap-3">
+            <div className="w-2 h-2 bg-blood rounded-full animate-pulse" />
+            <span className="text-[0.6rem] font-mono text-text-faint uppercase tracking-widest">{t("autonomousMonitoring")}</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-6">
+          <LanguageToggle />
+          <button className="hidden md:block bg-blood text-white px-6 py-2 text-[0.7rem] font-mono font-bold uppercase tracking-widest hover:bg-blood/80 transition-all">
+            {t("submitReport")}
+          </button>
+        </div>
+      </div>
       <div className="hero-noise absolute inset-0 opacity-40 pointer-events-none" />
       <div className="hero-glow absolute w-[600px] h-[600px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
       <motion.div

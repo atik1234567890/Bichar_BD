@@ -12,16 +12,30 @@ export default function SystemStatus() {
   useEffect(() => {
     async function fetchStatus() {
       try {
-        const result = await safeFetch("/health");
-        setStatus(result);
+        const result = await safeFetch("/api/status");
+        if (result.success) {
+          setStatus(result);
+        }
       } catch (error) {
         // Handled in safeFetch
       }
     }
     fetchStatus();
-    const interval = setInterval(fetchStatus, 60000);
+    const interval = setInterval(fetchStatus, 30000);
     return () => clearInterval(interval);
   }, []);
+
+  const [timeAgo, setTimeAgo] = useState("");
+  useEffect(() => {
+    if (!status?.last_scrape_time) return;
+    const update = () => {
+      const diff = Math.floor((new Date().getTime() - new Date(status.last_scrape_time).getTime()) / 60000);
+      setTimeAgo(diff <= 0 ? t("justNow") : `${formatNumber(diff)} ${t("minutesAgo")}`);
+    };
+    update();
+    const i = setInterval(update, 60000);
+    return () => clearInterval(i);
+  }, [status, t, formatNumber]);
 
   return (
     <div className="system-status bg-surface border border-border p-8 my-12 relative overflow-hidden">
@@ -36,7 +50,7 @@ export default function SystemStatus() {
           <div>
             <div className="text-[0.6rem] font-mono text-text-faint uppercase mb-1">{t("lastUpdate")}</div>
             <div className="text-sm text-text-dim" id="lastScrapeTime">
-              {status ? formatNumber(new Date(status.timestamp).toLocaleTimeString()) : t("loading")}
+              {status ? timeAgo : t("loading")}
             </div>
           </div>
         </div>

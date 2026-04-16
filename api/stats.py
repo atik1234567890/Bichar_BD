@@ -14,32 +14,88 @@ def get_summary():
     # Cache handled at app level or using a helper if available
     total = Incident.query.count()
     resolved = Incident.query.filter_by(status='verdict').count()
-    pending = Incident.query.filter(Incident.status != 'verdict').count()
-    investigation = Incident.query.filter_by(status='investigation').count()
+    active = Incident.query.filter(Incident.status != 'verdict').count()
+    under_investigation = Incident.query.filter_by(status='under_investigation').count()
     
     return jsonify({
         "success": True,
         "data": {
             "total": total,
-            "resolved": resolved,
-            "pending": pending,
-            "investigation": investigation
+            "active": active,
+            "verdict_given": resolved,
+            "under_investigation": under_investigation
         }
     })
 
 @stats_bp.route('/districts', methods=['GET'])
 def get_district_stats():
-    stats = DistrictStats.query.all()
+    # Update district stats from incidents before returning
+    from scraper.nlp_processor import BANGLADESH_DISTRICTS
+    from sqlalchemy import func
+    
+    district_counts = db.session.query(
+        Incident.district, 
+        func.count(Incident.id).label('total'),
+        func.count(func.nullif(Incident.status != 'verdict', False)).label('pending'),
+        func.count(func.nullif(Incident.status == 'verdict', False)).label('resolved')
+    ).group_by(Incident.district).all()
+    
+    counts_map = {d.district: d for d in district_counts}
+    
     data = []
-    for s in stats:
+    for dist_bn, dist_info in BANGLADESH_DISTRICTS.items():
+        dist_en = dist_info['en']
+        stats = counts_map.get(dist_en)
+        
         data.append({
-            "district": s.district,
-            "total": s.total_cases,
-            "pending": s.pending_cases,
-            "resolved": s.resolved_cases,
-            "density": s.density_score
+            "district": dist_en,
+            "total": stats.total if stats else 0,
+            "pending": stats.pending if stats else 0,
+            "resolved": stats.resolved if stats else 0,
+            "density": min(100, (stats.total * 5) if stats else 0)
         })
+    
     return jsonify({"success": True, "data": data})
+
+@stats_bp.route('/category-breakdown', methods=['GET'])
+def get_category_breakdown():
+    categories = db.session.query(
+        Incident.incident_type, 
+        func.count(Incident.id)
+    ).group_by(Incident.incident_type).all()
+    
+    return jsonify({
+        "success": True, 
+        "data": {cat: count for cat, count in categories}
+    })
+
+@stats_bp.route('/pressure-score', methods=['GET'])
+def get_pressure_score():
+    # Implement pressure score algorithm:
+    # score = (days_since_filing × 0.3) + (media_coverage_count × 0.4) + (public_reports × 0.3)
+    # For now, using average pending days as a proxy for days_since_filing
+    from database.models import PublicReport
+    
+    avg_pending = db.session.query(func.avg(Incident.days_pending)).filter(Incident.status != 'verdict').scalar() or 0
+    # Normalize avg_pending (assume 365 days is 100%)
+    pending_score = min(100, (avg_pending / 365) * 100)
+    
+    # Media coverage - using total incidents as a proxy for coverage density
+    total_incidents = Incident.query.count()
+    media_score = min(100, (total_incidents / 500) * 100)
+    
+    # Public reports count
+    report_count = PublicReport.query.count()
+    report_score = min(100, (report_count / 100) * 100)
+    
+    final_score = int((pending_score * 0.3) + (media_score * 0.4) + (report_score * 0.3))
+    
+    return jsonify({
+        "success": True,
+        "data": {
+            "score": final_score
+        }
+    })
 
 @stats_bp.route('/analytics', methods=['GET'])
 def get_analytics():

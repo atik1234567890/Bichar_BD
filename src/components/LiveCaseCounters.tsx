@@ -11,9 +11,9 @@ export default function LiveCaseCounters() {
   const { socket } = useSocket();
   const [stats, setStats] = useState({
     total: 0,
-    resolved: 0,
-    pending: 0,
-    investigation: 0
+    active: 0,
+    verdict_given: 0,
+    under_investigation: 0
   });
 
   useEffect(() => {
@@ -41,9 +41,9 @@ export default function LiveCaseCounters() {
 
   const counters = [
     { label: t("totalCases"), val: stats.total, icon: Scale, color: "text-white" },
-    { label: t("active"), val: stats.pending, icon: ShieldAlert, color: "text-blood" },
-    { label: t("verdictGiven"), val: stats.resolved, icon: CheckCircle, color: "text-teal" },
-    { label: t("underInvestigation"), val: stats.investigation, icon: Search, color: "text-gold" }
+    { label: t("active"), val: stats.active, icon: ShieldAlert, color: "text-blood" },
+    { label: t("verdictGiven"), val: stats.verdict_given, icon: CheckCircle, color: "text-teal" },
+    { label: t("underInvestigation"), val: stats.under_investigation, icon: Search, color: "text-gold" }
   ];
 
   return (

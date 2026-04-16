@@ -14,9 +14,9 @@ export default function CasePressureMeter() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const result = await safeFetch("/api/stats/analytics");
+        const result = await safeFetch("/api/stats/pressure-score");
         if (result.success) {
-          setScore(result.data.pressure_score);
+          setScore(result.data.score);
         }
       } catch (error) {
         // Handled in safeFetch

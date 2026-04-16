@@ -69,7 +69,7 @@ def list_incidents():
             (Incident.district.ilike(f'%{search}%'))
         )
     
-    pagination = query.order_by(Incident.created_at.desc()).paginate(page=page, per_page=limit)
+    pagination = query.order_by(Incident.created_at.desc()).paginate(page=page, per_page=limit, error_out=False)
     
     data = []
     for inc in pagination.items:
@@ -94,7 +94,44 @@ def list_incidents():
     return jsonify({
         "success": True,
         "data": data,
-        "meta": {"total": pagination.total, "page": page, "pages": pagination.pages},
+        "meta": {"total": pagination.total, "page": page, "pages": pagination.pages, "limit": limit},
+        "timestamp": datetime.utcnow().isoformat()
+    })
+
+@incidents_bp.route('/archive/historical', methods=['GET'])
+def historical_archive():
+    eras = {
+        "1971_War": "1971: War crimes",
+        "Post_Independence": "1975: Political tragedy",
+        "90s_Restoration": "1990s: Democracy era",
+        "Modern": "2009–2024: Modern era",
+        "July_Uprising": "2024: July uprising"
+    }
+    
+    data = {}
+    for era_id, era_label in eras.items():
+        query = Incident.query.filter_by(era=era_id)
+        # Handle 'July_Uprising' separately if it's within 'Modern'
+        if era_id == "July_Uprising":
+             # Assuming we mark July uprising specifically or filter by date
+             query = Incident.query.filter(Incident.era == 'Modern', Incident.created_at >= datetime(2024, 7, 1))
+        
+        incidents = query.order_by(Incident.created_at.desc()).limit(5).all()
+        data[era_id] = {
+            "label": era_label,
+            "incidents": [{
+                "id": inc.id,
+                "title": inc.title,
+                "description": inc.description,
+                "district": inc.district,
+                "created_at": inc.created_at.isoformat(),
+                "status": inc.status
+            } for inc in incidents]
+        }
+        
+    return jsonify({
+        "success": True,
+        "data": data,
         "timestamp": datetime.utcnow().isoformat()
     })
 

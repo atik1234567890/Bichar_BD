@@ -6,6 +6,37 @@ from datetime import datetime
 
 reports_bp = Blueprint('reports', __name__)
 
+@reports_bp.route('/tracker/<type>', methods=['GET'])
+def get_tracker_stats(type):
+    # Map type from URL to incident_type in DB
+    type_map = {
+        'rape-violence': 'rape',
+        'political-killings': 'political_assassination',
+        'enforced-disappearance': 'enforced_disappearance',
+        'land-grabbing': 'land_grab',
+        'labor-rights': 'labor_violation'
+    }
+    
+    db_type = type_map.get(type)
+    if not db_type:
+        return jsonify({"success": False, "message": "Invalid tracker type"}), 400
+        
+    from sqlalchemy import func
+    stats = db.session.query(
+        func.count(Incident.id).label('total'),
+        func.count(func.nullif(Incident.status == 'verdict', False)).label('resolved'),
+        func.count(func.nullif(Incident.status == 'under_investigation', False)).label('under_investigation')
+    ).filter_by(incident_type=db_type).first()
+    
+    return jsonify({
+        "success": True,
+        "data": {
+            "total": stats.total if stats else 0,
+            "resolved": stats.resolved if stats else 0,
+            "under_investigation": stats.under_investigation if stats else 0
+        }
+    })
+
 @reports_bp.route('/submit', methods=['POST'])
 def submit():
     try:

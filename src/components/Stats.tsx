@@ -16,7 +16,7 @@ export default function Stats() {
       try {
         const [summaryData, typesData] = await Promise.all([
           safeFetch("/api/stats/summary"),
-          safeFetch("/api/stats/types")
+          safeFetch("/api/stats/category-breakdown")
         ]);
         
         if (summaryData.success) setSummary(summaryData.data);
@@ -40,12 +40,12 @@ export default function Stats() {
       color: "blood",
     },
     {
-      num: `${formatNumber((summary.resolved / summary.total * 100 || 0).toFixed(1))}%`,
+      num: `${formatNumber((summary.verdict_given / summary.total * 100 || 0).toFixed(1))}%`,
       desc: t("justiceRate"),
       color: "gold",
     },
     {
-      num: formatNumber(summary.pending),
+      num: formatNumber(summary.active),
       desc: t("pendingCases"),
       color: "teal",
     },

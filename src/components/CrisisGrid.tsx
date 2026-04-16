@@ -5,10 +5,39 @@ import CrisisCard from "./CrisisCard";
 import ReportForm from "./ReportForm";
 import { useLanguage } from "@/context/LanguageContext";
 import { translations } from "@/translations";
+import { safeFetch } from "@/lib/api";
 
 export default function CrisisGrid() {
   const { language, t } = useLanguage();
   const [activeCrisis, setActiveCrisis] = useState<string | null>(null);
+  const [trackerStats, setTrackerStats] = useState<Record<string, any>>({});
+
+  useEffect(() => {
+    async function fetchTrackerStats() {
+      const types = [
+        { id: "rape", endpoint: "rape-violence" },
+        { id: "murder", endpoint: "political-killings" },
+        { id: "enforced_disappearance", endpoint: "enforced-disappearance" },
+        { id: "land_grab", endpoint: "land-grabbing" },
+        { id: "labor_violation", endpoint: "labor-rights" }
+      ];
+
+      const stats: Record<string, any> = {};
+      await Promise.all(types.map(async (type) => {
+        try {
+          const result = await safeFetch(`/api/report/tracker/${type.endpoint}`);
+          if (result.success) {
+            stats[type.id] = result.data;
+          }
+        } catch (error) {
+          console.error(`Failed to fetch stats for ${type.id}`);
+        }
+      }));
+      setTrackerStats(stats);
+    }
+
+    fetchTrackerStats();
+  }, []);
 
   const crisisData = translations[language].crises;
 
@@ -24,6 +53,7 @@ export default function CrisisGrid() {
       contextColor: "bg-blood-soft border-blood text-blood",
       solution: crisisData.rape.solution,
       features: crisisData.rape.features,
+      stats: trackerStats.rape,
     },
     {
       id: "murder",
@@ -36,6 +66,7 @@ export default function CrisisGrid() {
       contextColor: "bg-blood-soft border-blood text-blood",
       solution: crisisData.murder.solution,
       features: crisisData.murder.features,
+      stats: trackerStats.murder,
     },
     {
       id: "enforced_disappearance",
@@ -48,6 +79,7 @@ export default function CrisisGrid() {
       contextColor: "bg-blood-soft border-blood text-blood",
       solution: crisisData.enforced_disappearance.solution,
       features: crisisData.enforced_disappearance.features,
+      stats: trackerStats.enforced_disappearance,
     },
     {
       id: "land_grab",
@@ -60,6 +92,7 @@ export default function CrisisGrid() {
       contextColor: "bg-orange-soft border-orange text-orange",
       solution: crisisData.land_grab.solution,
       features: crisisData.land_grab.features,
+      stats: trackerStats.land_grab,
     },
     {
       id: "labor_violation",
@@ -72,6 +105,7 @@ export default function CrisisGrid() {
       contextColor: "bg-sky-soft border-sky text-sky",
       solution: crisisData.labor_violation.solution,
       features: crisisData.labor_violation.features,
+      stats: trackerStats.labor_violation,
     },
   ];
 
@@ -92,6 +126,7 @@ export default function CrisisGrid() {
             key={crisis.id}
             {...crisis}
             onReport={() => setActiveCrisis(crisis.id)}
+            stats={trackerStats[crisis.id]}
           />
         ))}
       </div>

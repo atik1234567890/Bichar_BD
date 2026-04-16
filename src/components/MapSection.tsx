@@ -4,10 +4,12 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { allDistricts } from "@/lib/data";
 import { MapPin, AlertTriangle, ShieldCheck, Clock, TrendingUp, Search } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 import { getApiUrl, safeFetch } from "@/lib/api";
 
 export default function MapSection() {
+  const { t, formatNumber, language } = useLanguage();
   const [mounted, setMounted] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
   const [stats, setStats] = useState<any[]>([]);
@@ -19,7 +21,7 @@ export default function MapSection() {
     
     async function fetchStats() {
       try {
-        const result = await safeFetch("/api/stats/divisions");
+        const result = await safeFetch("/api/stats/districts");
         if (result.success) {
           setStats(result.data);
         }
@@ -30,9 +32,13 @@ export default function MapSection() {
 
     async function fetchLiveEvents() {
       try {
-        const result = await safeFetch("/api/feed/live?limit=5");
+        const result = await safeFetch("/api/feed/recent");
         if (result.success) {
-          setLiveEvents(result.data.slice(0, 3)); // Get latest 3
+          const formatted = result.data.map((item: any) => ({
+            ...item,
+            message: `${item.incident_type.replace('_', ' ').toUpperCase()}: ${item.title.substring(0, 50)}...`
+          }));
+          setLiveEvents(formatted.slice(0, 3));
         }
       } catch (error) {
         // Handled in safeFetch
@@ -51,27 +57,26 @@ export default function MapSection() {
   }, []);
 
   const regions = stats.length > 0 ? stats : allDistricts.map(d => ({
-    division: d,
-    crime_density_score: 0,
-    pending_cases: 0,
-    resolved_cases: 0,
-    justice_score: 0,
-    total_cases: 0
+    district: d,
+    density: 0,
+    pending: 0,
+    resolved: 0,
+    total: 0
   }));
 
-  const totalNationalCases = regions.reduce((acc: number, curr: any) => acc + (curr.total_cases || 0), 0);
+  const totalNationalCases = regions.reduce((acc: number, curr: any) => acc + (curr.total || 0), 0);
 
   return (
     <div className="map-section mt-24 mb-12">
       <div className="chapter-header mb-12">
         <div className="chapter-kicker font-mono text-[0.6rem] tracking-[0.3em] uppercase text-text-faint mb-3 flex items-center gap-4 before:content-['03'] before:text-[0.5rem] before:text-blood before:border before:border-blood/30 before:px-1.5 before:py-0.5">
-          রিয়েল-টাইম হিটম্যাপ
+          {t("realtimeHeatmap")}
         </div>
         <h2 className="chapter-title text-[clamp(2rem,4vw,3rem)] font-bold text-white leading-[1.1] mb-2">
-          ৬৪ জেলার অপরাধ ও বিচারিক রেকর্ড
+          {t("sixtyFourDistrictsStats")}
         </h2>
         <p className="chapter-sub text-[1rem] text-text-dim font-light italic">
-          সারাদেশে মোট {totalNationalCases.toLocaleString()}টি নথিভুক্ত অপরাধ এবং তাদের বর্তমান অবস্থা
+          {t("nationwideTotalRecords").replace("{total}", formatNumber(totalNationalCases))}
         </p>
       </div>
 
@@ -80,37 +85,37 @@ export default function MapSection() {
         <div className="xl:col-span-1 space-y-3 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
           {regions.map((region: any) => (
             <div 
-              key={region.division}
-              onMouseEnter={() => setSelectedRegion(region.division)}
+              key={region.district}
+              onMouseEnter={() => setSelectedRegion(region.district)}
               className={`p-4 border transition-all cursor-pointer group ${
-                selectedRegion === region.division 
+                selectedRegion === region.district 
                 ? 'bg-surface2 border-blood shadow-[0_0_15px_rgba(204,31,31,0.1)]' 
                 : 'bg-surface border-border hover:border-blood/50'
               }`}
             >
               <div className="flex justify-between items-center mb-3">
-                <span className={`text-sm font-bold transition-colors ${selectedRegion === region.division ? 'text-blood' : 'text-white'}`}>
-                  {region.division}
+                <span className={`text-sm font-bold transition-colors ${selectedRegion === region.district ? 'text-blood' : 'text-white'}`}>
+                  {region.district}
                 </span>
                 <span className="text-[0.6rem] font-mono bg-bg px-2 py-0.5 border border-border text-text-faint">
-                  {region.total_cases} Cases
+                  {formatNumber(region.total)} {t("casesLabel")}
                 </span>
               </div>
               <div className="h-1 bg-bg w-full mb-3">
                 <motion.div 
                   initial={{ width: 0 }}
-                  animate={{ width: `${Math.min(100, region.total_cases)}%` }}
-                  className={`h-full ${region.total_cases > 80 ? 'bg-blood' : region.total_cases > 40 ? 'bg-gold' : 'bg-teal'}`}
+                  animate={{ width: `${Math.min(100, region.total)}%` }}
+                  className={`h-full ${region.total > 80 ? 'bg-blood' : region.total > 40 ? 'bg-gold' : 'bg-teal'}`}
                 />
               </div>
               <div className="grid grid-cols-2 gap-2 text-[0.6rem] font-mono text-text-dim">
                 <div className="flex items-center gap-1.5">
                   <Clock size={10} className="text-blood" />
-                  <span>Pending: {region.pending_cases}</span>
+                  <span>{t("active")}: {formatNumber(region.pending)}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <ShieldCheck size={10} className="text-teal" />
-                  <span>Resolved: {region.resolved_cases}</span>
+                  <span>{t("verdictGiven")}: {formatNumber(region.resolved)}</span>
                 </div>
               </div>
             </div>
@@ -132,24 +137,24 @@ export default function MapSection() {
             if (i > 30) return null;
             return (
               <motion.div
-                key={region.division}
+                key={region.district}
                 className={`absolute w-3 h-3 rounded-full cursor-pointer z-10 ${
-                  stats.crime_density_score > 70 ? 'bg-blood' : stats.crime_density_score > 40 ? 'bg-gold' : 'bg-teal'
+                  stats.density > 70 ? 'bg-blood' : stats.density > 40 ? 'bg-gold' : 'bg-teal'
                 }`}
                 style={{
                   top: `${15 + (Math.floor(i / 6) * 15)}%`,
                   left: `${15 + ((i % 6) * 15)}%`,
                 }}
                 whileHover={{ scale: 2 }}
-                onMouseEnter={() => setSelectedRegion(region.division)}
+                onMouseEnter={() => setSelectedRegion(region.district)}
                 animate={{
-                  boxShadow: selectedRegion === region.division 
-                    ? `0 0 20px 10px ${stats.crime_density_score > 70 ? 'rgba(204,31,31,0.3)' : 'rgba(200,147,10,0.3)'}`
+                  boxShadow: selectedRegion === region.district 
+                    ? `0 0 20px 10px ${stats.density > 70 ? 'rgba(204,31,31,0.3)' : 'rgba(200,147,10,0.3)'}`
                     : '0 0 0px 0px transparent'
                 }}
               >
                 <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 bg-bg border border-border px-2 py-1 whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none text-[0.6rem] font-mono text-white">
-                  {region.division}
+                  {region.district}
                 </div>
               </motion.div>
             )
@@ -228,45 +233,45 @@ export default function MapSection() {
                 <div className="space-y-8">
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
-                      <span className="text-[0.65rem] font-mono text-text-faint uppercase">অপরাধের তীব্রতা</span>
-                      <span className="text-blood font-bold">{regions.find((r: any) => r.division === selectedRegion)?.crime_density_score}%</span>
+                      <span className="text-[0.65rem] font-mono text-text-faint uppercase">{t("intensity")}</span>
+                      <span className="text-blood font-bold">{formatNumber(regions.find((r: any) => r.district === selectedRegion)?.density || 0)}%</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-[0.65rem] font-mono text-text-faint uppercase">মোট মামলা</span>
-                      <span className="text-white font-bold">{regions.find((r: any) => r.division === selectedRegion)?.total_cases} টি</span>
+                      <span className="text-[0.65rem] font-mono text-text-faint uppercase">{t("totalCasesMap")}</span>
+                      <span className="text-white font-bold">{formatNumber(regions.find((r: any) => r.district === selectedRegion)?.total || 0)} {t("casesLabel")}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-[0.65rem] font-mono text-text-faint uppercase">ঝুলে থাকা মামলা</span>
-                      <span className="text-gold font-bold">{regions.find((r: any) => r.division === selectedRegion)?.pending_cases} টি</span>
+                      <span className="text-[0.65rem] font-mono text-text-faint uppercase">{t("pendingCasesMap")}</span>
+                      <span className="text-gold font-bold">{formatNumber(regions.find((r: any) => r.district === selectedRegion)?.pending || 0)} {t("casesLabel")}</span>
                     </div>
                   </div>
 
-                  <div className="p-4 bg-bg border border-border">
-                    <div className="flex items-center gap-2 mb-3 text-blood">
-                      <AlertTriangle size={14} />
-                      <span className="text-[0.6rem] font-mono uppercase tracking-widest">High Risk Areas</span>
+                  <div className="pt-8 border-t border-border">
+                    <div className="flex items-center gap-2 mb-6">
+                      <TrendingUp size={14} className="text-blood" />
+                      <span className="text-[0.65rem] font-mono text-white uppercase tracking-widest">{t("highRiskAreas")}</span>
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                      {["থানা এ", "থানা বি", "থানা সি"].map(t => (
-                        <span key={t} className="text-[0.55rem] font-mono bg-surface2 px-2 py-1 border border-border text-text-dim">
-                          {t}
-                        </span>
+                    <div className="space-y-2">
+                      {regions.slice(0, 3).map((r: any) => (
+                        <div key={r.district} className="flex justify-between items-center text-[0.7rem] font-mono">
+                          <span className="text-text-dim">{r.district}</span>
+                          <span className="text-blood">{formatNumber(r.total)}</span>
+                        </div>
                       ))}
                     </div>
                   </div>
 
-                  <button 
-                    onClick={() => window.print()}
-                    className="w-full bg-blood text-white py-3 text-[0.7rem] font-mono uppercase tracking-widest hover:bg-blood/90 transition-all flex items-center justify-center gap-2 no-print"
-                  >
-                    <Search size={14} /> পূর্ণাঙ্গ রিপোর্ট ডাউনলোড
+                  <button className="w-full mt-8 py-4 bg-surface border border-blood/30 text-blood font-mono text-[0.65rem] uppercase tracking-[0.2em] hover:bg-blood hover:text-white transition-all">
+                    {t("downloadFullReport")}
                   </button>
                 </div>
               </motion.div>
             ) : (
-              <div className="h-full border border-dashed border-border flex flex-col items-center justify-center p-8 text-center text-text-faint">
-                <MapPin size={40} className="mb-4 opacity-20" />
-                <p className="text-xs font-mono uppercase tracking-widest">ম্যাপে অথবা বাম পাশের লিস্টে ক্লিক করে অঞ্চলের বিস্তারিত দেখুন</p>
+              <div className="h-full flex flex-col items-center justify-center text-center opacity-30">
+                <Search size={48} className="mb-6" />
+                <p className="text-xs font-mono uppercase tracking-widest leading-loose">
+                  {t("clickMapDetail")}
+                </p>
               </div>
             )}
           </AnimatePresence>

@@ -1,12 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, Filter, ShieldAlert, MapPin, Calendar, User, X, CheckCircle2, FileText, Clock, ExternalLink } from "lucide-react";
+import { Search, Filter, ShieldAlert, MapPin, Calendar, User, X, CheckCircle2, FileText, Clock, ExternalLink, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { districtsAndUpazillas, allDistricts, verifiedIncidents as fallbackIncidents } from "@/lib/data";
 import { safeFetch } from "@/lib/api";
 
+import { useLanguage } from "@/context/LanguageContext";
+
 export default function IncidentDirectory() {
+  const { t, formatNumber, language } = useLanguage();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("All");
   const [selectedThana, setSelectedThana] = useState("All");
@@ -16,13 +19,13 @@ export default function IncidentDirectory() {
   const [loading, setLoading] = useState(true);
   const [selectedIncident, setSelectedIncident] = useState<any | null>(null);
 
-  const [meta, setMeta] = useState<any>({ total: 0 });
+  const [meta, setMeta] = useState<any>({ total: 0, page: 1, pages: 1, limit: 20 });
 
   useEffect(() => {
     async function fetchIncidents() {
       setLoading(true);
       try {
-        let url = "/api/incidents?limit=100";
+        let url = `/api/incidents?page=${meta.page}&limit=${meta.limit}`;
         if (selectedDistrict !== "All") url += `&district=${encodeURIComponent(selectedDistrict)}`;
         if (selectedThana !== "All") url += `&thana=${encodeURIComponent(selectedThana)}`;
         if (selectedType !== "All") url += `&type=${encodeURIComponent(selectedType)}`;
@@ -32,11 +35,7 @@ export default function IncidentDirectory() {
         const result = await safeFetch(url);
         
         if (result.success) {
-          const sortedData = result.data.sort((a: any, b: any) => {
-            if (a.status === 'high_profile') return -1;
-            return 0;
-          });
-          setIncidents(sortedData);
+          setIncidents(result.data);
           setMeta(result.meta);
         }
       } catch (error) {
@@ -47,207 +46,250 @@ export default function IncidentDirectory() {
     }
     
     fetchIncidents();
-  }, [selectedDistrict, selectedThana, selectedType, selectedEra, searchTerm]);
+  }, [selectedDistrict, selectedThana, selectedType, selectedEra, searchTerm, meta.page]);
 
   const availableThanas = selectedDistrict !== "All" ? districtsAndUpazillas[selectedDistrict] || [] : [];
-  const filteredIncidents = incidents;
   const crimeTypes = [
-    { id: "rape", label: "ধর্ষণ ও নিপীড়ন" },
-    { id: "murder", label: "হত্যাকাণ্ড" },
-    { id: "enforced_disappearance", label: "গুম ও নিখোঁজ" },
-    { id: "election_violence", label: "নির্বাচনী সহিংসতা" },
-    { id: "minority_attack", label: "সংখ্যালঘূ হামলা" },
-    { id: "land_grab", label: "জমি দখল" },
-    { id: "labor_violation", label: "শ্রমিক অধিকার" },
-    { id: "general_crime", label: "সাধারণ অপরাধ" },
-    { id: "genocide", label: "গণহত্যা" },
-    { id: "political_assassination", label: "রাজনৈতিক হত্যাকাণ্ড" }
+    { id: "rape", label: t("crises.rape.title") },
+    { id: "murder", label: t("crises.murder.title") },
+    { id: "enforced_disappearance", label: t("crises.enforced_disappearance.title") },
+    { id: "election_violence", label: "Election Violence" },
+    { id: "minority_attack", label: "Minority Attack" },
+    { id: "land_grab", label: t("crises.land_grab.title") },
+    { id: "labor_violation", label: t("crises.labor_violation.title") },
+    { id: "general_crime", label: "General Crime" },
+    { id: "genocide", label: "Genocide" },
+    { id: "political_assassination", label: "Political Assassination" }
   ];
 
   const eras = [
-    { id: "1971_War", label: "১৯৭১: স্বাধীনতা যুদ্ধ" },
-    { id: "Post_Independence", label: "৭৫-৮৯: পুনর্গঠন" },
-    { id: "90s_Restoration", label: "৯০-এর দশক: গণতন্ত্র" },
-    { id: "Modern", label: "বর্তমান: আধুনিক" }
+    { id: "1971_War", label: "1971: Independence War" },
+    { id: "Post_Independence", label: "1975-1989: Reconstruction" },
+    { id: "90s_Restoration", label: "1990s: Democracy" },
+    { id: "Modern", label: "Modern Era" }
   ];
+
+  const handlePageChange = (newPage: number) => {
+    setMeta({ ...meta, page: newPage });
+    window.scrollTo({ top: document.getElementById('incident-directory')?.offsetTop || 0, behavior: 'smooth' });
+  };
 
   return (
     <div id="incident-directory" className="incident-directory mt-24">
-      <div className="chapter-header mb-10">
+      <div className="chapter-header mb-12">
         <div className="chapter-kicker font-mono text-[0.6rem] tracking-[0.3em] uppercase text-text-faint mb-3 flex items-center gap-4 before:content-['04'] before:text-[0.5rem] before:text-blood before:border before:border-blood/30 before:px-1.5 before:py-0.5">
-          ইন্সিডেন্ট ডিরেক্টরি
+          {t("incidentDirectoryKicker")}
         </div>
-        <h2 className="chapter-title text-[clamp(2rem,4vw,3rem)] font-bold text-white leading-[1.1] mb-2">
-          পাবলিক ফিড ও মামলা ট্র্যাকার
+        <h2 className="chapter-title text-[clamp(2rem,4vw,3rem)] font-bold text-white leading-[1.1] mb-4">
+          {t("incidentDirectoryTitle")}
         </h2>
         <p className="chapter-sub text-[1rem] text-text-dim font-light italic">
-          {selectedDistrict !== "All" ? `${selectedDistrict} জেলায় বর্তমানে ${meta.total}টি মামলা নথিভুক্ত আছে` : `সারাদেশে বর্তমানে ${meta.total}টি মামলার বিস্তারিত রেকর্ড আমাদের সিস্টেমে আছে`}
+          {selectedDistrict !== "All" 
+            ? t("recordsInDistrict").replace("{district}", selectedDistrict).replace("{total}", formatNumber(meta.total))
+            : t("recordsNationwide").replace("{total}", formatNumber(meta.total))
+          }
         </p>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4 mb-8">
-        <div className="relative flex-1">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-text-faint" size={18} />
+      {/* Filter Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+        <div className="relative group">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-text-faint group-hover:text-blood transition-colors" size={16} />
           <input 
-            type="text"
-            placeholder="থানা, অপরাধী বা ঘটনার বর্ণনা দিয়ে খুঁজুন..."
-            className="w-full bg-surface border border-border pl-12 pr-4 py-4 text-sm text-text focus:border-blood outline-none transition-all"
+            type="text" 
+            placeholder={t("searchPlaceholderDetailed")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full bg-surface border border-border p-4 pl-12 text-sm text-white focus:outline-none focus:border-blood/50 transition-all font-mono"
           />
         </div>
-        <div className="flex flex-wrap gap-2">
-          <select 
-            className="bg-surface border border-border px-6 py-4 text-sm text-text outline-none focus:border-blood"
-            value={selectedType}
-            onChange={(e) => setSelectedType(e.target.value)}
-          >
-            <option value="All">সকল অপরাধ</option>
-            {crimeTypes.map(t => (
-              <option key={t.id} value={t.id}>{t.label}</option>
-            ))}
-          </select>
 
-          <select 
-            className="bg-surface border border-border px-6 py-4 text-sm text-text outline-none focus:border-blood"
-            value={selectedEra}
-            onChange={(e) => setSelectedEra(e.target.value)}
-          >
-            <option value="All">সকল সময়কাল</option>
-            {eras.map(e => (
-              <option key={e.id} value={e.id}>{e.label}</option>
-            ))}
-          </select>
+        <select 
+          value={selectedType}
+          onChange={(e) => setSelectedType(e.target.value)}
+          className="bg-surface border border-border p-4 text-sm text-white focus:outline-none focus:border-blood/50 transition-all font-mono"
+        >
+          <option value="All">{t("allCrimes")}</option>
+          {crimeTypes.map(type => (
+            <option key={type.id} value={type.id}>{type.label}</option>
+          ))}
+        </select>
 
-          <select 
-            className="bg-surface border border-border px-6 py-4 text-sm text-text outline-none focus:border-blood"
-            value={selectedDistrict}
-            onChange={(e) => {
-              setSelectedDistrict(e.target.value);
-              setSelectedThana("All");
-            }}
-          >
-            <option value="All">সকল জেলা</option>
-            {allDistricts.sort().map(d => (
-              <option key={d} value={d}>{d}</option>
-            ))}
-          </select>
-          
-          <select 
-            className="bg-surface border border-border px-6 py-4 text-sm text-text outline-none focus:border-blood disabled:opacity-30 disabled:cursor-not-allowed"
-            value={selectedThana}
-            disabled={selectedDistrict === "All"}
-            onChange={(e) => setSelectedThana(e.target.value)}
-          >
-            <option value="All">সকল থানা</option>
-            {availableThanas.map(t => (
-              <option key={t} value={t}>{t}</option>
-            ))}
-          </select>
+        <select 
+          value={selectedEra}
+          onChange={(e) => setSelectedEra(e.target.value)}
+          className="bg-surface border border-border p-4 text-sm text-white focus:outline-none focus:border-blood/50 transition-all font-mono"
+        >
+          <option value="All">{t("allEras")}</option>
+          {eras.map(era => (
+            <option key={era.id} value={era.id}>{era.label}</option>
+          ))}
+        </select>
 
-          <button className="bg-surface border border-border px-6 py-4 text-text-faint hover:text-white transition-colors">
-            <Filter size={18} />
-          </button>
-        </div>
+        <select 
+          value={selectedDistrict}
+          onChange={(e) => {
+            setSelectedDistrict(e.target.value);
+            setSelectedThana("All");
+          }}
+          className="bg-surface border border-border p-4 text-sm text-white focus:outline-none focus:border-blood/50 transition-all font-mono"
+        >
+          <option value="All">{t("allDistricts")}</option>
+          {allDistricts.sort().map(d => (
+            <option key={d} value={d}>{d}</option>
+          ))}
+        </select>
+
+        <button 
+          onClick={() => {
+            setSelectedDistrict("All");
+            setSelectedThana("All");
+            setSelectedType("All");
+            setSelectedEra("All");
+            setSearchTerm("");
+            setMeta({ ...meta, page: 1 });
+          }}
+          className="bg-surface border border-border p-4 text-xs font-mono uppercase tracking-widest text-text-faint hover:text-white hover:border-blood transition-all flex items-center justify-center gap-2"
+        >
+          <X size={14} /> {t("resetFilters")}
+        </button>
       </div>
 
       <div className="space-y-4">
         <AnimatePresence mode="popLayout">
           {loading ? (
-            <div className="col-span-full py-20 text-center">
-              <div className="w-10 h-10 border-2 border-blood border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-              <p className="font-mono text-xs text-text-faint uppercase tracking-widest">Searching Records...</p>
+            <div className="space-y-4">
+              {[1, 2, 3, 4, 5].map(i => (
+                <div key={i} className="bg-surface border border-border p-6 animate-pulse">
+                  <div className="flex gap-4 mb-4">
+                    <div className="w-20 h-4 bg-surface2" />
+                    <div className="w-24 h-4 bg-surface2" />
+                  </div>
+                  <div className="w-full h-6 bg-surface2 mb-4" />
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="w-24 h-3 bg-surface2" />
+                    <div className="w-24 h-3 bg-surface2" />
+                    <div className="w-24 h-3 bg-surface2" />
+                    <div className="w-24 h-3 bg-surface2" />
+                  </div>
+                </div>
+              ))}
             </div>
           ) : incidents.length > 0 ? (
-            incidents.map((incident) => (
-              <motion.div 
-                key={incident.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                layout
-                className="group bg-surface border border-border p-6 hover:border-blood/50 transition-all cursor-pointer"
-                onClick={() => setSelectedIncident(incident)}
-              >
-                <div className="flex flex-col lg:flex-row justify-between gap-6">
-                  <div className="flex-1 space-y-4">
-                    <div className="flex flex-wrap items-center gap-3">
-                      <span className={`px-2 py-0.5 text-[0.6rem] font-mono uppercase tracking-widest border bg-blood/10 border-blood text-blood`}>
-                        {incident.incident_type.replace('_', ' ')}
-                      </span>
-                      <span className="text-text-faint text-[0.7rem] font-mono">ID: {incident.incident_id}</span>
+            <>
+              {incidents.map((incident) => (
+                <motion.div 
+                  key={incident.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  layout
+                  className="group bg-surface border border-border p-6 hover:border-blood/50 transition-all cursor-pointer"
+                  onClick={() => setSelectedIncident(incident)}
+                >
+                  <div className="flex flex-col lg:flex-row justify-between gap-6">
+                    <div className="flex-1 space-y-4">
+                      <div className="flex flex-wrap items-center gap-3">
+                        <span className={`px-2 py-0.5 text-[0.6rem] font-mono uppercase tracking-widest border bg-blood/10 border-blood text-blood`}>
+                          {incident.incident_type.replace('_', ' ')}
+                        </span>
+                        <span className="text-text-faint text-[0.7rem] font-mono">{t("caseId")}{incident.incident_id}</span>
+                        
+                        <div className="flex gap-2">
+                          <span className="flex items-center gap-1.5 bg-green/10 border border-green/30 px-2 py-0.5 text-[0.6rem] text-green font-mono uppercase tracking-widest">
+                            <CheckCircle2 size={10} /> {incident.source_name || t("verifiedSourceLabel")}
+                          </span>
+                        </div>
+                      </div>
                       
-                      <div className="flex gap-2">
-                        <span className="flex items-center gap-1.5 bg-green/10 border border-green/30 px-2 py-0.5 text-[0.6rem] text-green font-mono uppercase tracking-widest">
-                          <CheckCircle2 size={10} /> {incident.source_name || "Verified Source"}
+                      <h3 className="text-lg font-bold text-white group-hover:text-blood transition-colors">
+                        {incident.title}
+                      </h3>
+
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-[0.75rem] font-mono text-text-dim">
+                        <div className="flex items-center gap-2">
+                          <MapPin size={14} className="text-blood" />
+                          <span>{incident.district}, {incident.thana || "N/A"}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Calendar size={14} className="text-gold" />
+                          <span>{language === 'bn' ? formatNumber(new Date(incident.created_at).toLocaleDateString('bn-BD')) : new Date(incident.created_at).toLocaleDateString()}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Clock size={14} className="text-teal" />
+                          <span>{incident.status.replace('_', ' ')}</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <FileText size={14} className="text-sky" />
+                          <span>Case Document</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center lg:justify-end">
+                      <div className="flex flex-col items-center justify-center p-4 bg-surface2 border border-border group-hover:border-blood transition-all">
+                        <span className="text-[0.6rem] font-mono text-text-faint uppercase mb-1">{t("caseStatus")}</span>
+                        <span className={`text-[0.7rem] font-bold font-mono uppercase tracking-widest ${
+                          incident.status === 'verdict' ? 'text-green' : 
+                          incident.status === 'under_investigation' ? 'text-sky' : 
+                          'text-blood'
+                        }`}>
+                          {incident.status === 'verdict' ? t("resolvedStatus") : t("pendingStatus")}
                         </span>
                       </div>
                     </div>
-                    
-                    <h3 className="text-lg font-bold text-white group-hover:text-blood transition-colors">
-                      {incident.title}
-                    </h3>
-
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-[0.75rem] font-mono text-text-dim">
-                      <div className="flex items-center gap-2">
-                        <MapPin size={14} className="text-blood" />
-                        <span>{incident.district}, {incident.thana || "N/A"}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Calendar size={14} className="text-gold" />
-                        <span>{new Date(incident.created_at).toLocaleDateString('bn-BD')}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Clock size={14} className="text-teal" />
-                        <span>{incident.status.replace('_', ' ')}</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <FileText size={14} className="text-sky" />
-                        <span>Case Document</span>
-                      </div>
-                    </div>
                   </div>
+                </motion.div>
+              ))}
 
-                  <div className="flex items-center lg:justify-end">
-                    <div className="flex flex-col items-center justify-center p-4 bg-surface2 border border-border group-hover:border-blood transition-all">
-                      <span className="text-[0.6rem] font-mono text-text-faint uppercase mb-1">Status</span>
-                      <span className={`text-[0.7rem] font-bold font-mono uppercase tracking-widest ${
-                        incident.status === 'verdict' ? 'text-green' : 
-                        incident.status === 'under_investigation' ? 'text-sky' : 
-                        'text-blood'
-                      }`}>
-                        {incident.status.replace('_', ' ')}
-                      </span>
-                    </div>
+              {/* Pagination UI */}
+              {meta.pages > 1 && (
+                <div className="flex justify-center items-center gap-4 mt-12 py-8 border-t border-border">
+                  <button 
+                    disabled={meta.page === 1}
+                    onClick={() => handlePageChange(meta.page - 1)}
+                    className="p-3 border border-border text-text-faint hover:text-white disabled:opacity-30 disabled:hover:text-text-faint transition-all"
+                  >
+                    <ChevronRight className="rotate-180" size={18} />
+                  </button>
+                  <div className="flex gap-2">
+                    {[...Array(meta.pages)].map((_, i) => (
+                      <button
+                        key={i + 1}
+                        onClick={() => handlePageChange(i + 1)}
+                        className={`w-10 h-10 font-mono text-xs border transition-all ${
+                          meta.page === i + 1 
+                            ? 'bg-blood border-blood text-white' 
+                            : 'border-border text-text-faint hover:border-blood/50 hover:text-white'
+                        }`}
+                      >
+                        {formatNumber(i + 1)}
+                      </button>
+                    ))}
                   </div>
+                  <button 
+                    disabled={meta.page === meta.pages}
+                    onClick={() => handlePageChange(meta.page + 1)}
+                    className="p-3 border border-border text-text-faint hover:text-white disabled:opacity-30 disabled:hover:text-text-faint transition-all"
+                  >
+                    <ChevronRight size={18} />
+                  </button>
                 </div>
-              </motion.div>
-            ))
+              )}
+            </>
           ) : (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="py-20 text-center border border-dashed border-border-light bg-surface/30 col-span-full"
-            >
-              <div className="text-blood mb-4 flex justify-center">
-                <ShieldAlert size={48} />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">এই ফিল্টারে কোনো রেকর্ড পাওয়া যায়নি</h3>
-              <p className="text-text-dim text-sm max-w-[500px] mx-auto leading-relaxed">
-                আমাদের সিস্টেম ২৪ ঘণ্টা নিউজ স্ক্র্যাপ করে এবং তথ্য সংগ্রহ করে। আপনি যদি এই অঞ্চলে বা বিভাগে কোনো অপরাধের কথা জানেন, তবে নিচে রিপোর্ট করুন।
+            <div className="bg-surface border border-border p-20 text-center">
+              <ShieldAlert className="mx-auto text-blood/20 mb-6" size={64} />
+              <p className="font-mono text-xs text-text-faint uppercase tracking-[0.2em] mb-4">
+                {t("noRecordsFound")}
               </p>
-              <button 
-                onClick={() => {
-                  setSelectedDistrict("All");
-                  setSelectedType("All");
-                  setSelectedEra("All");
-                  setSearchTerm("");
-                }}
-                className="mt-6 px-6 py-2 border border-blood text-blood hover:bg-blood hover:text-white transition-all text-xs font-mono uppercase tracking-widest"
-              >
-                Reset Filters
+              <p className="text-text-dim text-sm max-w-md mx-auto leading-relaxed">
+                {t("systemNewsScraping")}
+              </p>
+              <button className="mt-8 px-8 py-3 bg-blood text-white font-mono text-xs uppercase tracking-widest hover:bg-blood/80 transition-all">
+                {t("submitReport")}
               </button>
-            </motion.div>
+            </div>
           )}
         </AnimatePresence>
       </div>

@@ -2,9 +2,10 @@
 
 import { useLanguage } from "@/context/LanguageContext";
 import { motion } from "framer-motion";
+import { Globe } from "lucide-react";
 
 export default function LanguageToggle() {
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
 
   return (
     <div className="flex items-center bg-surface2 border border-border p-1 rounded-sm no-print relative">
