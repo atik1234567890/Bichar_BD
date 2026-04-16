@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from database.models import db, Incident, DistrictStats, LiveFeedEvent
 from scraper.news_scraper import scrape_all_sources
 from sqlalchemy import func
+from api.socket_instance import socketio
 
 # Use Bangladesh Timezone
 bd_tz = pytz.timezone('Asia/Dhaka')
@@ -14,7 +15,9 @@ def update_pending_days():
     print(f"[{now_bd}] Updating pending days...")
     incidents = Incident.query.filter(Incident.status.notin_(['verdict', 'stalled', 'forgotten'])).all()
     
+    status_changed = []
     for inc in incidents:
+        old_status = inc.status
         # Convert incident date to BD time if it's naive
         inc_date = inc.incident_date
         if inc_date.tzinfo is None:
@@ -26,7 +29,20 @@ def update_pending_days():
             inc.status = "forgotten"
         elif days >= 30:
             inc.status = "stalled"
+        
+        if old_status != inc.status:
+            status_changed.append({
+                "id": inc.incident_id,
+                "title": inc.title,
+                "old_status": old_status,
+                "new_status": inc.status
+            })
+    
     db.session.commit()
+    
+    # Emit events for status changes
+    for change in status_changed:
+        socketio.emit('status_change', change)
 
 def update_division_stats():
     from scraper.nlp_processor import BANGLADESH_DISTRICTS
@@ -72,7 +88,7 @@ def cleanup_old_events():
     db.session.commit()
 
 # Schedule jobs with BD Timezone awareness
-scheduler.add_job(scrape_all_sources, 'interval', minutes=15) # Faster scraping for "Real-Time"
+scheduler.add_job(scrape_all_sources, 'interval', minutes=3) # Faster scraping for "Real-Time"
 scheduler.add_job(update_pending_days, 'interval', hours=6)
 scheduler.add_job(update_division_stats, 'interval', minutes=30) # More frequent map updates
 scheduler.add_job(cleanup_old_events, 'interval', hours=12)

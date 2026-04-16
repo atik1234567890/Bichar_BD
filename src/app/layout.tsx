@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { SocketProvider } from "@/context/SocketContext";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "BicharBD — বাংলাদেশের বিচারিক রেকর্ড ও ঐতিহাসিক আর্কাইভ (১৯৭১–২০২৬)",
@@ -22,7 +24,22 @@ export default function RootLayout({
       </head>
       <body>
         <LanguageProvider>
-          {children}
+          <SocketProvider>
+            {children}
+            <Toaster 
+              position="top-right"
+              toastOptions={{
+                className: 'bg-surface border border-border text-white text-sm font-mono',
+                duration: 5000,
+                style: {
+                  borderRadius: '0px',
+                  background: '#1a1a1a',
+                  color: '#fff',
+                  border: '1px solid #333',
+                },
+              }}
+            />
+          </SocketProvider>
         </LanguageProvider>
       </body>
     </html>

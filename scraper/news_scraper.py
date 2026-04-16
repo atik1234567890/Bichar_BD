@@ -5,13 +5,14 @@ import hashlib
 from datetime import datetime
 from database.models import db, Incident, LiveFeedEvent
 from scraper.nlp_processor import classify_article, extract_location, detect_status
+from api.socket_instance import socketio
 
 RSS_SOURCES = [
-    {'name': 'প্রথম আলো', 'rss': 'https://www.prothomalo.com/feed/bangladesh'},
-    {'name': 'দ্য ডেইলি স্টার', 'rss': 'https://www.thedailystar.net/bangladesh/news/rss.xml'},
+    {'name': 'প্রথম আলো', 'rss': 'https://www.prothomalo.com/feed'},
+    {'name': 'দ্য ডেইলি স্টার', 'rss': 'https://www.thedailystar.net/frontpage/rss.xml'},
+    {'name': 'বিডিনিউজ২৪', 'rss': 'https://bdnews24.com/?widgetName=rssfeed&widgetId=1&getXmlFeed=true'},
     {'name': 'ইত্তেফাক', 'rss': 'https://www.ittefaq.com.bd/rss/bangladesh'},
     {'name': 'যুগান্তর', 'rss': 'https://www.jugantor.com/rss/all.xml'},
-    {'name': 'বিডিনিউজ২৪', 'rss': 'https://bangla.bdnews24.com/?widgetName=rssfeed&widgetId=1151&getXmlFeed=true'},
     {'name': 'সমকাল', 'rss': 'https://samakal.com/rss/bangladesh'},
     {'name': 'কালের কণ্ঠ', 'rss': 'https://www.kalerkantho.com/rss/bangladesh'},
     {'name': 'ইনকিলাব', 'rss': 'https://dailyinqilab.com/rss/bangladesh'},
@@ -25,10 +26,15 @@ RSS_SOURCES = [
     {'name': 'Independent TV', 'rss': 'https://www.independent24.com/rss/bangladesh'},
 ]
 
+KEYWORDS = [
+    "দুর্নীতি", "বিচার", "গ্রেফতার", "মামলা", "হত্যা", "ধর্ষণ", 
+    "corruption", "arrest", "murder", "case", "verdict"
+]
+
 def scrape_all_sources():
     """
     Advanced Multi-Source Scraper with Neural Cross-Validation.
-    Surpasses standard scrapers by correlating data from 10+ sources for 100% accuracy.
+    Filters articles based on specific keywords and emits real-time updates via SocketIO.
     """
     print(f"[{datetime.now()}] Neural Engine: Starting deep scrape across Bangladesh Media Sphere...")
     total_new = 0
@@ -40,6 +46,11 @@ def scrape_all_sources():
         try:
             headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'}
             resp = requests.get(source['rss'], headers=headers, timeout=15)
+            
+            if resp.status_code != 200:
+                print(f"⚠️ Neural Warning: Source {source['name']} returned status {resp.status_code}")
+                continue
+
             feed = feedparser.parse(resp.content)
             
             print(f"📡 Scanning {source['name']}... {len(feed.entries)} nodes found.")
@@ -49,6 +60,11 @@ def scrape_all_sources():
                 title = entry.get('title', '')
                 summary = entry.get('summary', '') or entry.get('description', '')
                 
+                # Keyword Filtering
+                content_to_check = (title + " " + summary).lower()
+                if not any(keyword in content_to_check for keyword in KEYWORDS):
+                    continue
+
                 # Check duplication in database
                 if Incident.query.filter_by(source_url=url).first():
                     continue
@@ -60,7 +76,7 @@ def scrape_all_sources():
                     location = extract_location(title + " " + summary)
                     status = detect_status(title + " " + summary)
                     
-                    # Store as candidate for cross-validation (if same incident appears in multiple sources)
+                    # Store as candidate for cross-validation
                     candidates.append({
                         "title": title,
                         "summary": summary,
@@ -71,25 +87,24 @@ def scrape_all_sources():
                         "status": status
                     })
             
-            time.sleep(1) # Rate limiting to prevent blocks
+            time.sleep(1) # Rate limiting
         except Exception as e:
-            print(f"⚠️ Neural Warning: Source {source['name']} inaccessible. Details: {e}")
+            print(f"⚠️ Neural Warning: Source {source['name']} inaccessible. Retrying silently in next cycle. Details: {e}")
 
     # Stage 2: Neural Cross-Validation & Database Commitment
     print(f"🧠 Neural Stage: Processing {len(candidates)} candidates for verification...")
     
+    new_articles_for_emit = []
+
     for item in candidates:
         try:
-            # Check if a very similar incident was already added in THIS batch (Cross-Source Correlation)
-            # This mimics human-like cross-referencing for high accuracy
+            # Check for batch duplicates
             duplicate = Incident.query.filter(
                 (Incident.title.ilike(f"%{item['title'][:20]}%")) & 
                 (Incident.district == item['location']['district'])
             ).first()
             
             if duplicate:
-                # If duplicate found, just add this as an additional source instead of new incident
-                # This increases the "verified" status of the existing record
                 duplicate.verification_label = "multi_sourced_verified"
                 continue
             
@@ -114,6 +129,15 @@ def scrape_all_sources():
             db.session.add(new_incident)
             total_new += 1
             
+            # Prepare data for real-time emission
+            new_articles_for_emit.append({
+                "id": incident_id,
+                "title": item['title'],
+                "incident_type": item['analysis']['incident_type'],
+                "district": item['location']['district'],
+                "source_name": item['source']
+            })
+
             # Live Feed Sync
             new_event = LiveFeedEvent(
                 event_type=item['analysis']['incident_type'],
@@ -128,7 +152,11 @@ def scrape_all_sources():
 
     db.session.commit()
     
-    # Neural status logging for "Active" feeling
+    # Emit events for each new article
+    for article in new_articles_for_emit:
+        socketio.emit('new_article', article)
+
+    # Neural status logging
     status_msg = f"Neural Engine: Scanning {len(RSS_SOURCES)} sources. {total_new} new nodes integrated."
     db.session.add(LiveFeedEvent(
         event_type="MAINTENANCE",

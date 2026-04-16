@@ -9,6 +9,7 @@ from api.stats import stats_bp
 from api.reports import reports_bp
 from api.feed import feed_bp
 from api.figures import figures_bp
+from api.socket_instance import socketio
 from scraper.scheduler import scheduler
 from scraper.autonomous_brain import start_brain
 import os
@@ -18,6 +19,9 @@ app.config.from_object('config.Config')
 
 # Initialize DB
 db.init_app(app)
+
+# Initialize SocketIO
+socketio.init_app(app)
 
 # Initialize CORS
 CORS(app)
@@ -132,4 +136,4 @@ def health():
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+    socketio.run(app, host='0.0.0.0', port=port)
