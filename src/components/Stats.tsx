@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { BarChart3, TrendingUp, AlertTriangle } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function Stats() {
+  const { t, formatNumber } = useLanguage();
   const [summary, setSummary] = useState<any>(null);
   const [types, setTypes] = useState<any>({});
   const [loading, setLoading] = useState(true);
@@ -38,30 +40,30 @@ export default function Stats() {
 
   const stats = summary ? [
     {
-      num: `${summary.total.toLocaleString()}`,
-      desc: "মোট নথিভুক্ত\nবিচারিক রেকর্ড",
+      num: formatNumber(summary.total),
+      desc: t("totalRecords"),
       color: "blood",
     },
     {
-      num: `${(summary.resolved / summary.total * 100 || 0).toFixed(1)}%`,
-      desc: "বিচারের গড় হার\n(১৯৭১–২০২৬)",
+      num: `${formatNumber((summary.resolved / summary.total * 100 || 0).toFixed(1))}%`,
+      desc: t("justiceRate"),
       color: "gold",
     },
     {
-      num: `${summary.pending.toLocaleString()}`,
-      desc: "চলমান ও\nতদন্তাধীন মামলা",
+      num: formatNumber(summary.pending),
+      desc: t("pendingCases"),
       color: "teal",
     },
     {
       num: `Verified`,
-      desc: "১০০% ভেরিফাইড\nঅফিসিয়াল সোর্স",
+      desc: t("verifiedSource"),
       color: "sky",
     },
   ] : [
-    { num: "৮৫০+", desc: "গুম — enforced\ndisappearances (2009–2026)", color: "blood" },
-    { num: "১৯%", desc: "ধর্ষণ মামলায়\nসাজার হার", color: "gold" },
-    { num: "৪৫%", desc: "বাল্যবিবাহের হার\nগ্রামাঞ্চলে", color: "teal" },
-    { num: "৩৬ লক্ষ", desc: "RMG শ্রমিক\nঅধিকারবঞ্চিত", color: "sky" }
+    { num: formatNumber("৮৫০+"), desc: t("enforcedDisappearances"), color: "blood" },
+    { num: formatNumber("১৯%"), desc: t("rapeCaseConviction"), color: "gold" },
+    { num: formatNumber("৪৫%"), desc: t("childMarriageRate"), color: "teal" },
+    { num: t("rmgWorkersRights").split("\n")[0], desc: t("rmgWorkersRights").split("\n").slice(1).join("\n"), color: "sky" }
   ];
 
   return (
@@ -93,26 +95,18 @@ export default function Stats() {
         <div className="bg-surface border border-border p-6">
           <div className="flex items-center gap-2 mb-6">
             <BarChart3 size={16} className="text-blood" />
-            <h3 className="text-white font-bold text-xs uppercase tracking-widest font-mono">Crime Type Distribution</h3>
+            <h3 className="text-white font-bold text-xs uppercase tracking-widest font-mono">{t("crimeTypeDistribution")}</h3>
           </div>
           <div className="space-y-4">
             {Object.entries(types).length > 0 ? (
               Object.entries(types).sort((a: any, b: any) => b[1] - a[1]).slice(0, 5).map(([type, count]: any) => (
-                <div key={type} className="space-y-1">
-                  <div className="flex justify-between text-[0.65rem] font-mono text-text-dim uppercase">
-                    <span>{type.replace(/_/g, ' ')}</span>
-                    <span>{count} cases</span>
-                  </div>
-                  <div className="h-1 bg-bg border border-border-light overflow-hidden">
-                    <div 
-                      className="h-full bg-blood transition-all duration-1000" 
-                      style={{ width: `${(count / summary?.total * 100) || 0}%` }}
-                    />
-                  </div>
+                <div key={type} className="flex justify-between items-center text-[0.7rem] font-mono text-text-dim">
+                  <span>{type}</span>
+                  <span className="text-white">{formatNumber(count)}</span>
                 </div>
               ))
             ) : (
-              <p className="text-text-faint text-xs italic text-center py-4">তথ্য পাওয়া যায়নি</p>
+              <div className="text-[0.7rem] font-mono text-text-faint italic">No data available</div>
             )}
           </div>
         </div>

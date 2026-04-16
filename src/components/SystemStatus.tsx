@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { Activity, Database, Newspaper, Clock } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function SystemStatus() {
+  const { t, formatNumber } = useLanguage();
   const [status, setStatus] = useState<any>(null);
 
   useEffect(() => {
@@ -26,16 +28,16 @@ export default function SystemStatus() {
     <div className="system-status bg-surface border border-border p-8 my-12 relative overflow-hidden">
       <div className="flex items-center gap-3 mb-8">
         <Activity size={20} className="text-blood" />
-        <h3 className="text-lg font-bold text-white uppercase tracking-widest font-mono">System Status</h3>
+        <h3 className="text-lg font-bold text-white uppercase tracking-widest font-mono">{t("systemStatus")}</h3>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="flex items-start gap-4">
           <Clock className="text-text-faint mt-1" size={18} />
           <div>
-            <div className="text-[0.6rem] font-mono text-text-faint uppercase mb-1">শেষ আপডেট</div>
+            <div className="text-[0.6rem] font-mono text-text-faint uppercase mb-1">{t("lastUpdate")}</div>
             <div className="text-sm text-text-dim" id="lastScrapeTime">
-              {status ? new Date(status.timestamp).toLocaleTimeString() : "লোড হচ্ছে..."}
+              {status ? formatNumber(new Date(status.timestamp).toLocaleTimeString()) : t("loading")}
             </div>
           </div>
         </div>
@@ -43,18 +45,18 @@ export default function SystemStatus() {
         <div className="flex items-start gap-4">
           <Newspaper className="text-text-faint mt-1" size={18} />
           <div>
-            <div className="text-[0.6rem] font-mono text-text-faint uppercase mb-1">সংবাদ উৎস</div>
-            <div className="text-sm text-text-dim" id="totalSources">১৫+ যাচাইকৃত সোর্স</div>
+            <div className="text-[0.6rem] font-mono text-text-faint uppercase mb-1">{t("newsSources")}</div>
+            <div className="text-sm text-text-dim" id="totalSources">{t("verifiedSources")}</div>
           </div>
         </div>
 
         <div className="flex items-start gap-4">
           <Database className="text-text-faint mt-1" size={18} />
           <div>
-            <div className="text-[0.6rem] font-mono text-text-faint uppercase mb-1">ডেটাবেস</div>
+            <div className="text-[0.6rem] font-mono text-text-faint uppercase mb-1">{t("database")}</div>
             <div className="text-sm text-teal flex items-center gap-2" id="dbStatus">
               <div className="w-1.5 h-1.5 bg-teal rounded-full animate-pulse" />
-              সংযুক্ত (Cloud Sync)
+              {t("connectedCloudSync")}
             </div>
           </div>
         </div>

@@ -2,18 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { AlertCircle, Zap } from "lucide-react";
-
-const fallbackNews = [
-  "HISTORIC: ১৯৭১-এর যুদ্ধাপরাধের নতুন আর্কাইভ রেকর্ড ভেরিফাইড।",
-  "UPDATE: ১৫ই আগস্ট ১৯৭৫-এর বিচারিক নথিপত্র ডিজিটাল ফরম্যাটে সংরক্ষিত।",
-  "LIVE: সাভারের গার্মেন্টস শ্রমিকদের বকেয়া বেতন পরিশোধের দাবিতে বিক্ষোভ চলছে।",
-  "VERIFIED: পটিয়া অঞ্চলে ৫টি ভুয়া দলিল শনাক্ত করেছে আমাদের AI সিস্টেম।",
-  "BREAKING: আন্তর্জাতিক আদালতে মানবাধিকার লঙ্ঘনের নতুন তথ্য প্রমাণ জমা দিয়েছে বিচারBD।"
-];
+import { useLanguage } from "@/context/LanguageContext";
+import { translations } from "@/translations";
 
 export default function LiveTicker() {
+  const { t, language } = useLanguage();
   const [index, setIndex] = useState(0);
-  const [newsItems, setNewsItems] = useState<string[]>(fallbackNews);
+  const [newsItems, setNewsItems] = useState<string[]>(translations[language].fallbackNews);
 
   useEffect(() => {
     const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -52,7 +47,7 @@ export default function LiveTicker() {
       <div className="max-w-[1400px] mx-auto flex items-center gap-4">
         <div className="flex items-center gap-2 shrink-0 bg-blood px-2 py-0.5 rounded-sm">
           <Zap size={12} className="text-white fill-white animate-pulse" />
-          <span className="text-[0.6rem] font-mono font-bold text-white uppercase tracking-tighter">Live Updates</span>
+          <span className="text-[0.6rem] font-mono font-bold text-white uppercase tracking-tighter">{t("liveUpdates")}</span>
         </div>
         <div className="flex-1 overflow-hidden relative h-5">
           <div 
@@ -67,7 +62,7 @@ export default function LiveTicker() {
           </div>
         </div>
         <div className="shrink-0 text-[0.6rem] font-mono text-blood/50 uppercase tracking-widest hidden md:block">
-          System Status: Monitoring 24/7
+          {t("systemMonitoring")}
         </div>
       </div>
     </div>

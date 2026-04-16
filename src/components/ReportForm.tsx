@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { X, Send, ShieldCheck, Upload } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
-export default function ReportForm({ isOpen, onClose, title }: { isOpen: boolean, onClose: () => void, title: string }) {
+export default function ReportForm({ crisisId, onClose }: { crisisId: string, onClose: () => void }) {
+  const { t } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     district: "",
@@ -14,8 +16,6 @@ export default function ReportForm({ isOpen, onClose, title }: { isOpen: boolean
   });
   const [file, setFile] = useState<File | null>(null);
 
-  if (!isOpen) return null;
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -24,7 +24,7 @@ export default function ReportForm({ isOpen, onClose, title }: { isOpen: boolean
     if (API_URL.endsWith("/")) API_URL = API_URL.slice(0, -1);
     
     const submitData = new FormData();
-    submitData.append("incident_type", title);
+    submitData.append("incident_type", crisisId);
     submitData.append("description", formData.description);
     submitData.append("division", formData.district); 
     submitData.append("district", formData.district);
@@ -38,14 +38,14 @@ export default function ReportForm({ isOpen, onClose, title }: { isOpen: boolean
       });
       const result = await response.json();
       if (result.success) {
-        alert('আপনার অভিযোগ সফলভাবে এনক্রিপ্টেড চ্যানেলে জমা হয়েছে। টোকেন: ' + result.token);
+        alert(t("successMessage") + result.token);
         onClose();
       } else {
-        alert('ত্রুটি: ' + result.message);
+        alert(t("errorMessage") + result.message);
       }
     } catch (error) {
       console.error("Submission error:", error);
-      alert('সার্ভারের সাথে সংযোগ করা যাচ্ছে না। পরে চেষ্টা করুন।');
+      alert(t("serverError"));
     } finally {
       setIsSubmitting(false);
     }
@@ -66,20 +66,20 @@ export default function ReportForm({ isOpen, onClose, title }: { isOpen: boolean
         <div className="mb-8">
           <div className="text-blood font-mono text-[0.6rem] tracking-[0.3em] uppercase mb-2 flex items-center gap-2">
             <ShieldCheck size={12} className={isSubmitting ? "animate-spin" : ""} /> 
-            {isSubmitting ? "Encrypting Data..." : "Encrypted Submission"}
+            {isSubmitting ? t("encryptingData") : t("encryptedSubmission")}
           </div>
-          <h2 className="text-2xl font-bold text-white mb-2">{title} — অভিযোগ ফরম</h2>
-          <p className="text-text-dim text-sm italic">আপনার তথ্য সম্পূর্ণ গোপন রাখা হবে। কোনো ব্যক্তিগত তথ্য (নাম, ফোন) দেয়া বাধ্যতামূলক নয়।</p>
+          <h2 className="text-2xl font-bold text-white mb-2">{t(`crises.${crisisId}.title`)} — {t("reportFormTitle")}</h2>
+          <p className="text-text-dim text-sm italic">{t("anonymityNote")}</p>
         </div>
 
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-2">
-              <label className="text-[0.7rem] font-mono text-text-faint uppercase tracking-widest block">জেলা (District)</label>
+              <label className="text-[0.7rem] font-mono text-text-faint uppercase tracking-widest block">{t("districtLabel")}</label>
               <input 
                 type="text" 
                 className="w-full bg-bg border border-border p-3 text-text text-sm focus:border-blood outline-none transition-colors"
-                placeholder="যেমন: ঢাকা"
+                placeholder={t("districtPlaceholder")}
                 required
                 disabled={isSubmitting}
                 value={formData.district}
@@ -87,11 +87,11 @@ export default function ReportForm({ isOpen, onClose, title }: { isOpen: boolean
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[0.7rem] font-mono text-text-faint uppercase tracking-widest block">থানা (Thana)</label>
+              <label className="text-[0.7rem] font-mono text-text-faint uppercase tracking-widest block">{t("thanaLabel")}</label>
               <input 
                 type="text" 
                 className="w-full bg-bg border border-border p-3 text-text text-sm focus:border-blood outline-none transition-colors"
-                placeholder="যেমন: রমনা"
+                placeholder={t("thanaPlaceholder")}
                 required
                 disabled={isSubmitting}
                 value={formData.thana}
@@ -99,7 +99,7 @@ export default function ReportForm({ isOpen, onClose, title }: { isOpen: boolean
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[0.7rem] font-mono text-text-faint uppercase tracking-widest block">তারিখ (Date)</label>
+              <label className="text-[0.7rem] font-mono text-text-faint uppercase tracking-widest block">{t("dateLabel")}</label>
               <input 
                 type="date" 
                 className="w-full bg-bg border border-border p-3 text-text text-sm focus:border-blood outline-none transition-colors"
@@ -112,11 +112,11 @@ export default function ReportForm({ isOpen, onClose, title }: { isOpen: boolean
           </div>
 
           <div className="space-y-2">
-            <label className="text-[0.7rem] font-mono text-text-faint uppercase tracking-widest block">অভিযুক্তের তথ্য (Accused Details - Optional)</label>
+            <label className="text-[0.7rem] font-mono text-text-faint uppercase tracking-widest block">{t("accusedLabel")}</label>
             <input 
               type="text" 
               className="w-full bg-bg border border-border p-3 text-text text-sm focus:border-blood outline-none transition-colors"
-              placeholder="নাম, পদবী বা কোনো বিশেষ পরিচয় থাকলে লিখুন..."
+              placeholder={t("accusedPlaceholder")}
               disabled={isSubmitting}
               value={formData.accused}
               onChange={(e) => setFormData({...formData, accused: e.target.value})}
@@ -124,10 +124,11 @@ export default function ReportForm({ isOpen, onClose, title }: { isOpen: boolean
           </div>
 
           <div className="space-y-2">
-            <label className="text-[0.7rem] font-mono text-text-faint uppercase tracking-widest block">ঘটনার বর্ণনা (Description)</label>
+            <label className="text-[0.7rem] font-mono text-text-faint uppercase tracking-widest block">{t("descriptionLabel")}</label>
             <textarea 
-              className="w-full bg-bg border border-border p-4 text-text text-sm focus:border-blood outline-none min-h-[150px] transition-colors"
-              placeholder="ঘটনাটি বিস্তারিত লিখুন (কী ঘটেছিল, কীভাবে ঘটেছিল)..."
+              rows={4}
+              className="w-full bg-bg border border-border p-3 text-text text-sm focus:border-blood outline-none transition-colors resize-none"
+              placeholder={t("descriptionPlaceholder")}
               required
               disabled={isSubmitting}
               value={formData.description}
@@ -136,34 +137,29 @@ export default function ReportForm({ isOpen, onClose, title }: { isOpen: boolean
           </div>
 
           <div className="space-y-2">
-            <label className="text-[0.7rem] font-mono text-text-faint uppercase tracking-widest block">প্রমাণ আপলোড (Evidence)</label>
-            <input 
-              type="file" 
-              id="evidence-upload" 
-              className="hidden" 
-              onChange={(e) => e.target.files && setFile(e.target.files[0])}
-            />
-            <label 
-              htmlFor="evidence-upload"
-              className="border-2 border-dashed border-border p-8 text-center group hover:border-blood transition-colors cursor-pointer block"
-            >
-              <Upload className="mx-auto text-text-faint mb-2 group-hover:text-blood transition-colors" />
-              <p className="text-xs text-text-dim">
-                {file ? file.name : "ছবি, ভিডিও বা অডিও ফাইল ড্রপ করুন (Max 50MB)"}
-              </p>
-            </label>
+            <label className="text-[0.7rem] font-mono text-text-faint uppercase tracking-widest block">{t("evidenceLabel")}</label>
+            <div className="flex items-center gap-4">
+              <label className="flex-1 flex items-center justify-center gap-3 bg-bg border border-dashed border-border p-4 cursor-pointer hover:border-blood transition-colors group">
+                <Upload size={16} className="text-text-faint group-hover:text-blood" />
+                <span className="text-xs text-text-dim">{file ? file.name : t("chooseFile")}</span>
+                <input 
+                  type="file" 
+                  className="hidden" 
+                  onChange={(e) => setFile(e.target.files ? e.target.files[0] : null)}
+                  disabled={isSubmitting}
+                />
+              </label>
+            </div>
           </div>
 
-          <div className="pt-4">
-            <button 
-              type="submit"
-              disabled={isSubmitting}
-              className={`w-full ${isSubmitting ? 'bg-border text-text-faint' : 'bg-blood hover:bg-blood/90'} text-white py-4 font-mono text-sm uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all`}
-            >
-              <Send size={16} className={isSubmitting ? "animate-pulse" : ""} /> 
-              {isSubmitting ? "Processing Secure Upload..." : "Submit Anonymous Report"}
-            </button>
-          </div>
+          <button 
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full bg-blood text-white font-mono text-[0.8rem] font-bold uppercase tracking-[0.3em] py-5 flex items-center justify-center gap-3 hover:bg-blood/90 transition-all disabled:opacity-50"
+          >
+            <Send size={16} />
+            {isSubmitting ? t("submitting") : t("submitComplaint")}
+          </button>
         </form>
       </div>
     </div>

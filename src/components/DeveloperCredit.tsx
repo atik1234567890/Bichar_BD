@@ -1,6 +1,10 @@
 import { Github, Linkedin, Facebook, MessageSquare, Terminal, Shield } from "lucide-react";
+import LanguageToggle from "./LanguageToggle";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function DeveloperCredit() {
+  const { t } = useLanguage();
+
   return (
     <div className="bg-surface border-b border-border py-3 px-6 relative overflow-hidden group no-print">
       <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
@@ -9,9 +13,9 @@ export default function DeveloperCredit() {
             <Terminal size={20} />
           </div>
           <div>
-            <div className="text-[0.6rem] font-mono text-text-faint uppercase tracking-[0.2em]">Lead Developer</div>
+            <div className="text-[0.6rem] font-mono text-text-faint uppercase tracking-[0.2em]">{t("leadDeveloper")}</div>
             <div className="text-sm font-bold text-white flex items-center gap-2">
-              Md Atikur Rahman <span className="text-blood text-[0.6rem] bg-blood/10 px-1.5 py-0.5 border border-blood/20 font-mono">Cyber Security & Network Tech</span>
+              Md Atikur Rahman <span className="text-blood text-[0.6rem] bg-blood/10 px-1.5 py-0.5 border border-blood/20 font-mono">{t("cyberSecurity")}</span>
             </div>
           </div>
         </div>
@@ -19,9 +23,11 @@ export default function DeveloperCredit() {
         <div className="flex items-center gap-6">
           <div className="hidden lg:flex items-center gap-3 border-l border-border pl-6">
             <Shield size={14} className="text-blood" />
-            <span className="text-[0.65rem] font-mono text-text-dim uppercase tracking-wider">Lincoln University College</span>
+            <span className="text-[0.65rem] font-mono text-text-dim uppercase tracking-wider">{t("lincolnUniversity")}</span>
           </div>
           <div className="flex items-center gap-5">
+            <LanguageToggle />
+            <div className="w-[1px] h-4 bg-border mx-2" />
             <a href="https://github.com/atik1234567890" target="_blank" rel="noopener noreferrer" className="text-text-faint hover:text-white transition-colors" title="GitHub"><Github size={16} /></a>
             <a href="https://www.linkedin.com/in/md-atikur-rahman-3416a1386" target="_blank" rel="noopener noreferrer" className="text-text-faint hover:text-white transition-colors" title="LinkedIn"><Linkedin size={16} /></a>
             <a href="https://www.facebook.com/share/1KK88AFa1h/" target="_blank" rel="noopener noreferrer" className="text-text-faint hover:text-white transition-colors" title="Facebook"><Facebook size={16} /></a>

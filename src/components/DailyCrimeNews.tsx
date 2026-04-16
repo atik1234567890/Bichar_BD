@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { Newspaper, Clock, ExternalLink, MapPin, ChevronRight, AlertCircle, Globe } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function DailyCrimeNews() {
+  const { t, language, formatNumber, formatDate } = useLanguage();
   const [news, setNews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -34,19 +36,26 @@ export default function DailyCrimeNews() {
     <div className="h-[400px] flex items-center justify-center border border-border bg-surface">
       <div className="flex flex-col items-center gap-4">
         <div className="w-10 h-10 border-2 border-blood border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-xs font-mono text-text-faint uppercase tracking-widest">সংবাদ আপডেট হচ্ছে...</p>
+        <p className="text-xs font-mono text-text-faint uppercase tracking-widest">{t("updatingNews")}</p>
       </div>
     </div>
   );
 
   const formatTime = (dateStr: string) => {
     const date = new Date(dateStr);
-    return date.toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit', hour12: true });
+    const timeStr = date.toLocaleTimeString(language === "bn" ? 'bn-BD' : 'en-GB', { 
+      hour: '2-digit', 
+      minute: '2-digit', 
+      hour12: true 
+    });
+    return formatNumber(timeStr);
   };
 
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('bn-BD', { day: 'numeric', month: 'long', year: 'numeric' });
+  // Simple transliteration placeholder for Bengali news titles in English mode
+  const translateText = (text: string) => {
+    if (language === "bn") return text;
+    // In a real app, this might call a translation API or use a transliteration library
+    return `${text} (Translated)`;
   };
 
   return (
@@ -54,19 +63,19 @@ export default function DailyCrimeNews() {
       <div className="chapter-header mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <div className="chapter-kicker font-mono text-[0.6rem] tracking-[0.3em] uppercase text-text-faint mb-3 flex items-center gap-4 before:content-['LIVE'] before:text-[0.5rem] before:text-blood before:border before:border-blood/30 before:px-1.5 before:py-0.5">
-            সরাসরি আপডেট
+            {t("liveUpdate")}
           </div>
           <h2 className="chapter-title text-[clamp(2.5rem,6vw,4.5rem)] font-bold text-white leading-[1] mb-6 tracking-tight">
-            আজকের গুরুত্বপূর্ণ অপরাধ সংবাদ
+            {t("dailyNewsTitle")}
           </h2>
           <p className="chapter-sub text-[1.2rem] text-text-dim font-light italic max-w-[800px] leading-relaxed">
-            সারা দেশের যাচাইকৃত সংবাদ উৎস থেকে সংগৃহীত — ৩০ মিনিট পরপর অটো-আপডেট।
+            {t("dailyNewsSub")}
           </p>
         </div>
         <div className="bg-blood/10 border border-blood/20 px-4 py-2 flex items-center gap-3">
           <AlertCircle size={16} className="text-blood animate-pulse" />
           <span className="text-[0.7rem] font-mono text-white uppercase tracking-widest">
-            {news.length}টি গুরুত্বপূর্ণ সংবাদ পাওয়া গেছে
+            {formatNumber(news.length)}{t("newsFound")}
           </span>
         </div>
       </div>
@@ -85,11 +94,11 @@ export default function DailyCrimeNews() {
             </div>
             
             <h3 className="text-white font-bold text-lg mb-3 leading-tight group-hover:text-blood transition-colors h-[3.5em] overflow-hidden">
-              {item.title}
+              {translateText(item.title)}
             </h3>
             
             <p className="text-text-dim text-sm leading-relaxed mb-6 line-clamp-3">
-              {item.description}
+              {translateText(item.description)}
             </p>
             
             <div className="mt-auto">
@@ -105,7 +114,7 @@ export default function DailyCrimeNews() {
                   rel="noopener noreferrer"
                   className="text-blood hover:text-white transition-colors text-[0.7rem] font-bold uppercase tracking-widest flex items-center gap-1 bg-blood/5 px-3 py-1.5 border border-blood/20 rounded-sm"
                 >
-                  পুরো সংবাদ পড়ুন <ExternalLink size={12} />
+                  {t("readMore")} <ExternalLink size={12} />
                 </a>
               </div>
             </div>
@@ -113,14 +122,14 @@ export default function DailyCrimeNews() {
         )) : (
           <div className="col-span-full py-20 text-center border border-dashed border-border bg-bg/30">
             <Newspaper size={48} className="mx-auto text-text-faint opacity-20 mb-4" />
-            <p className="text-text-dim font-mono text-sm uppercase tracking-widest">আজকের কোনো সংবাদ এখনো পাওয়া যায়নি।</p>
+            <p className="text-text-dim font-mono text-sm uppercase tracking-widest">{t("noNews")}</p>
           </div>
         )}
       </div>
       
       <div className="mt-12 flex justify-center">
         <button className="bg-surface2 border border-border px-10 py-4 text-[0.7rem] font-mono text-text-dim hover:text-white hover:border-blood transition-all uppercase tracking-[0.2em] flex items-center gap-3">
-          পুরানো সংবাদ আর্কাইভ দেখুন <ChevronRight size={14} />
+          {t("dailyNewsTitle")} <ChevronRight size={14} />
         </button>
       </div>
     </div>
