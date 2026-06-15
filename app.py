@@ -16,7 +16,6 @@ from api.auth import auth_bp
 from api.threat_intel import threat_intel_bp
 from api.messages import messages_bp
 from api.siem import siem_bp
-from api.socket_instance import socketio
 from flask_caching import Cache
 import os
 from datetime import datetime
@@ -30,6 +29,10 @@ try:
     from scraper.autonomous_brain import start_brain
 except ImportError:
     start_brain = None
+try:
+    from api.socket_instance import socketio
+except ImportError:
+    socketio = None
 
 app = Flask(__name__)
 app.config.from_object('config.Config')
@@ -42,8 +45,9 @@ cache = Cache(app)
 # Initialize DB
 db.init_app(app)
 
-# Initialize SocketIO
-socketio.init_app(app)
+# Initialize SocketIO (optional)
+if socketio:
+    socketio.init_app(app)
 
 # Initialize JWT
 app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'super-secret-key-change-me')
@@ -212,4 +216,7 @@ with app.app_context():
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    socketio.run(app, host='0.0.0.0', port=port)
+    if socketio:
+        socketio.run(app, host='0.0.0.0', port=port)
+    else:
+        app.run(host='0.0.0.0', port=port, debug=False)
