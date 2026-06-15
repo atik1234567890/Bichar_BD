@@ -27,8 +27,10 @@ export default function AuthModal({ onClose }: { onClose: () => void }) {
       });
 
       if (mode === "login" && result.access_token) {
-        localStorage.setItem("jwt_token", result.access_token);
-        localStorage.setItem("user_role", result.role);
+        if (typeof window !== "undefined") {
+          localStorage.setItem("jwt_token", result.access_token);
+          localStorage.setItem("user_role", result.role);
+        }
         setMessage("Login successful!");
         setTimeout(onClose, 1000);
       } else {
