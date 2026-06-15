@@ -1,11 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/context/LanguageContext";
 import LanguageToggle from "./LanguageToggle";
+import AuthModal from "./AuthModal";
 
 export default function Hero() {
   const { t } = useLanguage();
+  const [showAuth, setShowAuth] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("jwt_token"));
 
   return (
     <div className="hero-section relative pt-12 pb-24 md:pt-20 md:pb-32 overflow-hidden">
@@ -23,10 +27,33 @@ export default function Hero() {
         </div>
         <div className="flex items-center gap-6">
           <LanguageToggle />
+          {isLoggedIn ? (
+            <button 
+              onClick={() => {
+                localStorage.removeItem("jwt_token");
+                localStorage.removeItem("user_role");
+                setIsLoggedIn(false);
+              }}
+              className="hidden md:block bg-surface border border-border text-text px-6 py-2 text-[0.7rem] font-mono font-bold uppercase tracking-widest hover:border-blood hover:text-blood transition-all"
+            >
+              Logout
+            </button>
+          ) : (
+            <button 
+              onClick={() => setShowAuth(true)}
+              className="hidden md:block bg-surface border border-border text-text px-6 py-2 text-[0.7rem] font-mono font-bold uppercase tracking-widest hover:border-blood hover:text-blood transition-all"
+            >
+              Login
+            </button>
+          )}
           <button className="hidden md:block bg-blood text-white px-6 py-2 text-[0.7rem] font-mono font-bold uppercase tracking-widest hover:bg-blood/80 transition-all">
             {t("submitReport")}
           </button>
         </div>
+        
+        {showAuth && (
+          <AuthModal onClose={() => { setShowAuth(false); setIsLoggedIn(!!localStorage.getItem("jwt_token")); }} />
+        )}
       </div>
       <div className="hero-noise absolute inset-0 opacity-40 pointer-events-none" />
       <div className="hero-glow absolute w-[600px] h-[600px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none" />

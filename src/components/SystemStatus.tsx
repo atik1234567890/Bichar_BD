@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Activity, Database, Newspaper, Clock } from "lucide-react";
+import { Activity, Database, Newspaper, Clock, ShieldCheck } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { safeFetch } from "@/lib/api";
 
@@ -44,7 +44,7 @@ export default function SystemStatus() {
         <h3 className="text-lg font-bold text-white uppercase tracking-widest font-mono">{t("systemStatus")}</h3>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
         <div className="flex items-start gap-4">
           <Clock className="text-text-faint mt-1" size={18} />
           <div>
@@ -70,6 +70,17 @@ export default function SystemStatus() {
             <div className="text-sm text-teal flex items-center gap-2" id="dbStatus">
               <div className="w-1.5 h-1.5 bg-teal rounded-full animate-pulse" />
               {t("connectedCloudSync")}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-start gap-4">
+          <ShieldCheck className="text-blood mt-1" size={18} />
+          <div>
+            <div className="text-[0.6rem] font-mono text-text-faint uppercase mb-1">Security Status</div>
+            <div className="text-sm text-blood flex items-center gap-2">
+              <div className="w-1.5 h-1.5 bg-blood rounded-full animate-pulse" />
+              E2E Encrypted, AI Protected
             </div>
           </div>
         </div>

@@ -6,6 +6,7 @@ import Stats from "@/components/Stats";
 import HubCategories from "@/components/HubCategories";
 import DailyCrimeNews from "@/components/DailyCrimeNews";
 import SystemStatus from "@/components/SystemStatus";
+import SecurityOpsDashboard from "@/components/SecurityOpsDashboard";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -28,6 +29,8 @@ export default function Home() {
         <section id="news" className="py-12 border-t border-border">
           <DailyCrimeNews />
         </section>
+
+        <SecurityOpsDashboard />
       </div>
 
       <Footer />
