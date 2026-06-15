@@ -1,0 +1,222 @@
+from flask import Flask, render_template, jsonify
+from flask_cors import CORS
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+from flask_talisman import Talisman
+from flask_jwt_extended import JWTManager
+from flask_wtf.csrf import CSRFProtect
+from database.models import db
+from database.seed import seed_districts, seed_figures, seed_massive_data, seed_historical_archive
+from api.incidents import incidents_bp
+from api.stats import stats_bp
+from api.reports import reports_bp
+from api.feed import feed_bp
+from api.figures import figures_bp
+from api.auth import auth_bp
+from api.threat_intel import threat_intel_bp
+from api.messages import messages_bp
+from api.siem import siem_bp
+from flask_caching import Cache
+import os
+from datetime import datetime
+
+# Optional imports for non-critical features
+try:
+    from scraper.scheduler import scheduler
+except ImportError:
+    scheduler = None
+try:
+    from scraper.autonomous_brain import start_brain
+except ImportError:
+    start_brain = None
+try:
+    from api.socket_instance import socketio
+except ImportError:
+    socketio = None
+
+app = Flask(__name__)
+app.config.from_object('config.Config')
+
+# Cache configuration
+app.config['CACHE_TYPE'] = 'SimpleCache'
+app.config['CACHE_DEFAULT_TIMEOUT'] = 300
+cache = Cache(app)
+
+# Initialize DB
+db.init_app(app)
+
+# Initialize SocketIO (optional)
+if socketio:
+    socketio.init_app(app)
+
+# Initialize JWT
+app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'super-secret-key-change-me')
+jwt = JWTManager(app)
+
+# Initialize CSRF
+csrf = CSRFProtect(app)
+# Exempt API routes from CSRF if they use JWT
+csrf.exempt(incidents_bp)
+csrf.exempt(stats_bp)
+csrf.exempt(reports_bp)
+csrf.exempt(feed_bp)
+csrf.exempt(figures_bp)
+csrf.exempt(auth_bp)
+csrf.exempt(threat_intel_bp)
+csrf.exempt(messages_bp)
+csrf.exempt(siem_bp)
+
+# Initialize Talisman (Security Headers)
+csp = {
+    'default-src': [
+        '\'self\'',
+        '*.google.com',
+        '*.gstatic.com',
+        '*.googleapis.com',
+        '*.cloudflare.com',
+        'data:',
+        '\'unsafe-inline\'',
+        '\'unsafe-eval\''
+    ],
+    'img-src': ['*', 'data:', 'blob:'],
+    'connect-src': ['*', 'ws:', 'wss:']
+}
+talisman = Talisman(app, content_security_policy=csp, force_https=False) # force_https=False for local dev
+
+# Initialize CORS
+CORS(app)
+
+# Initialize Limiter
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["100 per hour"],
+    storage_uri="memory://"
+)
+
+# Global Brain Instance
+brain = None
+
+# Register Blueprints
+app.register_blueprint(incidents_bp, url_prefix='/api/incidents')
+app.register_blueprint(stats_bp, url_prefix='/api/stats')
+app.register_blueprint(reports_bp, url_prefix='/api/report')
+app.register_blueprint(feed_bp, url_prefix='/api/feed')
+app.register_blueprint(figures_bp, url_prefix='/api/figures')
+app.register_blueprint(auth_bp, url_prefix='/api/auth')
+app.register_blueprint(threat_intel_bp, url_prefix='/api/threat-intel')
+app.register_blueprint(messages_bp, url_prefix='/api/messages')
+app.register_blueprint(siem_bp, url_prefix='/api/siem')
+
+@app.route('/api/brain/status')
+def brain_status():
+    if brain:
+        return jsonify({
+            "success": True,
+            "version": brain.version,
+            "logs": brain.health_logs[-10:], # Last 10 logs
+            "status": "Self-Healing Active"
+        })
+    return jsonify({"success": False, "message": "Brain not initialized"})
+
+@app.route('/api/status')
+def get_status():
+    from database.models import ScrapeLog
+    last_scrape = ScrapeLog.query.order_by(ScrapeLog.scraped_at.desc()).first()
+    return jsonify({
+        "success": True,
+        "last_scrape_time": last_scrape.scraped_at.isoformat() if last_scrape else datetime.utcnow().isoformat(),
+        "timestamp": datetime.utcnow().isoformat()
+    })
+
+@app.route('/health')
+def health():
+    from datetime import datetime
+    return jsonify({
+        "status": "healthy",
+        "timestamp": datetime.utcnow().isoformat(),
+        "uptime": "24/7 autonomous monitoring active"
+    })
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/incident/<int:id>')
+def incident_detail(id):
+    return render_template('incident.html', incident_id=id)
+
+@app.route('/submit')
+def submit_report_page():
+    return render_template('submit_report.html')
+
+# Initialize DB and Scheduler
+SKIP_HEAVY_INIT = os.environ.get('SKIP_HEAVY_INIT', '0') == '1'
+
+with app.app_context():
+    db.create_all()
+    
+    if not SKIP_HEAVY_INIT:
+        seed_districts() # Seed all 64 districts
+        # seed_figures()
+        seed_historical_archive() # Load 1971-Present Historical Data + 200 sample cases
+        
+        # 🚨 OSINT MODE: Ensure massive data exists for all 64 districts
+        from database.models import Incident
+        if Incident.query.count() < 1000:
+            print("🚀 OSINT Database is thin. Seeding massive archival data...")
+            seed_massive_data()
+        
+        # Background Sync Function to avoid Render timeouts
+        def run_sync():
+            with app.app_context():
+                try:
+                    from scraper.news_scraper import scrape_all_sources
+                    from scraper.scheduler import update_division_stats, update_pending_days
+                    from database.models import LiveFeedEvent
+                    
+                    # Add a neural log for startup
+                    db.session.add(LiveFeedEvent(
+                        event_type="HEAL",
+                        message="Neural Core Initialized. Synchronizing 1971-2026 Justice Archive...",
+                        district="Dhaka"
+                    ))
+                    db.session.commit()
+                    
+                    scrape_all_sources()
+                    update_division_stats()
+                    update_pending_days()
+                    
+                    # Add another log after sync
+                    db.session.add(LiveFeedEvent(
+                        event_type="GROWTH",
+                        message="Neural Sync Complete. Real-time monitoring active across 64 districts.",
+                        district="National"
+                    ))
+                    db.session.commit()
+                    
+                    # 🚨 CRITICAL FIX: Ensure all 64 districts have stats entry even if 0 cases
+                    from database.models import DistrictStats
+                    from scraper.nlp_processor import BANGLADESH_DISTRICTS
+                    for dist_bn, data in BANGLADESH_DISTRICTS.items():
+                        if not DistrictStats.query.filter_by(district=data['en']).first():
+                            db.session.add(DistrictStats(district=data['en'], division=data['division']))
+                    db.session.commit()
+                except Exception as e:
+                    print(f"Background sync failed: {e}")
+
+        import threading
+        threading.Thread(target=run_sync, daemon=True).start()
+        
+        # Start brain and scheduler only if available
+        if start_brain:
+            brain = start_brain(app) # Start the Autonomous Brain
+        if scheduler and not scheduler.running:
+            scheduler.start()
+
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
+    if socketio:
+        socketio.run(app, host='0.0.0.0', port=port)
+    else:
+        app.run(host='0.0.0.0', port=port, debug=False)
