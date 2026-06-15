@@ -15,6 +15,7 @@ export default function ReportForm({ crisisId, onClose }: { crisisId: string, on
     accused: "",
     description: ""
   });
+  const [isAnonymous, setIsAnonymous] = useState(true);
   const [file, setFile] = useState<File | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -27,6 +28,7 @@ export default function ReportForm({ crisisId, onClose }: { crisisId: string, on
     submitData.append("division", formData.district); 
     submitData.append("district", formData.district);
     submitData.append("thana", formData.thana);
+    submitData.append("is_anonymous", isAnonymous.toString());
     if (file) submitData.append("evidence_file", file);
 
     try {
@@ -130,6 +132,24 @@ export default function ReportForm({ crisisId, onClose }: { crisisId: string, on
               disabled={isSubmitting}
               value={formData.description}
               onChange={(e) => setFormData({...formData, description: e.target.value})}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="flex items-center gap-3 cursor-pointer">
+              <div className={`w-5 h-5 border border-border flex items-center justify-center ${isAnonymous ? 'bg-blood border-blood' : 'bg-bg'}`}>
+                {isAnonymous && <div className="w-2 h-2 bg-white" />}
+              </div>
+              <span className="text-text text-sm">
+                {isAnonymous ? "বেনামী সাবমিশন সক্রিয় (Anonymous Submission Active)" : "নিজের নাম দিয়ে রিপোর্ট করুন (Submit with your name)"}
+              </span>
+            </label>
+            <input 
+              type="checkbox" 
+              className="hidden" 
+              checked={isAnonymous}
+              onChange={(e) => setIsAnonymous(e.target.checked)}
+              disabled={isSubmitting}
             />
           </div>
 
