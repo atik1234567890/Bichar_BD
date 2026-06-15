@@ -1,6 +1,47 @@
 from PIL import Image
 import numpy as np
 import io
+import exifread
+from stegano import lsb
+try:
+    import magic
+except ImportError:
+    magic = None
+
+def extract_metadata(file_path):
+    """
+    Extracts metadata from Image/PDF files.
+    """
+    metadata = {}
+    try:
+        with open(file_path, 'rb') as f:
+            tags = exifread.process_file(f)
+            for tag in tags.keys():
+                if tag not in ('JPEGThumbnail', 'TIFFThumbnail', 'Filename', 'EXIF MakerNote'):
+                    metadata[tag] = str(tags[tag])
+    except Exception as e:
+        metadata['error'] = str(e)
+    return metadata
+
+def check_steganography(file_path):
+    """
+    Detects if hidden messages exist using LSB steganography.
+    """
+    try:
+        # This is a basic check. Real steganography detection is hard.
+        # We try to reveal and if it doesn't fail, there's something there.
+        message = lsb.reveal(file_path)
+        return {"hidden_data_detected": True, "message_preview": message[:50] if message else ""}
+    except:
+        return {"hidden_data_detected": False}
+
+def get_file_type(file_path):
+    if magic:
+        try:
+            return magic.from_file(file_path)
+        except:
+            return "Unknown"
+    return "Unknown (libmagic missing)"
 
 def run_ela(image_path, quality=90):
     original = Image.open(image_path).convert('RGB')

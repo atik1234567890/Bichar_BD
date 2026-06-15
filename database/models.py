@@ -1,8 +1,39 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import uuid
+from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
+
+class User(db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
+    role = db.Column(db.String(20), nullable=False, default='journalist') # admin, journalist, verifier, whistleblower
+    is_active = db.Column(db.Boolean, default=True)
+    last_login = db.Column(db.DateTime)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+class AuditLog(db.Model):
+    __tablename__ = 'audit_logs'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    action = db.Column(db.String(255), nullable=False)
+    target_type = db.Column(db.String(50))
+    target_id = db.Column(db.Integer)
+    ip_address = db.Column(db.String(45))
+    user_agent = db.Column(db.String(255))
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Blockchain integrity hash (for advanced feature)
+    integrity_hash = db.Column(db.String(64))
 
 class Incident(db.Model):
     __tablename__ = 'incidents'
@@ -41,6 +72,7 @@ class PublicReport(db.Model):
     thana           = db.Column(db.String(100))
     file_path       = db.Column(db.String(300))
     file_hash       = db.Column(db.String(200))
+    blockchain_tx   = db.Column(db.String(100))
     is_tampered     = db.Column(db.Boolean)
     ela_confidence  = db.Column(db.Integer)
     status          = db.Column(db.String(30), default='pending')

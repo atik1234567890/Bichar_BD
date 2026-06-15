@@ -121,6 +121,41 @@ BANGLADESH_DISTRICTS = {
     "লালমনিরহাট": {"en":"Lalmonirhat","division":"Rangpur","lat":25.9129,"lon":89.4426}
 }
 
+SUSPICIOUS_KEYWORDS = [
+    "গুজব", "rumor", "unverified", "social media claim", 
+    "সোর্স নেই", "সূত্রহীন", "fake news", "ভুয়া", "মিথ্যা"
+]
+
+def analyze_misinformation(text):
+    """
+    Analyzes text for misinformation indicators.
+    Returns a score from 0 (Likely Real) to 100 (Likely Fake).
+    """
+    if not text:
+        return 0
+        
+    text_lower = text.lower()
+    score = 0
+    
+    # Check for suspicious keywords
+    for word in SUSPICIOUS_KEYWORDS:
+        if word in text_lower:
+            score += 25
+            
+    # Check for excessive exclamation marks (common in fake news)
+    if text.count('!') > 3:
+        score += 15
+        
+    # Check for all caps (common in fake news)
+    if text.isupper() and len(text) > 10:
+        score += 20
+        
+    # Check for short length (less than 20 chars usually lacks detail)
+    if len(text) < 20:
+        score += 10
+        
+    return min(score, 100)
+
 def classify_article(title, summary):
     text = (title + " " + summary).lower()
     for crime_type, keywords in CRIME_KEYWORDS.items():

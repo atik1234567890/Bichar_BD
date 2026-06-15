@@ -2,6 +2,9 @@ from flask import Flask, render_template, jsonify
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask_talisman import Talisman
+from flask_jwt_extended import JWTManager
+from flask_wtf.csrf import CSRFProtect
 from database.models import db
 from database.seed import seed_districts, seed_figures, seed_massive_data, seed_historical_archive
 from api.incidents import incidents_bp
@@ -9,6 +12,10 @@ from api.stats import stats_bp
 from api.reports import reports_bp
 from api.feed import feed_bp
 from api.figures import figures_bp
+from api.auth import auth_bp
+from api.threat_intel import threat_intel_bp
+from api.messages import messages_bp
+from api.siem import siem_bp
 from api.socket_instance import socketio
 from scraper.scheduler import scheduler
 from scraper.autonomous_brain import start_brain
@@ -28,6 +35,40 @@ db.init_app(app)
 
 # Initialize SocketIO
 socketio.init_app(app)
+
+# Initialize JWT
+app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'super-secret-key-change-me')
+jwt = JWTManager(app)
+
+# Initialize CSRF
+csrf = CSRFProtect(app)
+# Exempt API routes from CSRF if they use JWT
+csrf.exempt(incidents_bp)
+csrf.exempt(stats_bp)
+csrf.exempt(reports_bp)
+csrf.exempt(feed_bp)
+csrf.exempt(figures_bp)
+csrf.exempt(auth_bp)
+csrf.exempt(threat_intel_bp)
+csrf.exempt(messages_bp)
+csrf.exempt(siem_bp)
+
+# Initialize Talisman (Security Headers)
+csp = {
+    'default-src': [
+        '\'self\'',
+        '*.google.com',
+        '*.gstatic.com',
+        '*.googleapis.com',
+        '*.cloudflare.com',
+        'data:',
+        '\'unsafe-inline\'',
+        '\'unsafe-eval\''
+    ],
+    'img-src': ['*', 'data:', 'blob:'],
+    'connect-src': ['*', 'ws:', 'wss:']
+}
+talisman = Talisman(app, content_security_policy=csp, force_https=False) # force_https=False for local dev
 
 # Initialize CORS
 CORS(app)
@@ -49,6 +90,10 @@ app.register_blueprint(stats_bp, url_prefix='/api/stats')
 app.register_blueprint(reports_bp, url_prefix='/api/report')
 app.register_blueprint(feed_bp, url_prefix='/api/feed')
 app.register_blueprint(figures_bp, url_prefix='/api/figures')
+app.register_blueprint(auth_bp, url_prefix='/api/auth')
+app.register_blueprint(threat_intel_bp, url_prefix='/api/threat-intel')
+app.register_blueprint(messages_bp, url_prefix='/api/messages')
+app.register_blueprint(siem_bp, url_prefix='/api/siem')
 
 @app.route('/api/brain/status')
 def brain_status():

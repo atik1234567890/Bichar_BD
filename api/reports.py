@@ -1,10 +1,14 @@
 from flask import Blueprint, jsonify, request
-from database.models import db, PublicReport
+from database.models import db, PublicReport, Incident, AuditLog
 from evidence.verifier import run_ela
+from evidence.encryption import EvidenceEncryptor
+from evidence.blockchain import BlockchainTimestamp
 import hashlib, os, uuid
 from datetime import datetime
 
 reports_bp = Blueprint('reports', __name__)
+encryptor = EvidenceEncryptor()
+blockchain = BlockchainTimestamp()
 
 @reports_bp.route('/tracker/<type>', methods=['GET'])
 def get_tracker_stats(type):
@@ -46,11 +50,19 @@ def submit():
         division = data.get('division')
         district = data.get('district')
         thana = data.get('thana')
+        is_anonymous = data.get('is_anonymous', 'false').lower() == 'true'
         
         if not incident_type or not description or not division or not district:
             return jsonify({"success": False, "message": "Missing required fields"}), 400
             
-        ip_hash = hashlib.sha256(request.remote_addr.encode()).hexdigest()
+        # IP Stripping for Anonymous Reports
+        if is_anonymous:
+            ip_hash = "ANONYMOUS"
+        else:
+            ip_hash = hashlib.sha256(request.remote_addr.encode()).hexdigest()
+        
+        # E2E Encryption (AES-256) for description
+        encrypted_description = encryptor.encrypt_data(description)
         
         evidence_file = request.files.get('evidence_file')
         evidence_file_path = None
@@ -65,7 +77,7 @@ def submit():
             evidence_file_path = os.path.join(upload_dir, filename)
             evidence_file.save(evidence_file_path)
             
-            # Evidence hashing
+            # Evidence hashing BEFORE encryption
             sha256 = hashlib.sha256()
             with open(evidence_file_path, 'rb') as f:
                 for chunk in iter(lambda: f.read(4096), b''):
@@ -79,29 +91,48 @@ def submit():
             except:
                 is_tampered = False
             
+            # Encrypt File (AES-256)
+            encryptor.encrypt_file(evidence_file_path)
+            
+            # Blockchain Timestamping
+            bc_proof = blockchain.generate_proof(evidence_hash)
+            blockchain_tx = bc_proof['tx_hash']
+        else:
+            blockchain_tx = None
+            
         new_report = PublicReport(
             incident_type=incident_type,
-            description=description,
+            description=encrypted_description, # Save encrypted
             division=division,
             district=district,
             thana=thana,
-            evidence_file_path=evidence_file_path,
-            evidence_hash=evidence_hash,
+            file_path=evidence_file_path,
+            file_hash=evidence_hash,
+            blockchain_tx=blockchain_tx,
             is_tampered=is_tampered,
             ip_hash=ip_hash,
             status='pending'
         )
         db.session.add(new_report)
+        db.session.flush() # Flush to get new_report.id before commit
+        
+        # Audit Log for Report Submission
+        log = AuditLog(
+            action="REPORT_SUBMITTED",
+            target_type="PublicReport",
+            target_id=new_report.id,
+            ip_address=ip_hash, # Use the same ip_hash (hashed or "ANONYMOUS") for consistency
+            user_agent=request.user_agent.string if not is_anonymous else "ANONYMOUS"
+        )
+        db.session.add(log)
         db.session.commit()
         
         return jsonify({
             "success": True, 
-            "token": new_report.submission_token, 
-            "message": "Report submitted successfully. Thank you for your transparency.",
-            "timestamp": datetime.utcnow().isoformat()
+            "token": new_report.token, 
+            "message": "Report submitted successfully with E2E Encryption. Your identity is protected."
         })
     except Exception as e:
-        db.session.rollback()
         return jsonify({"success": False, "message": str(e)}), 500
 
 @reports_bp.route('/verify-document', methods=['POST'])
