@@ -1,16 +1,12 @@
 import hashlib
 import time
 import json
-from web3 import Web3
-from eth_account import Account
 import os
 
 class BlockchainTimestamp:
     def __init__(self):
-        # In a real app, this would be an Infura/Alchemy URL
-        self.provider_url = os.environ.get('BLOCKCHAIN_PROVIDER', 'http://localhost:8545')
-        self.w3 = Web3(Web3.HTTPProvider(self.provider_url))
-        self.mock_mode = True # Set to False if real provider exists
+        # Always use mock mode for reliability
+        self.mock_mode = True
 
     def generate_proof(self, data_hash):
         """

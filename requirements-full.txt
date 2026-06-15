@@ -19,5 +19,14 @@ flask-talisman
 flask-jwt-extended
 flask-wtf
 cryptography
+pyOpenSSL
 argon2-cffi
 python-jose[cryptography]
+web3
+eth-account
+python-magic
+stegano
+exifread
+nltk
+scikit-learn
+joblib

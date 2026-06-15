@@ -1,8 +1,18 @@
 from PIL import Image
 import numpy as np
 import io
-import exifread
-from stegano import lsb
+
+# Make these optional imports
+try:
+    import exifread
+except ImportError:
+    exifread = None
+
+try:
+    from stegano import lsb
+except ImportError:
+    lsb = None
+
 try:
     import magic
 except ImportError:
@@ -13,6 +23,9 @@ def extract_metadata(file_path):
     Extracts metadata from Image/PDF files.
     """
     metadata = {}
+    if not exifread:
+        return {"error": "exifread not available"}
+        
     try:
         with open(file_path, 'rb') as f:
             tags = exifread.process_file(f)
@@ -27,6 +40,9 @@ def check_steganography(file_path):
     """
     Detects if hidden messages exist using LSB steganography.
     """
+    if not lsb:
+        return {"hidden_data_detected": "N/A"}
+        
     try:
         # This is a basic check. Real steganography detection is hard.
         # We try to reveal and if it doesn't fail, there's something there.
