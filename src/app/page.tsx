@@ -6,7 +6,9 @@ import Stats from "@/components/Stats";
 import HubCategories from "@/components/HubCategories";
 import DailyCrimeNews from "@/components/DailyCrimeNews";
 import SystemStatus from "@/components/SystemStatus";
-import SecurityOpsDashboard from "@/components/SecurityOpsDashboard";
+import CyberThreatDashboard from "@/components/CyberThreatDashboard";
+import FakeNewsAndPhishingChecker from "@/components/FakeNewsAndPhishingChecker";
+import CrisisGrid from "@/components/CrisisGrid";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -17,9 +19,25 @@ export default function Home() {
       <div className="max-w-[1400px] mx-auto px-6 md:px-12">
         <Hero />
         <SystemStatus />
-        
+      </div>
+
+      {/* Cyber Security Module - NEW */}
+      <section id="cyber-dashboard" className="w-full">
+        <CyberThreatDashboard />
+      </section>
+
+      {/* AI Verification Tools */}
+      <section id="ai-checker" className="w-full">
+        <FakeNewsAndPhishingChecker />
+      </section>
+      
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12">
         <section id="stats" className="py-12 border-b border-border">
           <Stats />
+        </section>
+
+        <section id="cyber-crisis" className="py-12 border-b border-border">
+          <CrisisGrid />
         </section>
 
         <section id="explore" className="py-12">
@@ -29,8 +47,6 @@ export default function Home() {
         <section id="news" className="py-12 border-t border-border">
           <DailyCrimeNews />
         </section>
-
-        <SecurityOpsDashboard />
       </div>
 
       <Footer />
